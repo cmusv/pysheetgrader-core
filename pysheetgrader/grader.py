@@ -1,5 +1,6 @@
-from pysheetgrader.gradingrubric import GradingRubric
-from pysheetgrader.gradingrubric import GradingRubricType
+from pysheetgrader.grading.rubric import GradingRubric
+from pysheetgrader.grading.rubric import GradingRubricType
+from pysheetgrader.grading.strategy.constant import ConstantStrategy
 
 
 class Grader:
@@ -56,8 +57,7 @@ class Grader:
         :param rubric: GradingRubric instance.
         :return: Float value of the grade of the document's sheet.
         """
-        # TODO: Use the grading strategy here.
         if rubric.rubric_type == GradingRubricType.CONSTANT:
-            return 10
-        else:
-            return 20
+            return ConstantStrategy(self.key_document, document, sheet_name, rubric).grade()
+        else: # TODO: Use the formula-based grading strategy here.
+            return rubric.score

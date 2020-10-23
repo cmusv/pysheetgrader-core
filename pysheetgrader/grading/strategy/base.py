@@ -1,5 +1,5 @@
 
-class GradingStrategy:
+class BaseStrategy:
     """
     Base class of other grading strategies.
     """

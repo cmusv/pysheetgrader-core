@@ -1,7 +1,7 @@
-from pysheetgrader.gradingstrategy.gradingstrategy import GradingStrategy
+from pysheetgrader.grading.strategy.base import BaseStrategy
 
 
-class ConstantGradingStrategy(GradingStrategy):
+class ConstantStrategy(BaseStrategy):
     """
     Used to grade Constant rubrics.
     """
