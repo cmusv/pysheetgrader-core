@@ -31,7 +31,7 @@ class Document:
     def __del__(self):
         self.formula_wb.close()
         self.computed_value_wb.close()
-        
+
     def is_valid_key(self):
         """
         Returns a Boolean value to identify whether this document is a valid key document or not.
@@ -49,15 +49,15 @@ class Document:
             return []
 
         sheet_names = []
-        order_sheet = self.formula_wb['SheetGradingOrder']
+        order_sheet = self.formula_wb[self.GRADING_ORDER_SHEET_NAME]
 
         # Assumptions of the order sheet
         # 1. The scoring column is always on B. (min_col=2, max_col=2)
         # 2. The scoring column always has a header (min_row=2)
         # 3. The scoring column is always in order
-        for column in order_sheet.iter_cols(min_col=2, max_col=2, min_row=2):
+        for row in order_sheet.iter_rows(min_col=2, max_col=2, min_row=2):
             # Assuming this for-loop will only be executed for B column
             # And the cell always have the valid sheet name.
-            sheet_names.extend([cell.value for cell in column])
+            sheet_names.extend([cell.value for cell in row])
 
         return sheet_names
