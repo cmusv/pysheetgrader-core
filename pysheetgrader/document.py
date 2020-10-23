@@ -28,6 +28,10 @@ class Document:
         self.formula_wb = load_workbook(path, read_only=read_only, data_only=False)
         self.computed_value_wb = load_workbook(path, read_only=read_only, data_only=True)
 
+    def __del__(self):
+        self.formula_wb.close()
+        self.computed_value_wb.close()
+        
     def is_valid_key(self):
         """
         Returns a Boolean value to identify whether this document is a valid key document or not.
