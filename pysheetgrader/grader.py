@@ -1,6 +1,7 @@
 from pysheetgrader.grading.rubric import GradingRubric
 from pysheetgrader.grading.rubric import GradingRubricType
 from pysheetgrader.grading.strategy.constant import ConstantStrategy
+from pysheetgrader.grading.strategy.formula import NaiveFormulaStrategy
 
 
 class Grader:
@@ -59,5 +60,6 @@ class Grader:
         """
         if rubric.rubric_type == GradingRubricType.CONSTANT:
             return ConstantStrategy(self.key_document, document, sheet_name, rubric).grade()
-        else: # TODO: Use the formula-based grading strategy here.
-            return rubric.score
+
+        # TODO: Use other formula-based grading strategies here (e.g., unit test)
+        return NaiveFormulaStrategy(self.key_document, document, sheet_name, rubric).grade()
