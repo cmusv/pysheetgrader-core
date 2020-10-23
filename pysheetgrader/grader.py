@@ -1,5 +1,5 @@
-from gradingrubric import GradingRubric
-from gradingrubric import GradingRubricType
+from pysheetgrader.gradingrubric import GradingRubric
+from pysheetgrader.gradingrubric import GradingRubricType
 
 
 class Grader:
