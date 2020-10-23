@@ -1,4 +1,5 @@
 from gradingrubric import GradingRubric
+from gradingrubric import GradingRubricType
 
 
 class Grader:
@@ -40,11 +41,23 @@ class Grader:
         :param sheet_name: String value of the sheet name that should be graded.
         :return: Float value of the grade for the sheet.
         """
-
         score = 0
         rubrics = GradingRubric.create_rubrics_for_sheet(self.key_document, sheet_name)
-        for _ in rubrics:
-            # TODO: Update this method to properly use grading rubric.
-            score += 10
+        for r in rubrics:
+            score += self.grade_sheet_by_rubric(document, sheet_name, r)
 
         return score
+
+    def grade_sheet_by_rubric(self, document, sheet_name, rubric):
+        """
+        Grades the `sheet_name` of the passed `document` using the passed `rubric`.
+        :param document: Document instance.
+        :param sheet_name: String value of the sheet name.
+        :param rubric: GradingRubric instance.
+        :return: Float value of the grade of the document's sheet.
+        """
+        # TODO: Use the grading strategy here.
+        if rubric.rubric_type == GradingRubricType.CONSTANT:
+            return 10
+        else:
+            return 20
