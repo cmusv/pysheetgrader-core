@@ -1,3 +1,5 @@
+from gradingrubric import GradingRubric
+
 
 class Grader:
     """
@@ -40,34 +42,9 @@ class Grader:
         """
 
         score = 0
-        graded_cells = self.cell_grading_order(sheet_name)
-        for _ in graded_cells:
+        rubrics = GradingRubric.create_rubrics_for_sheet(self.key_document, sheet_name)
+        for _ in rubrics:
             # TODO: Update this method to properly use grading rubric.
             score += 10
 
         return score
-
-    def cell_grading_order(self, sheet_name):
-        """
-        Return ordered String list of cell coordinate to be graded for the passed `sheet_name` based on this
-            instance's key document.
-
-        :param sheet_name: String of the sheet name.
-        :return: List of Strings.
-        """
-
-        # TODO: Update this method to return the grading rubric.
-
-        order_sheet = self.key_document.formula_wb[sheet_name + "_CheckOrder"]
-        cell_orders = []
-
-        # Assumptions of the order sheet
-        # 1. The scoring column is always on B. (min_col=2, max_col=2)
-        # 2. The scoring column always has a header (min_row=2)
-        # 3. The scoring column is always in order
-        for row in order_sheet.iter_rows(min_col=2, max_col=2, min_row=2):
-            # Assuming this for-loop will only be executed for B column
-            # And the reference cells always have comment text for rubric.
-            cell_orders.extend([cell.value for cell in row])
-
-        return cell_orders
