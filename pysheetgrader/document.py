@@ -19,6 +19,7 @@ class Document:
             `computed_value_wb`.
         :param read_only: Boolean marker whether the document should be treated as read-only. This will affect
             the `formula_wb` and `computed_value_wb` property of this instance - whether they're read-only or not.
+            Please set this to `False` when creating key documents, so the rubric notes can be accessed.
             Defaults to `True`.
         """
 
