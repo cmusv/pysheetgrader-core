@@ -5,6 +5,6 @@ setup(
     version='0.1',
     py_modules=['pysheetgrader'],
     install_requires=[
-        'openpyxl', 'sympy'
+        'openpyxl', 'sympy', 'click'
     ]
 )
