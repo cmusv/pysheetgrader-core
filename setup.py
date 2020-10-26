@@ -6,5 +6,9 @@ setup(
     py_modules=['pysheetgrader'],
     install_requires=[
         'openpyxl', 'sympy', 'click'
-    ]
+    ],
+    entry_points='''
+        [console_scripts]
+        pysheetgrader=main:cli
+    '''
 )
