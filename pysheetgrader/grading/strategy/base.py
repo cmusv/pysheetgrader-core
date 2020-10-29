@@ -1,10 +1,13 @@
+from pysheetgrader.grading.rubric import GradingRubric
+from pysheetgrader.document import Document
+
 
 class BaseStrategy:
     """
     Base class of other grading strategies.
     """
 
-    def __init__(self, key_document, sub_document, sheet_name, grading_rubric):
+    def __init__(self, key_document: Document, sub_document: Document, sheet_name, grading_rubric: GradingRubric):
         """
         Initializer of this class.
         :param key_document: Document instance that used as a key.
@@ -19,8 +22,8 @@ class BaseStrategy:
 
     def grade(self):
         """
-        Returns the grade of the `sub_document` of this instance, based on the `grading_rubric` and `key_document`.
-        :return: Float value of the grade.
+        Returns the grading report of the `sub_document` of this instance, based on the `grading_rubric` and `key_document`.
+        :return: Report instance of the grading.
         :exception NotImplemented   raised when this method called directly (instead of the subclass').
         """
         raise NotImplemented("The `grade` method should've been implemented in the subclasses.")
