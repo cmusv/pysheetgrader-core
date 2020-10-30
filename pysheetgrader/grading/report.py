@@ -11,6 +11,7 @@ class Report:
 
     def __add__(self, other):
         self.append(other)
+        return self
 
     def append(self, other_report):
         """
