@@ -48,7 +48,7 @@ class Grader:
         :return: GradingReport instance of the grade for the sheet.
         """
         report = GradingReport()
-        report.report_lines.append(f"\tGrading for sheet: {sheet_name}")
+        report.report_lines.append(f"Grading for sheet: {sheet_name}")
         rubrics = GradingRubric.create_rubrics_for_sheet(self.key_document, sheet_name)
         for r in rubrics:
             report += self.grade_sheet_by_rubric(document, sheet_name, r)
