@@ -1,5 +1,5 @@
 from pysheetgrader.grading.strategy.base import BaseStrategy
-from pysheetgrader.grading.report import Report
+from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.formula_parser import parse_formula
 from sympy import simplify
 
@@ -17,7 +17,7 @@ class NaiveFormulaStrategy(BaseStrategy):
         key_cell_value = key_sheet[cell_cord].value
         sub_cell_value = sub_sheet[cell_cord].value
 
-        report = Report()
+        report = GradingReport()
         report.max_possible_score = self.grading_rubric.score
 
         try:
@@ -28,6 +28,7 @@ class NaiveFormulaStrategy(BaseStrategy):
             if is_similar:
                 report.submission_score = self.grading_rubric.score
 
+            print(f"[NaiveFormulaStrategy] GradingReport of grading: {report}")
             return report
         except Exception as exc:
             report.report_lines.append(f"Failed to compare formulas, key: {key_cell_value}, "

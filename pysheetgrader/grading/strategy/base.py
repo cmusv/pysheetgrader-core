@@ -23,7 +23,7 @@ class BaseStrategy:
     def grade(self):
         """
         Returns the grading report of the `sub_document` of this instance, based on the `grading_rubric` and `key_document`.
-        :return: Report instance of the grading.
+        :return: GradingReport instance of the grading.
         :exception NotImplemented   raised when this method called directly (instead of the subclass').
         """
         raise NotImplemented("The `grade` method should've been implemented in the subclasses.")

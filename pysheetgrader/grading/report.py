@@ -1,5 +1,5 @@
 
-class Report:
+class GradingReport:
     """
     Representation of a grading report.
     """
@@ -15,8 +15,8 @@ class Report:
 
     def append(self, other_report):
         """
-        Appends another Report instance properties to this instance.
-        :param other_report: Report instance.
+        Appends another GradingReport instance properties to this instance.
+        :param other_report: GradingReport instance.
         """
         # Early return
         if not isinstance(other_report, self.__class__):

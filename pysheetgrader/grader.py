@@ -1,8 +1,8 @@
 from pysheetgrader.grading.rubric import GradingRubric
 from pysheetgrader.grading.rubric import GradingRubricType
+from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.grading.strategy.constant import ConstantStrategy
 from pysheetgrader.grading.strategy.formula import NaiveFormulaStrategy
-from pysheetgrader.grading.report import Report
 
 
 class Grader:
@@ -29,9 +29,9 @@ class Grader:
         """
         Grade the passed `document` against this instance's key document.
         :param document: Document instance.
-        :return: Report instance of the grade.
+        :return: GradingReport instance of the grade.
         """
-        report = Report()
+        report = GradingReport()
         for sheet_name in self.grading_sheet_names:
             report += self.grade_sheet(document, sheet_name)
 
@@ -42,9 +42,9 @@ class Grader:
         Grade the passed `sheet_name` of the passed `document` against this instance's key document.
         :param document: Document instance.
         :param sheet_name: String value of the sheet name that should be graded.
-        :return: Report instance of the grade for the sheet.
+        :return: GradingReport instance of the grade for the sheet.
         """
-        report = Report()
+        report = GradingReport()
         rubrics = GradingRubric.create_rubrics_for_sheet(self.key_document, sheet_name)
         for r in rubrics:
             report += self.grade_sheet_by_rubric(document, sheet_name, r)
@@ -57,7 +57,7 @@ class Grader:
         :param document: Document instance.
         :param sheet_name: String value of the sheet name.
         :param rubric: GradingRubric instance.
-        :return: Report instance of the grade of the document's sheet.
+        :return: GradingReport instance of the grade of the document's sheet.
         """
         if rubric.rubric_type == GradingRubricType.CONSTANT:
             return ConstantStrategy(self.key_document, document, sheet_name, rubric).grade()
