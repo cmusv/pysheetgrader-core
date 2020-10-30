@@ -1,5 +1,6 @@
 from pysheetgrader.grading.rubric import GradingRubric
 from pysheetgrader.grading.rubric import GradingRubricType
+from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.grading.strategy.constant import ConstantStrategy
 from pysheetgrader.grading.strategy.formula import NaiveFormulaStrategy
 
@@ -28,27 +29,31 @@ class Grader:
         """
         Grade the passed `document` against this instance's key document.
         :param document: Document instance.
-        :return: Float value of the grade.
+        :return: GradingReport instance of the grade.
         """
-        score = 0
-        for sheet_name in self.grading_sheet_names:
-            score += self.grade_sheet(document, sheet_name)
+        report = GradingReport()
+        report.append_line(f"========== START GRADING PROCESS ==========")
 
-        return score
+        for sheet_name in self.grading_sheet_names:
+            report += self.grade_sheet(document, sheet_name)
+
+        report.append_line(f"Final score: {report.submission_score} / {report.max_possible_score}")
+        return report
 
     def grade_sheet(self, document, sheet_name):
         """
         Grade the passed `sheet_name` of the passed `document` against this instance's key document.
         :param document: Document instance.
         :param sheet_name: String value of the sheet name that should be graded.
-        :return: Float value of the grade for the sheet.
+        :return: GradingReport instance of the grade for the sheet.
         """
-        score = 0
+        report = GradingReport()
+        report.append_line(f"Grading for sheet: {sheet_name}")
         rubrics = GradingRubric.create_rubrics_for_sheet(self.key_document, sheet_name)
         for r in rubrics:
-            score += self.grade_sheet_by_rubric(document, sheet_name, r)
+            report += self.grade_sheet_by_rubric(document, sheet_name, r)
 
-        return score
+        return report
 
     def grade_sheet_by_rubric(self, document, sheet_name, rubric):
         """
@@ -56,10 +61,17 @@ class Grader:
         :param document: Document instance.
         :param sheet_name: String value of the sheet name.
         :param rubric: GradingRubric instance.
-        :return: Float value of the grade of the document's sheet.
+        :return: GradingReport instance of the grade of the document's sheet.
         """
-        if rubric.rubric_type == GradingRubricType.CONSTANT:
-            return ConstantStrategy(self.key_document, document, sheet_name, rubric).grade()
+        report = GradingReport()
 
-        # TODO: Use other formula-based grading strategies here (e.g., unit test)
-        return NaiveFormulaStrategy(self.key_document, document, sheet_name, rubric).grade()
+        if rubric.rubric_type == GradingRubricType.CONSTANT:
+            report.append_line(f"\t- Cell {rubric.cell_cord}, constant value comparison.")
+            report += ConstantStrategy(self.key_document, document, sheet_name, rubric).grade()
+        else:
+            report.append_line(f"\t- Cell {rubric.cell_cord}, formula comparison.")
+            # TODO: Use other formula-based grading strategies here (e.g., unit test)
+            report += NaiveFormulaStrategy(self.key_document, document, sheet_name, rubric).grade()
+
+        report.append_line(f"\tScore: {report.submission_score} / {report.max_possible_score}")
+        return report
