@@ -9,6 +9,9 @@ class Report:
         self.max_possible_score = 0
         self.report_lines = []
 
+    def __add__(self, other):
+        self.append(other)
+
     def append(self, other_report):
         """
         Appends another Report instance properties to this instance.
