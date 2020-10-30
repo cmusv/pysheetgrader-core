@@ -18,7 +18,10 @@ def cli(key_document_path, submission_document_path):
     sub_doc = Document(submission_document_path, read_only=True)
 
     grader = Grader(key_doc)
-    sub_score = grader.grade(sub_doc)
+    report = grader.grade(sub_doc)
 
-    print(f"Grade of the submission:\t{sub_score}")
+    print(f"Grade of the submission:\t{report.submission_score} / {report.max_possible_score}")
+    print(f"Report lines:")
+    for line in report.report_lines:
+        print(line)
 
