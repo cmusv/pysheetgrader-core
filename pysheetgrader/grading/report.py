@@ -24,4 +24,4 @@ class GradingReport:
 
         self.submission_score += other_report.submission_score
         self.max_possible_score += other_report.max_possible_score
-        self.report_lines.extend(self.report_lines)
+        self.report_lines.extend(other_report.report_lines)
