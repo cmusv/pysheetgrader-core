@@ -43,7 +43,7 @@ def save_score(report, output_path):
     :param report: GradingReport instance.
     :param output_path: String value of the output file path.
     """
-    with open(output_path, 'a') as file:
+    with open(output_path, 'w') as file:
         file.write(f"Assignment Score, {report.submission_score}\n")
 
 
@@ -53,5 +53,5 @@ def save_report(report, output_path):
     :param report: GradingReport instance.
     :param output_path: String value of the output file path.
     """
-    with open(output_path, 'a') as file:
+    with open(output_path, 'w') as file:
         file.writelines(report.report_lines)
