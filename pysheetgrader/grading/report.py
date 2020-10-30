@@ -38,6 +38,6 @@ class GradingReport:
         Appends the passed string_line to this instance's `report_lines`.
         :param string_line: String instance.
         """
-        self.report_lines.append(string_line)
+        self.report_lines.append(string_line + "\n")
         if self.print_appended_lines:
             print(string_line)
