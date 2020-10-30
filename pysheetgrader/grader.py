@@ -32,12 +32,12 @@ class Grader:
         :return: GradingReport instance of the grade.
         """
         report = GradingReport()
-        report.report_lines.append(f"========== START GRADING PROCESS ==========")
+        report.append_line(f"========== START GRADING PROCESS ==========")
 
         for sheet_name in self.grading_sheet_names:
             report += self.grade_sheet(document, sheet_name)
 
-        report.report_lines.append(f"Final score: {report.submission_score} / {report.max_possible_score}")
+        report.append_line(f"Final score: {report.submission_score} / {report.max_possible_score}")
         return report
 
     def grade_sheet(self, document, sheet_name):
@@ -48,7 +48,7 @@ class Grader:
         :return: GradingReport instance of the grade for the sheet.
         """
         report = GradingReport()
-        report.report_lines.append(f"Grading for sheet: {sheet_name}")
+        report.append_line(f"Grading for sheet: {sheet_name}")
         rubrics = GradingRubric.create_rubrics_for_sheet(self.key_document, sheet_name)
         for r in rubrics:
             report += self.grade_sheet_by_rubric(document, sheet_name, r)
@@ -66,12 +66,12 @@ class Grader:
         report = GradingReport()
 
         if rubric.rubric_type == GradingRubricType.CONSTANT:
-            report.report_lines.append(f"\t- Cell {rubric.cell_cord}, constant value comparison.")
+            report.append_line(f"\t- Cell {rubric.cell_cord}, constant value comparison.")
             report += ConstantStrategy(self.key_document, document, sheet_name, rubric).grade()
         else:
-            report.report_lines.append(f"\t- Cell {rubric.cell_cord}, formula comparison.")
+            report.append_line(f"\t- Cell {rubric.cell_cord}, formula comparison.")
             # TODO: Use other formula-based grading strategies here (e.g., unit test)
             report += NaiveFormulaStrategy(self.key_document, document, sheet_name, rubric).grade()
 
-        report.report_lines.append(f"\tScore: {report.submission_score} / {report.max_possible_score}")
+        report.append_line(f"\tScore: {report.submission_score} / {report.max_possible_score}")
         return report

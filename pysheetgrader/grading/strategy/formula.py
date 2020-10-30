@@ -30,7 +30,7 @@ class NaiveFormulaStrategy(BaseStrategy):
 
             return report
         except Exception as exc:
-            report.report_lines.append(f"Failed to compare formulas, key: {key_cell_value}, "
-                                       f"submission: {sub_cell_value}. Error:")
-            report.report_lines.append(f"{exc}")
+            report.append_line(f"Failed to compare formulas, key: {key_cell_value}, "
+                               f"submission: {sub_cell_value}. Error:")
+            report.append_line(f"{exc}")
             return report
