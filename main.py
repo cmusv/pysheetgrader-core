@@ -1,4 +1,5 @@
 import click
+from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.document import Document
 from pysheetgrader.grader import Grader
 
@@ -12,8 +13,10 @@ from pysheetgrader.grader import Grader
               help="File path where the score output will be saved.")
 @click.option('--report-output', type=click.Path(writable=True),
               help="File path where the detailed report will be saved.")
-def cli(key_document_path, submission_document_path, score_output, report_output):
+@click.option('-v', '--verbose', is_flag=True)
+def cli(key_document_path, submission_document_path, score_output, report_output, verbose):
     """ Grades the passed spreadsheet in SUBMISSION_DOCUMENT_PATH using the key spreadsheet from KEY_DOCUMENT_PATH."""
+
     print("PySheetGrader!")
     print(f"Key document path:\t\t{key_document_path}")
     print(f"Submission document path:\t{submission_document_path}")
@@ -21,13 +24,11 @@ def cli(key_document_path, submission_document_path, score_output, report_output
     key_doc = Document(key_document_path, read_only=False)
     sub_doc = Document(submission_document_path, read_only=True)
 
+    GradingReport.print_appended_lines = verbose
     grader = Grader(key_doc)
     report = grader.grade(sub_doc)
 
     print(f"Grade of the submission:\t{report.submission_score} / {report.max_possible_score}")
-    print(f"Report lines:")
-    for line in report.report_lines:
-        print(line)
 
     if score_output:
         save_score(report, score_output)
