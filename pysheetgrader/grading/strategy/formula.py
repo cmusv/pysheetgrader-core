@@ -28,7 +28,6 @@ class NaiveFormulaStrategy(BaseStrategy):
             if is_similar:
                 report.submission_score = self.grading_rubric.score
 
-            print(f"[NaiveFormulaStrategy] GradingReport of grading: {report}")
             return report
         except Exception as exc:
             report.report_lines.append(f"Failed to compare formulas, key: {key_cell_value}, "
