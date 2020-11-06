@@ -1,4 +1,5 @@
 from enum import Enum
+import yaml
 import re
 
 
@@ -76,24 +77,22 @@ class GradingRubric:
         key_cell = key_sheet[cell_coord]
         key_comment = key_cell.comment.text
 
-        # Rubric parsing
-        # TODO: Update this to use YAML later.
-        rubric_by_line = key_comment.split(sep="\n")
+        # Comment parsing
+        parsed_comment = yaml.load(key_comment, Loader=yaml.Loader)
+        rubric_dict = parsed_comment['rubric']
+        unit_tests = parsed_comment['unit_tests']
 
-        # Assumption:
-        # 1. Grading rubric is always on the second line.
-        # 2. Unit tests is always on the fourth line forward.
-        rubric_lines = rubric_by_line[1] if len(rubric_by_line) >= 2 else None
-        unit_tests_lines = rubric_by_line[3:] if len(rubric_by_line) >= 4 else None
-
-        grade_search = re.search('\t(.+?)P', rubric_lines) if rubric_lines else None
-        type_search = re.search('P-(.+?)', rubric_lines) if rubric_lines else None
-
-        grade = grade_search.group(1) if grade_search else None
-        grading_type = type_search.group(1) if type_search else None
-
-        if grade and grading_type:
-            rubric_type = GradingRubricType.FORMULA if grading_type == "F" else GradingRubricType.CONSTANT
-            return GradingRubric(cell_coord, rubric_type, int(grade), unit_tests_lines)
-        else:
+        if not rubric_dict:
             raise ValueError(f"Invalid rubric comment found for cell: {cell_coord} in sheet: {key_sheet}")
+            return
+
+        # Rubric parsing
+        rubric_score = rubric_dict['score']
+        rubric_type = rubric_dict['type'].lower()
+
+        if not rubric_score or not rubric_type:
+            raise ValueError(f"Invalid rubric comment score and type found for cell: {cell_coord} in sheet: {key_sheet}")
+            return
+
+        valid_type = GradingRubricType.FORMULA if type == "formula" else GradingRubricType.CONSTANT
+        return GradingRubric(cell_coord, valid_type, int(rubric_score), unit_tests)
