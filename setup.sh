@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "PySheetGrader Setup"
 echo "Checking environment"
@@ -26,6 +26,6 @@ fi
 echo "Installing dependencies."
 
 source venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-pip install -e .
+python3 -m pip install --upgrade pip
+python3 -m pip install -r requirements.txt
+python3 -m pip install -e .
