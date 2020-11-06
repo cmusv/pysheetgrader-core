@@ -3,13 +3,13 @@
 echo "PySheetGrader Setup"
 echo "Checking environment"
 
-if ! command -v python3 &>/dev/null;
+if ! [ -x "$(command -v python3)" ];
 then
   echo "Command 'python3' cannot be found. Aborting."
   exit 1
 fi
 
-if ! command -v pip &>/dev/null;
+if ! [ -x "$(command -v pip)" ];
 then
   echo "Command 'pip' cannot be found. Aborting."
   exit 1
