@@ -46,11 +46,16 @@ PySheetGrader will require a key document to run. A proper *.xlsx key document s
 
 Here are some sample images:
 
-1. SheetGradingOrder content:
+- SheetGradingOrder content:
+
 ![Image of the content in SheetGradingOrder](readme_images/sheet_grading_order.png)
-2. CheckOrder sheet content (in this case, it's `Sheet3_CheckOrder`):
+
+- CheckOrder sheet content (in this case, it's `Sheet3_CheckOrder`):
+
 ![Image of the content in CheckOrder](readme_images/cell_check_order.png)
-3. Rubric note of one of the graded cell, as a note on cell B6 of Sheet3:
+
+- Rubric note of one of the graded cell, as a note on cell B6 of Sheet3:
+
 ![Image of the rubric note of cell B6 in Sheet3](readme_images/cell_rubric_note.png)
 
 ## Creating a rubric note
