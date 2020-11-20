@@ -77,3 +77,4 @@ venv-lite/
 # Custom ignores
 __pycache__/
 *.egg-info/
+.DS_Store
