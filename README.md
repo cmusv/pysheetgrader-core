@@ -72,4 +72,7 @@ The `rubric` section consists of two child:
 The `unit_tests` section will hold the values that will be used for testing the cell. This will be used only for `formula`-type rubrics.
 The details on how to write cell unit tests will be added later.
 
+## How to setup in Vocareum
+
+TODO: Add this later
  
