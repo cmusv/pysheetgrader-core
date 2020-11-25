@@ -2,6 +2,14 @@
 
 ## How to setup
 
+Here are the minimum files that needs to be copied to make PySheetGrader works:
+
+- `pysheetgrader` directory
+- `main.py`
+- `requirements.txt`
+- `setup.py`
+- `setup.sh`
+
 You could run `./setup.sh` as a quick way to install PySheetGrader to your system. This will require your system to have `python3` and `pip` installed.
 
 Otherwise, you could do it manually by executing these steps:
