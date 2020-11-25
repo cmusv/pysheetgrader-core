@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='pysheetgrader',
-    version='0.2',
+    version='0.3',
     py_modules=['pysheetgrader'],
     install_requires=[
         'openpyxl', 'sympy', 'click', 'pyYAML'
