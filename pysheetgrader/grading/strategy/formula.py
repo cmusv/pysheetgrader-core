@@ -19,10 +19,14 @@ class NaiveFormulaStrategy(BaseStrategy):
         report = GradingReport()
         report.max_possible_score = self.grading_rubric.score
 
+        # These two are declared early to be used in the catch section.
+        sub_cell_value = None
+
         try:
             sub_cell_value = sub_sheet[cell_coord].value
             sub_formula = parse_formula(sub_cell_value)
 
+            # Comparison
             for key_coord in self.grading_rubric.get_all_cell_coord():
                 key_cell_value = key_sheet[key_coord].value
                 key_formula = parse_formula(key_cell_value)
@@ -34,7 +38,8 @@ class NaiveFormulaStrategy(BaseStrategy):
 
             return report
         except Exception as exc:
-            report.append_line(f"Failed to compare formulas, key: {key_cell_value}, "
-                               f"submission: {sub_formula}. Error:")
-            report.append_line(f"{exc}")
+            # TODO: Revisit whether we should print the comparison key value here.
+            #   It might leak the answers to the students, though.
+            report.append_line(f"Failed to evaluate submission: {sub_cell_value}")
+            report.append_line(f"Error: {exc}")
             return report
