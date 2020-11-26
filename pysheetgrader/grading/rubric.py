@@ -111,5 +111,5 @@ class GradingRubric:
             raise ValueError(f"Invalid rubric comment score and type found for cell: {cell_coord} in sheet: {key_sheet}")
             return
 
-        valid_type = GradingRubricType.FORMULA if type == "formula" else GradingRubricType.CONSTANT
+        valid_type = GradingRubricType.FORMULA if rubric_type == "formula" else GradingRubricType.CONSTANT
         return GradingRubric(cell_coord, valid_type, int(rubric_score), alt_cells, unit_tests)
