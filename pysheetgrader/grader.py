@@ -66,10 +66,10 @@ class Grader:
         report = GradingReport()
 
         if rubric.rubric_type == GradingRubricType.CONSTANT:
-            report.append_line(f"\t- Cell {rubric.cell_cord}, constant value comparison.")
+            report.append_line(f"\t- Cell {rubric.cell_coord}, constant value comparison.")
             report += ConstantStrategy(self.key_document, document, sheet_name, rubric).grade()
         else:
-            report.append_line(f"\t- Cell {rubric.cell_cord}, formula comparison.")
+            report.append_line(f"\t- Cell {rubric.cell_coord}, formula comparison.")
             # TODO: Use other formula-based grading strategies here (e.g., unit test)
             report += NaiveFormulaStrategy(self.key_document, document, sheet_name, rubric).grade()
 

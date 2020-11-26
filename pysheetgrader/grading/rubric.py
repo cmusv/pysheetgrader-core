@@ -16,18 +16,33 @@ class GradingRubric:
     Representation of a grading rubric in a sheet.
     """
 
-    def __init__(self, cell_coord, rubric_type, score, unit_tests):
+    def __init__(self, cell_coord, rubric_type, score, alt_cells, unit_tests):
         """
         Initializer of this class' instance.
-        :param cell_coord: String value of the cell coordinate in this rubric.
+        :param cell_coord: String value of the main cell coordinate in this rubric.
         :param rubric_type: GradingRubricType enum value.
         :param score: Float value of the score for this rubric.
+        :param alt_cells: List of String of alternative cell coordinates to be reviewed by this rubric.
         :param unit_tests: List of String for unit tests (TBD)
         """
-        self.cell_cord = cell_coord
+        self.cell_coord = cell_coord
         self.rubric_type = rubric_type
         self.score = score
+        self.alt_cells = alt_cells
         self.unit_tests = unit_tests
+
+    def get_all_cell_coord(self):
+        """
+        Returns all cell coordinate used in this rubric, with the main cell as the first element and
+            alternative cells as the rest.
+        :return: List of String of cell coordinates.
+        """
+        result = [self.cell_coord]
+        if self.alt_cells:
+            result.extend(self.alt_cells)
+
+        return result
+
 
     @staticmethod
     def create_rubrics_for_sheet(key_document, sheet_name):
@@ -80,7 +95,8 @@ class GradingRubric:
         # Comment parsing
         parsed_comment = yaml.load(key_comment, Loader=yaml.Loader)
         rubric_dict = parsed_comment['rubric']
-        unit_tests = parsed_comment['unit_tests']
+        alt_cells = parsed_comment['alt_cells'] if 'alt_cells' in parsed_comment else []
+        unit_tests = parsed_comment['unit_tests'] if 'unit_tests' in parsed_comment else []
 
         if not rubric_dict:
             raise ValueError(f"Invalid rubric comment found for cell: {cell_coord} in sheet: {key_sheet}")
@@ -94,5 +110,5 @@ class GradingRubric:
             raise ValueError(f"Invalid rubric comment score and type found for cell: {cell_coord} in sheet: {key_sheet}")
             return
 
-        valid_type = GradingRubricType.FORMULA if type == "formula" else GradingRubricType.CONSTANT
-        return GradingRubric(cell_coord, valid_type, int(rubric_score), unit_tests)
+        valid_type = GradingRubricType.FORMULA if rubric_type == "formula" else GradingRubricType.CONSTANT
+        return GradingRubric(cell_coord, valid_type, int(rubric_score), alt_cells, unit_tests)

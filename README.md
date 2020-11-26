@@ -68,7 +68,9 @@ Here are some sample images:
 
 ## Creating a rubric note
 
-Rubric notes of a cell are written in YAML format. It consists of two root sections: `rubric` and `unit_tests`.
+Rubric notes of a cell are written in YAML format. It consists of mandatory section called `rubric` and optional sections: `alt_cells` and `unit_tests`.
+
+### Rubrics
 
 The `rubric` section consists of two child:
 
@@ -76,6 +78,25 @@ The `rubric` section consists of two child:
 2. `type`, which determines how this cell will be graded. There are two options: 
     - `constant`, which will only compare the computed value of the cell
     - `formula`, which will compare the formula of the graded cell against the key document.
+
+### Alternative cells
+
+The `alt_cells` section consists of an array of cell coordinates inside the sheet.
+These cells will be used as alternative values to check the main coordinate in the submission. Here's a sample rubric with alternative cells, in cell H5:
+
+```
+rubric:
+ score: 1
+ type: formula 
+alt_cells:
+ - P5
+ - Q5
+ - R5
+```
+
+PySheetGrader will compare the formula of the submission and key in the cell H5. If the formula didn't match, PySheetGrader will compare submission's H5 formula against the key's P5, Q5, and R5 formula. If any of them matches the submission value, it will be considered as a valid answer.
+
+### Unit tests
 
 The `unit_tests` section will hold the values that will be used for testing the cell. This will be used only for `formula`-type rubrics.
 The details on how to write cell unit tests will be added later.

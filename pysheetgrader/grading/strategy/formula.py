@@ -7,30 +7,34 @@ from sympy import simplify
 class NaiveFormulaStrategy(BaseStrategy):
     """
     Naively compare whether the formula between key and submission is the same when they're simplified.
+    This instance will check the alternative cells in the key if the submission formula didn't match the key formula
+        in the main cell.
     """
 
     def grade(self):
         key_sheet = self.key_document.formula_wb[self.sheet_name]
         sub_sheet = self.sub_document.formula_wb[self.sheet_name]
-        cell_cord = self.grading_rubric.cell_cord
-
-        key_cell_value = key_sheet[cell_cord].value
-        sub_cell_value = sub_sheet[cell_cord].value
+        cell_coord = self.grading_rubric.cell_coord
 
         report = GradingReport()
         report.max_possible_score = self.grading_rubric.score
 
         try:
-            key_formula = parse_formula(key_cell_value)
+            sub_cell_value = sub_sheet[cell_coord].value
             sub_formula = parse_formula(sub_cell_value)
-            is_similar = simplify(key_formula - sub_formula) == 0
 
-            if is_similar:
-                report.submission_score = self.grading_rubric.score
+            for key_coord in self.grading_rubric.get_all_cell_coord():
+                key_cell_value = key_sheet[key_coord].value
+                key_formula = parse_formula(key_cell_value)
+                is_similar = simplify(key_formula - sub_formula) == 0
+
+                if is_similar:
+                    report.submission_score = self.grading_rubric.score
+                    break
 
             return report
         except Exception as exc:
             report.append_line(f"Failed to compare formulas, key: {key_cell_value}, "
-                               f"submission: {sub_cell_value}. Error:")
+                               f"submission: {sub_formula}. Error:")
             report.append_line(f"{exc}")
             return report
