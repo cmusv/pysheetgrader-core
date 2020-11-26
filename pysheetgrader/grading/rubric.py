@@ -19,17 +19,31 @@ class GradingRubric:
     def __init__(self, cell_coord, rubric_type, score, alt_cells, unit_tests):
         """
         Initializer of this class' instance.
-        :param cell_coord: String value of the cell coordinate in this rubric.
+        :param cell_coord: String value of the main cell coordinate in this rubric.
         :param rubric_type: GradingRubricType enum value.
         :param score: Float value of the score for this rubric.
-        :param alt_cells: List of String of alternative cells to be reviewed by this rubric.
+        :param alt_cells: List of String of alternative cell coordinates to be reviewed by this rubric.
         :param unit_tests: List of String for unit tests (TBD)
         """
+        # TODO: Rename this cell_cord to cell_coord.
         self.cell_cord = cell_coord
         self.rubric_type = rubric_type
         self.score = score
         self.alt_cells = alt_cells
         self.unit_tests = unit_tests
+
+    def get_all_cell_coord(self):
+        """
+        Returns all cell coordinate used in this rubric, with the main cell as the first element and
+            alternative cells as the rest.
+        :return: List of String of cell coordinates.
+        """
+        result = [self.cell_cord]
+        if self.alt_cells:
+            result.extend(self.alt_cells)
+
+        return result
+
 
     @staticmethod
     def create_rubrics_for_sheet(key_document, sheet_name):
