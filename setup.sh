@@ -9,12 +9,6 @@ then
   exit 1
 fi
 
-if ! [ -x "$(command -v pip)" ];
-then
-  echo "Command 'pip' cannot be found. Aborting."
-  exit 1
-fi
-
 if [ -d "venv" ];
 then
   echo "Folder 'venv' already exists."
