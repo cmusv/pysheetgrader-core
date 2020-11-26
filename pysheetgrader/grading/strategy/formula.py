@@ -14,13 +14,13 @@ class NaiveFormulaStrategy(BaseStrategy):
     def grade(self):
         key_sheet = self.key_document.formula_wb[self.sheet_name]
         sub_sheet = self.sub_document.formula_wb[self.sheet_name]
-        cell_cord = self.grading_rubric.cell_cord
+        cell_coord = self.grading_rubric.cell_coord
 
         report = GradingReport()
         report.max_possible_score = self.grading_rubric.score
 
         try:
-            sub_cell_value = sub_sheet[cell_cord].value
+            sub_cell_value = sub_sheet[cell_coord].value
             sub_formula = parse_formula(sub_cell_value)
 
             for key_coord in self.grading_rubric.get_all_cell_coord():

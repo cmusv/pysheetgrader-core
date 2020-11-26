@@ -25,8 +25,7 @@ class GradingRubric:
         :param alt_cells: List of String of alternative cell coordinates to be reviewed by this rubric.
         :param unit_tests: List of String for unit tests (TBD)
         """
-        # TODO: Rename this cell_cord to cell_coord.
-        self.cell_cord = cell_coord
+        self.cell_coord = cell_coord
         self.rubric_type = rubric_type
         self.score = score
         self.alt_cells = alt_cells
@@ -38,7 +37,7 @@ class GradingRubric:
             alternative cells as the rest.
         :return: List of String of cell coordinates.
         """
-        result = [self.cell_cord]
+        result = [self.cell_coord]
         if self.alt_cells:
             result.extend(self.alt_cells)
 
