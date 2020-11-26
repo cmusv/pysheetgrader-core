@@ -1,14 +1,14 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='pysheetgrader',
     version='0.3',
-    py_modules=['pysheetgrader'],
+    packages=find_packages(),
     install_requires=[
         'openpyxl', 'sympy', 'click', 'pyYAML'
     ],
     entry_points='''
         [console_scripts]
-        pysheetgrader=main:cli
+        pysheetgrader=pysheetgrader.main:cli
     '''
 )
