@@ -104,8 +104,25 @@ The details on how to write cell unit tests will be added later.
 ## How to setup in Vocareum
 
 Due to Vocareum's nature of copying the `lib` folder from the teacher's workspace to each student's workspace, here are the general steps on setting up PySheetGrader and making it usable for the students:
-1. Setup PySheetGrader inside Vocareum's teacher workspace (by following the "How to setup" section.)
-2. Compile PySheetGrader to *.egg binary to strip the source code.
-3. Convert the *.egg to *.whl format to make it installable in student's workspace via `pip`.
+
+1. Setup PySheetGrader inside Vocareum's teacher workspace.
+2. Compile PySheetGrader to installable wheel package.
+3. Copy shared Vocareum scripts.
 4. Install PySheetGrader along with `requirements.txt` to the student's workspace.  
 
+Here are the details for each step above:
+
+### 1. Setting up in teacher's workspace
+
+1. Zip the contents of this directory to be uploaded to Vocareum by executing `./vocareum_scripts/zip_for_vocareum.sh` from the root folder. This will generate `pysheetgrader-vocareum.zip`.
+2. Upload `pysheetgrader-vocareum.zip` to `resource/lib` in Vocareum's teacher workspace.
+3. In the Vocareum's terminal, go to the uploaded directory by executing `cd $LIB/pysheetgrader-vocareum`.
+4. Execute `./setup.sh` to set up the virtual environment.
+
+
+### 2. Compiling PySheetGrader
+
+Right after setting up the workspace, we need to execute `./vocareum_scripts/teacher/package.sh`. This script will create an installable *.whl file in the `pysheetgrader-vocareum` folder.
+The script already handles the step for stripping source code from the binary for security measures.
+
+  
