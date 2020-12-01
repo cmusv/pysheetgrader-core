@@ -103,5 +103,9 @@ The details on how to write cell unit tests will be added later.
 
 ## How to setup in Vocareum
 
-TODO: Add this later
- 
+Due to Vocareum's nature of copying the `lib` folder from the teacher's workspace to each student's workspace, here are the general steps on setting up PySheetGrader and making it usable for the students:
+1. Setup PySheetGrader inside Vocareum's teacher workspace (by following the "How to setup" section.)
+2. Compile PySheetGrader to *.egg binary to strip the source code.
+3. Convert the *.egg to *.whl format to make it installable in student's workspace via `pip`.
+4. Install PySheetGrader along with `requirements.txt` to the student's workspace.  
+
