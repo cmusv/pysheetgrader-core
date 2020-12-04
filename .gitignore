@@ -80,3 +80,4 @@ __pycache__/
 .DS_Store
 build/
 dist/
+*.whl
