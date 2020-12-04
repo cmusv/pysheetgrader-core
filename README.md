@@ -123,10 +123,11 @@ Here are the details for each step above:
 3. In the Vocareum's terminal, go to the uploaded directory by executing `cd $LIB/pysheetgrader-vocareum`.
 4. Execute `./setup.sh` to set up the virtual environment.
 
-
 ### 2. Compiling PySheetGrader
 
 Right after setting up the workspace, we need to execute `./vocareum_scripts/teacher/package_for_students.sh`. This script will create an installable *.whl file in the `pysheetgrader-vocareum` folder and copy it to `student_installer` folder in the root level. It will also copy the `requirements.txt` file to it. All the contents of `student_installer` will be used for installing PySheetGrader in the student level.
+
+The compilation process needs to be done in Vocareum to make sure it's compiled for proper processor architecture and OS.
 
 ### 3. Copy shared Vocareum scripts
 
