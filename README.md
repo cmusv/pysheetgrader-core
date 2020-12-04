@@ -103,18 +103,22 @@ The details on how to write cell unit tests will be added later.
 
 ## How to setup in Vocareum
 
-Due to Vocareum's nature of copying the `lib` folder from the teacher's workspace to each student's workspace, here are the general steps on setting up PySheetGrader and making it usable for the students:
+Running PySheetGrader in Vocareum could be tricky. PySheetGrader relies on other Python packages (e.g., `sympy` and `openpyxl`) and Vocareum seems to have different user level, which makes it hard for installing a package one time and reusing it for other user levels.
+However, a fresh PySheetGrader installation will only take one to two minutes, and it will only happen for the student's first submission. 
 
-1. Setup PySheetGrader inside Vocareum's teacher workspace.
-2. Compile PySheetGrader to installable wheel package.
-3. Copy shared Vocareum scripts.
-4. Set key Excel document
+Here are the general steps on setting up PySheetGrader in Vocareum to make it usable for the students:
+
+1. Setup PySheetGrader inside Vocareum's teacher workspace
+2. Compile PySheetGrader to installable wheel package
+3. Copy shared Vocareum scripts
+4. Set key Excel document for the assignment
+5. Set submitted document for the students
 
 Here are the details for each step above:
 
 ### 1. Setting up in teacher's workspace
 
-1. Zip the contents of this directory to be uploaded to Vocareum by executing `./vocareum_scripts/zip_for_vocareum.sh` from the root folder. This will generate `pysheetgrader-vocareum.zip`.
+1. Zip the necessary files to run PySheetGrader by executing `./vocareum_scripts/zip_for_vocareum.sh` from the root folder. This will generate `pysheetgrader-vocareum.zip`.
 2. Upload `pysheetgrader-vocareum.zip` to `resource/lib` in Vocareum's teacher workspace.
 3. In the Vocareum's terminal, go to the uploaded directory by executing `cd $LIB/pysheetgrader-vocareum`.
 4. Execute `./setup.sh` to set up the virtual environment.
@@ -122,13 +126,16 @@ Here are the details for each step above:
 
 ### 2. Compiling PySheetGrader
 
-Right after setting up the workspace, we need to execute `./vocareum_scripts/teacher/package_for_students.sh`. This script will create an installable *.whl file in the `pysheetgrader-vocareum` folder.
-The script already handles the step for stripping source code from the binary for security measures. It will also copy the necessary files to the public folder.
+Right after setting up the workspace, we need to execute `./vocareum_scripts/teacher/package_for_students.sh`. This script will create an installable *.whl file in the `pysheetgrader-vocareum` folder and copy it to `student_installer` folder in the root level. It will also copy the `requirements.txt` file to it. All the contents of `student_installer` will be used for installing PySheetGrader in the student level.
 
 ### 3. Copy shared Vocareum scripts
 
-In the `vocareum_scripts` folder, there's a folder named `shared_scripts`. Please copy the contents of each script to the corresponding filename in the `scripts` folder.
+In the `vocareum_scripts` folder, there's a folder named `shared_scripts`. Please copy the contents of each script to the corresponding filename in Vocareum workspace's `scripts` folder.
 
 ### 4. Set the key Excel document
 
 The `submit.sh` script will take an excel file named `key.xlsx` in the `asnlib` folder. Please upload your Excel file to the `asnlib` folder and rename it to `key.xlsx`.
+
+### 5. Set student's submission document
+
+The students need to upload their `*.xlsx` file in the root folder of their workspace and rename it to `submission.xlsx`. The `submit.sh` will take the `submission.xlsx` and compare it to the `key.xlsx`.
