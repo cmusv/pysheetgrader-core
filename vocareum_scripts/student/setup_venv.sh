@@ -26,5 +26,5 @@ python3 -m pip install wheel
 
 # These two lines are the main difference compared to the root-level setup.sh.
 
-python3 -m pip install -r $LIB/public/pysheetgrader-vocareum/requirements.txt
-python3 -m pip install $LIB/public/pysheetgrader-vocareum/*.whl
+python3 -m pip install -r $LIB/pysheetgrader-vocareum/student_installer/requirements.txt
+python3 -m pip install $LIB/pysheetgrader-vocareum/student_installer/*.whl

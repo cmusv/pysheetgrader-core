@@ -10,12 +10,12 @@ wheel convert dist/*.egg
 
 # This part below is for copying the necessary files for student's setup step
 
-if [ -d "$LIB/public/pysheetgrader-vocareum" ];
+if [ -d "student_installer" ];
 then
   echo "Old student setup files found, deleting it for replacement"
-  rm -rf $LIB/public/pysheetgrader-vocareum
+  rm -rf student_installer
 fi
 
-mkdir $LIB/public/pysheetgrader-vocareum
-cp requirements.txt $LIB/public/pysheetgrader-vocareum
-cp *.whl $LIB/public/pysheetgrader-vocareum
+mkdir student_installer
+cp requirements.txt student_installer
+cp *.whl student_installer
