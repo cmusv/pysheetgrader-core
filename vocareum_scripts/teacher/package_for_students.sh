@@ -16,5 +16,6 @@ then
   rm -rf $LIB/public/pysheetgrader-vocareum
 fi
 
+mkdir $LIB/public/pysheetgrader-vocareum
 cp requirements.txt $LIB/public/pysheetgrader-vocareum
 cp *.whl $LIB/public/pysheetgrader-vocareum
