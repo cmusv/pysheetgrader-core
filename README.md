@@ -122,7 +122,7 @@ Here are the details for each step above:
 
 ### 2. Compiling PySheetGrader
 
-Right after setting up the workspace, we need to execute `./vocareum_scripts/teacher/package.sh`. This script will create an installable *.whl file in the `pysheetgrader-vocareum` folder.
-The script already handles the step for stripping source code from the binary for security measures.
+Right after setting up the workspace, we need to execute `./vocareum_scripts/teacher/package_for_students.sh`. This script will create an installable *.whl file in the `pysheetgrader-vocareum` folder.
+The script already handles the step for stripping source code from the binary for security measures. It will also copy the necessary files to the public folder.
 
   
