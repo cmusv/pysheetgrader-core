@@ -108,7 +108,7 @@ Due to Vocareum's nature of copying the `lib` folder from the teacher's workspac
 1. Setup PySheetGrader inside Vocareum's teacher workspace.
 2. Compile PySheetGrader to installable wheel package.
 3. Copy shared Vocareum scripts.
-4. Install PySheetGrader along with `requirements.txt` to the student's workspace.  
+4. Set key Excel document
 
 Here are the details for each step above:
 
@@ -125,4 +125,10 @@ Here are the details for each step above:
 Right after setting up the workspace, we need to execute `./vocareum_scripts/teacher/package_for_students.sh`. This script will create an installable *.whl file in the `pysheetgrader-vocareum` folder.
 The script already handles the step for stripping source code from the binary for security measures. It will also copy the necessary files to the public folder.
 
-  
+### 3. Copy shared Vocareum scripts
+
+In the `vocareum_scripts` folder, there's a folder named `shared_scripts`. Please copy the contents of each script to the corresponding filename in the `scripts` folder.
+
+### 4. Set the key Excel document
+
+The `submit.sh` script will take an excel file named `key.xlsx` in the `asnlib` folder. Please upload your Excel file to the `asnlib` folder and rename it to `key.xlsx`.
