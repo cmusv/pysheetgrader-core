@@ -2,6 +2,8 @@ from enum import Enum
 import yaml
 import re
 
+from typing import List
+
 
 class GradingRubricType(Enum):
     """
@@ -16,18 +18,26 @@ class GradingRubric:
     Representation of a grading rubric in a sheet.
     """
 
-    def __init__(self, cell_coord, rubric_type, score, alt_cells, unit_tests):
+    def __init__(self, cell_coord: str, rubric_type: GradingRubricType,
+                 score: float, constant_delta: float = 0,
+                 alt_cells: List[str] = [], unit_tests: List = []):
         """
         Initializer of this class' instance.
         :param cell_coord: String value of the main cell coordinate in this rubric.
         :param rubric_type: GradingRubricType enum value.
         :param score: Float value of the score for this rubric.
+        :param constant_delta: Float value of the delta / precision that allowed for a constant GradingRubricType.
+            Defaults to 0.
         :param alt_cells: List of String of alternative cell coordinates to be reviewed by this rubric.
-        :param unit_tests: List of String for unit tests (TBD)
+            Defaults to empty list.
+        :param unit_tests: List of String for unit tests (TBD). Defaults to empty list.
         """
         self.cell_coord = cell_coord
         self.rubric_type = rubric_type
+
         self.score = score
+        self.constant_delta = constant_delta
+
         self.alt_cells = alt_cells
         self.unit_tests = unit_tests
 
@@ -105,10 +115,21 @@ class GradingRubric:
         # Rubric parsing
         rubric_score = rubric_dict['score']
         rubric_type = rubric_dict['type'].lower()
+        rubric_delta = rubric_dict['delta'] if 'delta' in rubric_dict else 0
 
+        # Rubric type
         if not rubric_score or not rubric_type:
             raise ValueError(f"Invalid rubric comment score and type found for cell: {cell_coord} in sheet: {key_sheet}")
             return
 
         valid_type = GradingRubricType.FORMULA if rubric_type == "formula" else GradingRubricType.CONSTANT
-        return GradingRubric(cell_coord, valid_type, int(rubric_score), alt_cells, unit_tests)
+
+        # Rubric delta
+        try:
+            rubric_delta = float(rubric_delta)
+        except ValueError:
+            raise ValueError(f"Invalid rubric delta format found for cell: {cell_coord} in sheet: {key_sheet}")
+            return
+
+        return GradingRubric(cell_coord, valid_type, int(rubric_score),
+                             constant_delta=rubric_delta, alt_cells=alt_cells, unit_tests=unit_tests)
