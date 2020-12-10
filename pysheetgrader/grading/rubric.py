@@ -56,7 +56,7 @@ class GradingRubric:
         self.constant_delta = constant_delta
 
         self.alt_cells = alt_cells
-        self.unit_tests = test_cases
+        self.test_cases = test_cases
 
     def get_all_cell_coord(self):
         """
@@ -186,10 +186,11 @@ class GradingRubric:
                 new_case = GradingTestCase(name=case_name,
                                            expected_output=float(output),
                                            inputs=input,
-                                           delta=delta)
+                                           output_delta=float(delta))
 
                 test_cases.append(new_case)
-            except Exception:
+            except Exception as exc:
+                # TODO: Revisit if we need to print an error here.
                 continue
 
         return test_cases
