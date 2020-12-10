@@ -1,4 +1,4 @@
-from pysheetgrader.grading.testcase import GradingTestCase
+from pysheetgrader.grading.test_case import GradingTestCase
 from typing import List
 from enum import Enum
 import yaml
