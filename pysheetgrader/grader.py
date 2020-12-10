@@ -68,10 +68,13 @@ class Grader:
         if rubric.rubric_type == GradingRubricType.CONSTANT:
             report.append_line(f"\t- Cell {rubric.cell_coord}, constant value comparison.")
             report += ConstantStrategy(self.key_document, document, sheet_name, rubric).grade()
-        else:
+        elif rubric.rubric_type == GradingRubricType.FORMULA:
             report.append_line(f"\t- Cell {rubric.cell_coord}, formula comparison.")
-            # TODO: Use other formula-based grading strategies here (e.g., unit test)
             report += NaiveFormulaStrategy(self.key_document, document, sheet_name, rubric).grade()
+        else:
+            report.append_line(f"\t- Cell {rubric.cell_coord}, test case runs.")
+            report.append_line(f"\t\tTest cases:")
+            # TODO: Add test case runs here.
 
         report.append_line(f"\tScore: {report.submission_score} / {report.max_possible_score}")
         return report
