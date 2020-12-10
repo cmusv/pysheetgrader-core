@@ -36,6 +36,9 @@ def cli(key_document_path, submission_document_path, score_output, report_output
     if report_output:
         save_report(report, report_output)
 
+    key_doc.close()
+    sub_doc.close()
+
 
 def save_score(report, output_path):
     """

@@ -3,7 +3,7 @@ from openpyxl import load_workbook
 
 class Document:
     """
-    Represents a document in the grading process.
+    Represents a document in the grading process. Please call the `close()` method when it's not used anymore.
 
     Attributes:
         GRADING_ORDER_SHEET_NAME    Holds the name of the sheet in a key workbook that contains the order
@@ -28,10 +28,6 @@ class Document:
 
         self.formula_wb = load_workbook(path, read_only=read_only, data_only=False)
         self.computed_value_wb = load_workbook(path, read_only=read_only, data_only=True)
-
-    def __del__(self):
-        self.formula_wb.close()
-        self.computed_value_wb.close()
 
     def is_valid_key(self):
         """
@@ -62,3 +58,10 @@ class Document:
             sheet_names.extend([cell.value for cell in row])
 
         return sheet_names
+
+    def close(self):
+        """
+        Closes this document. Call this method only after the document is not used anymore.
+        """
+        self.formula_wb.close()
+        self.computed_value_wb.close()
