@@ -22,11 +22,17 @@ def parse_formula(formula: str, local_dict: dict = None):
 
     So far, this method will always expand any cell ranges.
 
-    :param formula: String value of the formula. Should start with '=', otherwise it will not be regarded as a formula.
+    This method will raise an exception if the passed `formula` is not a valid Excel formula.
+
+    :param formula: String value of the formula. Should start with '=', otherwise it will throw an exception.
     :param local_dict: Dictionary for replacing variables with values or custom formulas with Sympy lambdas.
         Again, it is preferred to have lowercased keys and custom functions.
     :return: Sympy expression that can be passed to Sympy's `simplify` method.
     """
+
+    if not formula or formula is not str or formula[0] != "=":
+        raise ValueError(f"Excepted formula, got {formula}")
+        return
 
     string_tokens = []
     formula_tokenizer = Tokenizer(formula)
