@@ -13,15 +13,13 @@ class TestRunStrategy(BaseStrategy):
     """
 
     def grade(self):
-        key_sheet = self.key_document.formula_wb[self.sheet_name]
         sub_sheet = self.sub_document.formula_wb[self.sheet_name]
         cell_coord = self.grading_rubric.cell_coord
 
         report = GradingReport()
         report.max_possible_score = self.grading_rubric.score
 
-        # TODO: Revert this back to sub_sheet instead of key_sheet.
-        sub_raw_formula = key_sheet[cell_coord].value
+        sub_raw_formula = sub_sheet[cell_coord].value
 
         # Test runs
         if not self.report_line_prefix:
@@ -39,7 +37,7 @@ class TestRunStrategy(BaseStrategy):
             except Exception as exc:
                 # TODO: Add more profound exception error message later.
                 all_test_pass = False
-                result_suffix = f"FAIL\n{self.report_line_prefix}Exception found: {exc}"
+                result_suffix = f"FAIL\n{self.report_line_prefix}Exception found: Failed to process {sub_raw_formula}"
 
             report.append_line(f"{self.report_line_prefix}- {test_case.name}: {result_suffix}")
 
