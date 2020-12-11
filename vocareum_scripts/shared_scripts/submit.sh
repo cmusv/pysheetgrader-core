@@ -10,10 +10,14 @@ source $LIB/pysheetgrader-vocareum/vocareum_scripts/student/setup_venv.sh > /dev
 
 source venv/bin/activate
 
+# Take env variables from assignment config
+
+source $ASNLIB/pysheetgrader.config
+
 # Path setup
 
-KEY_DOC_PATH=$ASNLIB/key.xlsx
-SUB_DOC_PATH=$HOME/submission.xlsx
+KEY_DOC_PATH="${ASNLIB}/${ASSIGNMENT_PREFIX}Key.xlsx"
+SUB_DOC_PATH="${HOME}/${ASSIGNMENT_PREFIX}Submission.xlsx"
 
 SCORE_OUTPUT_PATH=$vocareumGradeFile
 REPORT_OUTPUT_PATH=$vocareumReportFile
@@ -21,4 +25,6 @@ REPORT_OUTPUT_PATH=$vocareumReportFile
 # Execute grading
 
 pysheetgrader $KEY_DOC_PATH $SUB_DOC_PATH --score-output $SCORE_OUTPUT_PATH --report-output $REPORT_OUTPUT_PATH --verbose
+
+
 
