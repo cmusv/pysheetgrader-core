@@ -5,18 +5,12 @@ from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.formula_parser import parse_formula
 from pysheetgrader.formula_parser import encode_cell_reference
 from pysheetgrader.formula_parser import get_excel_formula_lambdas
-from pysheetgrader.document import Document
 
 
 class TestRunStrategy(BaseStrategy):
     """
     Runs all available test for the corresponding rubric.
     """
-
-    def __init__(self, key_document: Document, sub_document: Document, sheet_name,
-                 grading_rubric: GradingRubric,  report_line_prefix: str = ""):
-        self.report_line_prefix = report_line_prefix
-        super().__init__(key_document, sub_document, sheet_name,  grading_rubric)
 
     def grade(self):
         key_sheet = self.key_document.formula_wb[self.sheet_name]
@@ -26,7 +20,7 @@ class TestRunStrategy(BaseStrategy):
         report = GradingReport()
         report.max_possible_score = self.grading_rubric.score
 
-        # TODO: Rever this back to sub_sheet instead of key_sheet.
+        # TODO: Revert this back to sub_sheet instead of key_sheet.
         sub_raw_formula = key_sheet[cell_coord].value
 
         # Test runs
