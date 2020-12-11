@@ -1,8 +1,7 @@
+from pysheetgrader.grading.test_case import GradingTestCase
+from typing import List
 from enum import Enum
 import yaml
-import re
-
-from typing import List
 
 
 class GradingRubricType(Enum):
@@ -11,6 +10,24 @@ class GradingRubricType(Enum):
     """
     CONSTANT = 1
     FORMULA = 2
+    TEST = 3
+
+    @staticmethod
+    def type_from_string(value):
+        """
+        Returns corresponding GradingRubricType for the passed String in `value`.
+        :param value: String value.
+        :return: None if it doesn't match any GradingRubricType, otherwise a valid GradingRubricType.
+        """
+
+        if value == "constant":
+            return GradingRubricType.CONSTANT
+        elif value == "formula":
+            return GradingRubricType.FORMULA
+        elif value == "test":
+            return GradingRubricType.TEST
+        else:
+            return None
 
 
 class GradingRubric:
@@ -20,7 +37,7 @@ class GradingRubric:
 
     def __init__(self, cell_coord: str, rubric_type: GradingRubricType,
                  score: float, constant_delta: float = 0,
-                 alt_cells: List[str] = [], unit_tests: List = []):
+                 alt_cells: List[str] = [], test_cases: List[GradingTestCase] = []):
         """
         Initializer of this class' instance.
         :param cell_coord: String value of the main cell coordinate in this rubric.
@@ -30,7 +47,7 @@ class GradingRubric:
             Defaults to 0.
         :param alt_cells: List of String of alternative cell coordinates to be reviewed by this rubric.
             Defaults to empty list.
-        :param unit_tests: List of String for unit tests (TBD). Defaults to empty list.
+        :param test_cases: List of GradingTestCase instances. Defaults to empty list.
         """
         self.cell_coord = cell_coord
         self.rubric_type = rubric_type
@@ -39,7 +56,7 @@ class GradingRubric:
         self.constant_delta = constant_delta
 
         self.alt_cells = alt_cells
-        self.unit_tests = unit_tests
+        self.test_cases = test_cases
 
     def get_all_cell_coord(self):
         """
@@ -52,7 +69,6 @@ class GradingRubric:
             result.extend(self.alt_cells)
 
         return result
-
 
     @staticmethod
     def create_rubrics_for_sheet(key_document, sheet_name):
@@ -104,25 +120,33 @@ class GradingRubric:
 
         # Comment parsing
         parsed_comment = yaml.load(key_comment, Loader=yaml.Loader)
-        rubric_dict = parsed_comment['rubric']
+        rubric_dict = parsed_comment['rubric'] if 'rubric' in parsed_comment else None
         alt_cells = parsed_comment['alt_cells'] if 'alt_cells' in parsed_comment else []
-        unit_tests = parsed_comment['unit_tests'] if 'unit_tests' in parsed_comment else []
+        test_cases = parsed_comment['test_cases'] if 'test_cases' in parsed_comment else {}
 
         if not rubric_dict:
-            raise ValueError(f"Invalid rubric comment found for cell: {cell_coord} in sheet: {key_sheet}")
+            raise ValueError(f"No rubric found for cell: {cell_coord} in sheet: {key_sheet}")
             return
 
         # Rubric parsing
-        rubric_score = rubric_dict['score']
-        rubric_type = rubric_dict['type'].lower()
+        rubric_score = rubric_dict['score'] if 'score' in rubric_dict else None
+        rubric_type = rubric_dict['type'] if 'type' in rubric_dict else None
         rubric_delta = rubric_dict['delta'] if 'delta' in rubric_dict else 0
 
-        # Rubric type
-        if not rubric_score or not rubric_type:
-            raise ValueError(f"Invalid rubric comment score and type found for cell: {cell_coord} in sheet: {key_sheet}")
+        # Rubric score parsing
+        try:
+            rubric_score = float(rubric_score)
+        except Exception:
+            raise ValueError(f"Invalid rubric score found for cell: {cell_coord} in sheet: {key_sheet}")
             return
 
-        valid_type = GradingRubricType.FORMULA if rubric_type == "formula" else GradingRubricType.CONSTANT
+        # Rubric type parsing
+        if rubric_type is not None:
+            rubric_type = GradingRubricType.type_from_string(rubric_type)
+
+        if not rubric_type:
+            raise ValueError(f"Invalid rubric comment score and type found for cell: {cell_coord} in sheet: {key_sheet}")
+            return
 
         # Rubric delta
         try:
@@ -131,5 +155,43 @@ class GradingRubric:
             raise ValueError(f"Invalid rubric delta format found for cell: {cell_coord} in sheet: {key_sheet}")
             return
 
-        return GradingRubric(cell_coord, valid_type, int(rubric_score),
-                             constant_delta=rubric_delta, alt_cells=alt_cells, unit_tests=unit_tests)
+        # Rubric test cases
+        test_cases = GradingRubric.create_test_cases_from_dict(test_cases)
+
+        return GradingRubric(cell_coord, rubric_type, rubric_score,
+                             constant_delta=rubric_delta, alt_cells=alt_cells,
+                             test_cases=test_cases)
+
+    @staticmethod
+    def create_test_cases_from_dict(raw_cases):
+        """
+        Creates a list of GradingTestCases out of passed `raw_cases` dictionary.
+        :param raw_cases: Dictionary of test cases.
+        :return: List of GradingTestCases.
+        """
+
+        test_cases = []
+        for case_name in raw_cases:
+            single_case_dict = raw_cases[case_name]
+
+            # Mandatory key check
+            if 'output' not in single_case_dict or 'input' not in single_case_dict:
+                continue
+
+            output = single_case_dict['output']
+            input = single_case_dict['input']
+            delta = single_case_dict['delta'] if 'delta' in single_case_dict else 0
+
+            try:
+                new_case = GradingTestCase(name=case_name,
+                                           expected_output=float(output),
+                                           inputs=input,
+                                           output_delta=float(delta))
+
+                test_cases.append(new_case)
+            except Exception as exc:
+                # TODO: Revisit if we need to print an error here.
+                continue
+
+        return test_cases
+
