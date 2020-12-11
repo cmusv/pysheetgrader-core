@@ -1,8 +1,10 @@
 from pysheetgrader.grading.strategy.base import BaseStrategy
 from pysheetgrader.grading.test_case import GradingTestCase
+from pysheetgrader.grading.rubric import GradingRubric
 from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.formula_parser import parse_formula
 from pysheetgrader.formula_parser import encode_cell_reference
+from pysheetgrader.document import Document
 from sympy import parse_expr
 
 
@@ -11,8 +13,12 @@ class TestRunStrategy(BaseStrategy):
     Runs all available test for the corresponding rubric.
     """
 
+    def __init__(self, key_document: Document, sub_document: Document, sheet_name,
+                 grading_rubric: GradingRubric,  report_line_prefix: str = ""):
+        self.report_line_prefix = report_line_prefix
+        super().__init__(key_document, sub_document, sheet_name,  grading_rubric)
+
     def grade(self):
-        key_sheet = self.key_document.formula_wb[self.sheet_name]
         sub_sheet = self.sub_document.formula_wb[self.sheet_name]
         cell_coord = self.grading_rubric.cell_coord
 
@@ -21,13 +27,23 @@ class TestRunStrategy(BaseStrategy):
 
         sub_raw_formula = sub_sheet[cell_coord].value
 
+        # Test runs
+        if not self.report_line_prefix:
+            self.report_line_prefix = ""
+
         all_test_pass = True
         for test_case in self.grading_rubric.test_cases:
-            if not self.test_run_match(test_case, sub_raw_formula):
+            result_suffix = "PASS"
+            try:
+                if not self.test_run_match(test_case, sub_raw_formula):
+                    all_test_pass = False
+                    result_suffix = "FAIL"
+            except Exception as exc:
+                # TODO: Add more profound exception error message later.
                 all_test_pass = False
-                report.append_line(f"- {test_case.name} [FAIL]")
-            else:
-                report.append_line(f"- {test_case.name} [PASS]")
+                result_suffix = f"FAIL\n{self.report_line_prefix}Exception found: {exc}"
+
+            report.append_line(f"{self.report_line_prefix}- {test_case.name}: {result_suffix}")
 
         if all_test_pass:
             report.submission_score = self.grading_rubric.score
