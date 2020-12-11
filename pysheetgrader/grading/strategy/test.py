@@ -75,10 +75,6 @@ class TestRunStrategy(BaseStrategy):
         local_dict.update(encoded_inputs)
 
         result = parse_formula(lowercased_formula, local_dict=local_dict)
-        print(f"{self.report_line_prefix}Lowercased formula: {lowercased_formula}")
-        print(f"{self.report_line_prefix}Encoded input: {encoded_inputs}")
-        print(f"{self.report_line_prefix}result: {result}")
-
         expected_lower_range = test_case.expected_output
         expected_upper_range = test_case.expected_output
 
