@@ -37,7 +37,7 @@ class TestRunStrategy(BaseStrategy):
             except Exception as exc:
                 # TODO: Add more profound exception error message later.
                 all_test_pass = False
-                result_suffix = f"FAIL\n{self.report_line_prefix}Exception found: {exc}"
+                result_suffix = f"FAIL\n{self.report_line_prefix}Exception found: Failed to process {sub_raw_formula}"
 
             report.append_line(f"{self.report_line_prefix}- {test_case.name}: {result_suffix}")
 
