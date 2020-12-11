@@ -49,7 +49,7 @@ class ConstantStrategy(BaseStrategy):
         try:
             key_float = float(key_value)
             sub_float = float(sub_value)
-            return (key_float - delta) <= sub_float or sub_float <= (key_float + delta)
+            return (key_float - delta) <= sub_float <= (key_float + delta)
         except Exception:
             # TODO: Check if we should log an error here.
             return False
