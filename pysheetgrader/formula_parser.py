@@ -30,8 +30,8 @@ def parse_formula(formula: str, local_dict: dict = None):
     :return: Sympy expression that can be passed to Sympy's `simplify` method.
     """
 
-    if not formula or formula is not str or formula[0] != "=":
-        raise ValueError(f"Excepted formula, got {formula}")
+    if not formula or not isinstance(formula, str):
+        raise ValueError(f"Expected formula, got {formula}")
         return
 
     string_tokens = []
