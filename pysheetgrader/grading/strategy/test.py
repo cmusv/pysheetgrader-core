@@ -65,11 +65,20 @@ class TestRunStrategy(BaseStrategy):
         """
 
         raw_inputs = test_case.inputs
-        encoded_inputs = {encode_cell_reference(cell_coord): raw_inputs[cell_coord] for cell_coord in raw_inputs}
+
+        # Lowercase the inputs and the custom functions, because Sympy supports simple functions out-of-the box
+        #   e.g. sqrt, sin
+        lowercased_formula = sub_raw_formula.lower()
+        encoded_inputs = {encode_cell_reference(cell_coord).lower(): raw_inputs[cell_coord]
+                          for cell_coord in raw_inputs}
         local_dict = get_excel_formula_lambdas()
         local_dict.update(encoded_inputs)
 
-        result = parse_formula(sub_raw_formula, local_dict=local_dict)
+        result = parse_formula(lowercased_formula, local_dict=local_dict)
+        print(f"{self.report_line_prefix}Lowercased formula: {lowercased_formula}")
+        print(f"{self.report_line_prefix}Encoded input: {encoded_inputs}")
+        print(f"{self.report_line_prefix}result: {result}")
+
         expected_lower_range = test_case.expected_output
         expected_upper_range = test_case.expected_output
 

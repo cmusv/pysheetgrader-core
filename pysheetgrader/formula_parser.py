@@ -17,11 +17,14 @@ ___excel_formula_lambdas = None
 
 def parse_formula(formula: str, local_dict: dict = None):
     """
-    Returns the Sympy-parsed form for of the passed Excel formula.
+    Returns the Sympy-parsed form for of the passed Excel formula. If is preferred to have the lowercased version of
+    the formula to allow Sympy use built-in functions (e.g., sqrt).
+
     So far, this method will always expand any cell ranges.
 
     :param formula: String value of the formula. Should start with '=', otherwise it will not be regarded as a formula.
     :param local_dict: Dictionary for replacing variables with values or custom formulas with Sympy lambdas.
+        Again, it is preferred to have lowercased keys and custom functions.
     :return: Sympy expression that can be passed to Sympy's `simplify` method.
     """
 
@@ -48,7 +51,8 @@ def parse_formula(formula: str, local_dict: dict = None):
         else:
             string_tokens.append(token.value)
 
-    expanded_form = "".join(string_tokens)
+    # Lowercase the form, to allow Sympy use built-in functions.
+    expanded_form = "".join(string_tokens).lower()
 
     return parse_expr(expanded_form, local_dict=local_dict)
 
@@ -88,11 +92,11 @@ def get_excel_formula_lambdas():
     if ___excel_formula_lambdas:
         return ___excel_formula_lambdas
 
+    # TODO: Implement more function here.
     # Custom implementation
     # The key and the first parameter of the `implemented_function` should be the same.
     custom_functions = {
-        'SUM': implemented_function('SUM', lambda val: sum(val)),
-        'SQRT': implemented_function('SQRT', lambda val: math.sqrt(val))
+        'sum': implemented_function('sum', lambda val: sum(val))
     }
 
     # Sympy lambda transformation
