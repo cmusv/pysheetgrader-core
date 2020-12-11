@@ -40,6 +40,5 @@ class NaiveFormulaStrategy(BaseStrategy):
         except Exception as exc:
             # TODO: Revisit whether we should print the comparison key value here.
             #   It might leak the answers to the students, though.
-            report.append_line(f"Failed to evaluate submission: {sub_cell_value}")
-            report.append_line(f"Error: {exc}")
+            report.append_line(f"{self.report_line_prefix}Error: {exc}")
             return report

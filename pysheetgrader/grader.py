@@ -71,7 +71,8 @@ class Grader:
             report += ConstantStrategy(self.key_document, document, sheet_name, rubric).grade()
         elif rubric.rubric_type == GradingRubricType.FORMULA:
             report.append_line(f"\t- Cell {rubric.cell_coord}, formula comparison.")
-            report += NaiveFormulaStrategy(self.key_document, document, sheet_name, rubric).grade()
+            strategy = NaiveFormulaStrategy(self.key_document, document, sheet_name, rubric, report_line_prefix="\t")
+            report += strategy.grade()
         else:
             report.append_line(f"\t- Cell {rubric.cell_coord}, test case runs.")
             report.append_line(f"\t\tTest cases:")
