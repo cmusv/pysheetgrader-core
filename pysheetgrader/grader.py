@@ -3,6 +3,7 @@ from pysheetgrader.grading.rubric import GradingRubricType
 from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.grading.strategy.constant import ConstantStrategy
 from pysheetgrader.grading.strategy.formula import NaiveFormulaStrategy
+from pysheetgrader.grading.strategy.test import TestRunStrategy
 
 
 class Grader:
@@ -74,7 +75,8 @@ class Grader:
         else:
             report.append_line(f"\t- Cell {rubric.cell_coord}, test case runs.")
             report.append_line(f"\t\tTest cases:")
-            # TODO: Add test case runs here.
+            strategy = TestRunStrategy(self.key_document, document, sheet_name, rubric, report_line_prefix="\t\t")
+            report += strategy.grade()
 
         report.append_line(f"\tScore: {report.submission_score} / {report.max_possible_score}")
         return report
