@@ -1,18 +1,8 @@
 from openpyxl.formula import Tokenizer
 from openpyxl.formula.tokenizer import Token
 from openpyxl.worksheet.datavalidation import expand_cell_ranges
-from sympy.utilities.lambdify import lambdify, implemented_function
 from sympy.parsing.sympy_parser import parse_expr
-from sympy import symbols
-import sympy
 import re
-
-
-"""
-Static dictionary of this file. Please use `get_excel_formula_lambdas()` method to retrieve this instead of
-    accessing it directly.
-"""
-___excel_formula_lambdas = None
 
 
 def parse_formula(formula: str, local_dict: dict = None):
@@ -87,34 +77,3 @@ def decode_cell_reference(encoded_reference: str):
     This method will uppercase the cell references.
     """
     return encoded_reference.replace('_', '').upper()
-
-
-def get_excel_formula_lambdas():
-    """
-    Returns dictionary of Excel formulas as key and the corresponding Sympy lambdas as the value.
-    :return: Dictionary instance.
-    """
-    global ___excel_formula_lambdas
-
-    # If it's already initialized, then early return.
-    if ___excel_formula_lambdas:
-        return ___excel_formula_lambdas
-
-    # TODO: Implement more function here.
-    # Custom implementation
-    # The key and the first parameter of the `implemented_function` should be the same.
-    # We can also reuse Sympy's predefined function, especially for formula with variadic args like sum.
-
-    # This is just a sample.
-
-    custom_power = implemented_function('custom_pow', lambda base, power: pow(base, power))
-    x, y = symbols("x y")
-    custom_functions = {
-        'sum': sympy.Add,
-        'custom_pow': lambdify((x, y), custom_power(x, y))
-    }
-
-    return ___excel_formula_lambdas
-
-
-
