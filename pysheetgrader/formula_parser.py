@@ -63,9 +63,10 @@ def parse_formula(formula: str, local_dict: dict = None):
     return parse_expr(expanded_form, local_dict=local_dict)
 
 
-def encode_cell_reference(reference):
+def encode_cell_reference(reference: str):
     """
     Encodes the string of cell reference so it won't clash with predefined variables in Sympy.
+    This method will lowercase the cell references, too.
     """
 
     column_finder = re.search('(.+?)[0-9]+', reference)
@@ -77,14 +78,15 @@ def encode_cell_reference(reference):
     column = column_finder.group(1)
     row = reference.replace(column, "")
 
-    return f"{column}_{row}"
+    return f"{column}_{row}".lower()
 
 
-def decode_cell_reference(encoded_reference):
+def decode_cell_reference(encoded_reference: str):
     """
     Decodes the cell reference from encode_cell_reference method so it can be used in normal spreadsheet operations.
+    This method will uppercase the cell references.
     """
-    return encoded_reference.replace('_', '')
+    return encoded_reference.replace('_', '').upper()
 
 
 def get_excel_formula_lambdas():
