@@ -3,8 +3,8 @@ from openpyxl.formula.tokenizer import Token
 from openpyxl.worksheet.datavalidation import expand_cell_ranges
 from sympy.utilities.lambdify import lambdify, implemented_function
 from sympy.parsing.sympy_parser import parse_expr
-from sympy.abc import x
-import math
+from sympy import symbols
+import sympy
 import re
 
 
@@ -103,13 +103,16 @@ def get_excel_formula_lambdas():
     # TODO: Implement more function here.
     # Custom implementation
     # The key and the first parameter of the `implemented_function` should be the same.
-    custom_functions = {
-        'sum': implemented_function('sum', lambda val: sum(val))
-    }
+    # We can also reuse Sympy's predefined function, especially for formula with variadic args like sum.
 
-    # Sympy lambda transformation
-    ___excel_formula_lambdas = {formula_name: lambdify(x, custom_functions[formula_name](x))
-                                for formula_name in custom_functions}
+    # This is just a sample.
+
+    custom_power = implemented_function('custom_pow', lambda base, power: pow(base, power))
+    x, y = symbols("x y")
+    custom_functions = {
+        'sum': sympy.Add,
+        'custom_pow': lambdify((x, y), custom_power(x, y))
+    }
 
     return ___excel_formula_lambdas
 
