@@ -2,8 +2,14 @@
 
 ## What does PySheetGrader do?
 
-explain purpose here, what it works with (intended to work iwth vocareum), why is it original, etc
-provide a simple example, kind of a demo
+PySheetGrader is a grading automation system for spreadsheet-based assignments. Spreadsheets are frequently used in data-oriented courses due to its WYSISWG nature and low learning curve, such as 18657 Decision Analysis for Software Engineers. Grading these assignments manually are tedious and error prone, and PySheetGrader helps the teaching team by automating the grading process.
+
+There are some research that was built for grading or validating spreadsheets, such as Thomas G. Hill's Excel grader [[1](#references)] and Reichwein et al.'s in-app validator [[2](#references)]. However, they are not directly applicable for grading 18657's assignments. Hill's system needs to be run on Windows OS and the website is not available anymore, while Reichwein et al.'s system needs to be run inside spreadsheet app with [Forms/3](http://web.engr.oregonstate.edu/~burnett/Forms3/forms3.html) language. PySheetGrader provides automated grading approach that can be run on top Linux-based systems with open source dependencies, alongside with different modes of grading.
+
+Due to the open source and Linux-based nature, PySheetGrader can be deployed into scalable systems and modified as necessary. In the 18657 course, PySheetGrader is deployed to [Vocareum](https://www.vocareum.com), where student can submit their assignment and get their grades automatically.   
+
+
+// TODO: Add a screenshot here
 
 
 ## How to setup
@@ -16,7 +22,7 @@ Here are the files that need to be copied to make PySheetGrader works:
 - `setup.py`
 - `setup.sh`
 
-You could run `./setup.sh` as a quick way to install PySheetGrader on your system. This will require your system to have `python3` and `pip` installed.
+After downloading or cloning this repository, you could run `./setup.sh` as a quick way to install PySheetGrader to your system. Your system needs to have `python3` and `pip` installed.
 
 Otherwise, you could do it manually by executing these steps:
 
@@ -148,3 +154,9 @@ The `submit.sh` script will take an excel file named `key.xlsx` in the `asnlib` 
 The student needs to upload their `*.xlsx` file to the root folder of their workspace and rename it to `submission.xlsx`. The `submit.sh` will take the `submission.xlsx` and compare it to the `key.xlsx` when the student submits.
 
 // todo: add latest features
+
+
+## References
+
+1. Thomas G. Hill. 2004. Excel grader and access grader. SIGCSE Bull. 36, 2 (June 2004), 101–105. DOI: https://doi.org/10.1145/1024338.1024382
+2. James Reichwein, Gregg Rothermel, and Margaret Burnett. 2000. Slicing spreadsheets: an integrated methodology for spreadsheet testing and debugging. In Proceedings of the 2nd conference on Domain-specific languages (DSL '99). Association for Computing Machinery, New York, NY, USA, 25–38. DOI: https://doi.org/10.1145/331960.331968
