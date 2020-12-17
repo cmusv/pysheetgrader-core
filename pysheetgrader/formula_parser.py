@@ -1,18 +1,8 @@
 from openpyxl.formula import Tokenizer
 from openpyxl.formula.tokenizer import Token
 from openpyxl.worksheet.datavalidation import expand_cell_ranges
-from sympy.utilities.lambdify import lambdify, implemented_function
 from sympy.parsing.sympy_parser import parse_expr
-from sympy.abc import x
-import math
 import re
-
-
-"""
-Static dictionary of this file. Please use `get_excel_formula_lambdas()` method to retrieve this instead of
-    accessing it directly.
-"""
-___excel_formula_lambdas = None
 
 
 def parse_formula(formula: str, local_dict: dict = None):
@@ -63,9 +53,10 @@ def parse_formula(formula: str, local_dict: dict = None):
     return parse_expr(expanded_form, local_dict=local_dict)
 
 
-def encode_cell_reference(reference):
+def encode_cell_reference(reference: str):
     """
     Encodes the string of cell reference so it won't clash with predefined variables in Sympy.
+    This method will lowercase the cell references, too.
     """
 
     column_finder = re.search('(.+?)[0-9]+', reference)
@@ -77,39 +68,12 @@ def encode_cell_reference(reference):
     column = column_finder.group(1)
     row = reference.replace(column, "")
 
-    return f"{column}_{row}"
+    return f"{column}_{row}".lower()
 
 
-def decode_cell_reference(encoded_reference):
+def decode_cell_reference(encoded_reference: str):
     """
     Decodes the cell reference from encode_cell_reference method so it can be used in normal spreadsheet operations.
+    This method will uppercase the cell references.
     """
-    return encoded_reference.replace('_', '')
-
-
-def get_excel_formula_lambdas():
-    """
-    Returns dictionary of Excel formulas as key and the corresponding Sympy lambdas as the value.
-    :return: Dictionary instance.
-    """
-    global ___excel_formula_lambdas
-
-    # If it's already initialized, then early return.
-    if ___excel_formula_lambdas:
-        return ___excel_formula_lambdas
-
-    # TODO: Implement more function here.
-    # Custom implementation
-    # The key and the first parameter of the `implemented_function` should be the same.
-    custom_functions = {
-        'sum': implemented_function('sum', lambda val: sum(val))
-    }
-
-    # Sympy lambda transformation
-    ___excel_formula_lambdas = {formula_name: lambdify(x, custom_functions[formula_name](x))
-                                for formula_name in custom_functions}
-
-    return ___excel_formula_lambdas
-
-
-
+    return encoded_reference.replace('_', '').upper()

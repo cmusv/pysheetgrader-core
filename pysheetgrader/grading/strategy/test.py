@@ -4,7 +4,7 @@ from pysheetgrader.grading.rubric import GradingRubric
 from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.formula_parser import parse_formula
 from pysheetgrader.formula_parser import encode_cell_reference
-from pysheetgrader.formula_parser import get_excel_formula_lambdas
+from pysheetgrader.custom_excel_formula import get_excel_formula_lambdas
 
 
 class TestRunStrategy(BaseStrategy):
