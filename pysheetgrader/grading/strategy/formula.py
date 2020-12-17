@@ -15,8 +15,8 @@ class NaiveFormulaStrategy(BaseStrategy):
 
         # Retrieving sheets
         try:
-            key_sheet = self.key_document.computed_value_wb[self.sheet_name]
-            sub_sheet = self.sub_document.computed_value_wb[self.sheet_name]
+            key_sheet = self.key_document.formula_wb[self.sheet_name]
+            sub_sheet = self.sub_document.formula_wb[self.sheet_name]
         except Exception as exc:
             report.append_line(f"{self.report_line_prefix}{exc}")
             return report
