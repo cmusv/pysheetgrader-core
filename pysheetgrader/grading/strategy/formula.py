@@ -1,5 +1,4 @@
 from pysheetgrader.grading.strategy.base import BaseStrategy
-from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.formula_parser import parse_formula
 from sympy import simplify
 
@@ -12,15 +11,18 @@ class NaiveFormulaStrategy(BaseStrategy):
     """
 
     def grade(self):
-        key_sheet = self.key_document.formula_wb[self.sheet_name]
-        sub_sheet = self.sub_document.formula_wb[self.sheet_name]
+        report = self.create_initial_report()
+
+        # Retrieving sheets
+        try:
+            key_sheet = self.key_document.computed_value_wb[self.sheet_name]
+            sub_sheet = self.sub_document.computed_value_wb[self.sheet_name]
+        except Exception as exc:
+            report.append_line(f"{self.report_line_prefix}{exc}")
+            return report
+
+        # Grading cells
         cell_coord = self.grading_rubric.cell_coord
-
-        report = GradingReport()
-        report.max_possible_score = self.grading_rubric.score
-
-        # These two are declared early to be used in the catch section.
-        sub_cell_value = None
 
         try:
             sub_cell_value = sub_sheet[cell_coord].value
