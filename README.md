@@ -259,9 +259,11 @@ There are some known issues for current version of PySheetGrader:
 
 There are some features that could be explored further for future versions:
 
-1. **Handling cell shifts in submitted spreadsheets.** Current version of PySheetGrader assumes students' submission will use a certain templates and didn't move them around. To implement this, we might need to find a way to automatically find cell shifting between two sheets. After figuring out the automatic shift detector, we could recover the submitted cells to the original range by utilizing [openpyxl's move_range() method](https://stackoverflow.com/a/61908728/1448626).
+1. **Handle cell shifts in submitted spreadsheets.** Current version of PySheetGrader assumes students' submission will use a certain templates and didn't move them around. To implement this, we might need to find a way to automatically find cell shifting between two sheets. After figuring out the automatic shift detector, we could recover the submitted cells to the original range by utilizing [openpyxl's move_range() method](https://stackoverflow.com/a/61908728/1448626).
 2. **Add comparison feature.** It is common to find assertion or comparison feature in unit test frameworks, such as finding equality or inequality. One could say that current PySheetGrader's implementation only supports the equality part. Perhaps there are needs to add a feature to do different type of comparison and a way to state it in the rubric note, e.g., not equal, greater than, or less than.
 3. **Add automated unit testing.** Currently all the tests for making sure PySheetGrader works correctly are done manually. To help future maintainers, it is desirable to have automated unit testing for positive, negative, and edge cases to ensure all feature works correctly after new changes.
+4. **Add fallback rubric types.** There are some discussions about using test cases when formula comparison is not enough, but current version only allows one rubric type for a cell. We might need to figure out how to define a clean, readable rubric to implement the feature.
+5. **Handle test case runs with different cell references.** Current test case runs only work when the submission cells when the cell references in the formula are defined in the rubric. There might be cases where the cell formula includes cell reference that is not defined in the rubric, and we need to do some sort of detection or replacement algorithm to do handle it properly. Or perhaps, one might tackle this from the perspective of mathematical formula definition. 
  
 ## References
 
