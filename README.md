@@ -1,5 +1,14 @@
 # PySheetGrader
 
+Sections:
+1. [What does PySheetGrader do?](#what-does-pysheetgrader-do)
+2. [How to setup](#how-to-setup)
+3. [How to run](#how-to-run)
+4. [Creating a key document](#creating-a-key-document)
+5. [Creating a rubric note](#creating-a-rubric-note)
+6. [How to setup in Vocareum](#how-to-setup-in-vocareum)
+7. [References](#references)
+
 ## What does PySheetGrader do?
 
 PySheetGrader is a grading automation system for spreadsheet-based assignments. Spreadsheets are frequently used in data-oriented courses due to its WYSISWG nature and low learning curve, such as 18657 Decision Analysis for Software Engineers. Grading these assignments manually are tedious and error prone, and PySheetGrader helps the teaching team by automating the grading process.
@@ -8,9 +17,7 @@ There are some research that was built for grading or validating spreadsheets, s
 
 PySheetGrader fills the need that cannot be fulfilled by Hill's and Reichwein et al.'s systems: an automated grading system  that can be run on top Linux-based systems with open source dependencies. This is possible due to PySheetGrader's relience on [openpyxl](https://openpyxl.readthedocs.io/en/stable/) for processing spreadsheets and Sympy [[3](#references)] for formula comparison and execution.
 
-Due to the open source and Linux-based nature, PySheetGrader can be deployed into scalable systems and modified as necessary. In the 18657 course, PySheetGrader is deployed to [Vocareum](https://www.vocareum.com), where student can submit their assignment and get their grades automatically.   
-
-// TODO: Add a screenshot here
+Due to the open source and Python-based implementation, PySheetGrader can be deployed into different operating systems and modified as necessary. In the 18657 course, PySheetGrader is deployed to [Vocareum](https://www.vocareum.com), where student can submit their assignment and get their grades automatically.   
 
 ## How to setup
 
@@ -222,19 +229,19 @@ The compilation process needs to be done on Vocareum to make sure the grader is 
 
 In the `vocareum_scripts` folder, there's a folder named `shared_scripts`. Please copy the contents of each script to the corresponding filename in Vocareum workspace's `scripts` folder.
 
-### 3. Copy configuration file (teacher)
+### 4. Copy configuration file (teacher)
 
 In the `vocareum_scripts` folder, there's a folder named `assignments`. Please copy the folder's contents to the `asnlib` folder in the workspace.
 
-### 4. Configure assignment variables (teacher)
+### 5. Configure assignment variables (teacher)
 
 In the `pysheetgrader.config` of the `asnlib` folder (copied from previous step), there's variable called `ASSIGNMENT_PREFIX`. Please set up the value of the variable to be used for the key and submission file in this assignment.
 
-### 5. Upload the key Excel document (teacher)
+### 6. Upload the key Excel document (teacher)
 
 The `submit.sh` script will take an excel file named `[ASSIGNMENT_PREFIX]Key.xlsx` in the `asnlib` folder. Please upload your key Excel file to the `asnlib` folder and rename it correspondingly. For example, if the `ASSIGNMENT_PREFIX` value is `A1` in the config file, the key spreadsheet should be named as `A1Key.xlsx`.
 
-### 6. Uploads the submission Excel document (student)
+### 7. Uploads the submission Excel document (student)
 
 The student needs to upload their `*.xlsx` file to the root folder of their workspace and rename it to `[ASSIGNMENT_PREFIX]Submission.xlsx`. The `submit.sh` will take the submitted file and compare it to the corresponding key file. For example, if the `ASSIGNMENT_PREFIX` value is `A1` in the config file, the submission spreadsheet should be named as `A1Submission.xlsx`.
 
