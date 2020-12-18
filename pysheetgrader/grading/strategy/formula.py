@@ -1,3 +1,4 @@
+from pysheetgrader.custom_excel_formula import get_excel_formula_lambdas
 from pysheetgrader.grading.strategy.base import BaseStrategy
 from pysheetgrader.formula_parser import parse_formula
 from sympy import simplify
@@ -23,15 +24,16 @@ class NaiveFormulaStrategy(BaseStrategy):
 
         # Grading cells
         cell_coord = self.grading_rubric.cell_coord
+        custom_formulas = get_excel_formula_lambdas()
 
         try:
             sub_cell_value = sub_sheet[cell_coord].value
-            sub_formula = parse_formula(sub_cell_value)
+            sub_formula = parse_formula(sub_cell_value, local_dict=custom_formulas)
 
             # Comparison
             for key_coord in self.grading_rubric.get_all_cell_coord():
                 key_cell_value = key_sheet[key_coord].value
-                key_formula = parse_formula(key_cell_value)
+                key_formula = parse_formula(key_cell_value, local_dict=custom_formulas)
                 is_similar = simplify(key_formula - sub_formula) == 0
 
                 if is_similar:
