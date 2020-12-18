@@ -1,4 +1,6 @@
 from pysheetgrader.grading.test_case import GradingTestCase
+from openpyxl.worksheet.worksheet import Worksheet
+from pysheetgrader.document import Document
 from typing import List
 from enum import Enum
 import yaml
@@ -98,13 +100,18 @@ class GradingRubric:
         # 3. The scoring column is always in order
         for row in order_sheet.iter_rows(min_col=2, max_col=2, min_row=2):
             # Assuming this for-loop will only be executed for B column
-            rubrics.extend([GradingRubric.create_rubrics_from_cell(c.value, key_sheet)
-                            for c in row])
+            # TODO: Revisit if the failed rubric parsing is necessary to be reported.
+            for c in row:
+                try:
+                    r = GradingRubric.create_rubric_from_cell(c.value, key_sheet)
+                    rubrics.append(r)
+                except Exception:
+                    continue
 
         return rubrics
 
     @staticmethod
-    def create_rubrics_from_cell(cell_coord, key_sheet):
+    def create_rubric_from_cell(cell_coord: str, key_sheet: Worksheet):
         """
         Creates GradingRubric instance from passed `cell_coord` of the `key_sheet`.
         This method assumes the cell of the passed coordinate will have notes that holds the rubric.
@@ -115,8 +122,12 @@ class GradingRubric:
         :return: GradingRubric instance.
         """
 
-        key_cell = key_sheet[cell_coord]
-        key_comment = key_cell.comment.text
+        try:
+            key_cell = key_sheet[cell_coord]
+            key_comment = key_cell.comment.text
+        except Exception:
+            raise Exception(f"No rubric note found for cell: {cell_coord} in sheet: {key_sheet.title}")
+            return
 
         # Comment parsing
         parsed_comment = yaml.load(key_comment, Loader=yaml.Loader)
@@ -125,7 +136,7 @@ class GradingRubric:
         test_cases = parsed_comment['test_cases'] if 'test_cases' in parsed_comment else {}
 
         if not rubric_dict:
-            raise ValueError(f"No rubric found for cell: {cell_coord} in sheet: {key_sheet}")
+            raise ValueError(f"No valid rubric found for cell: {cell_coord} in sheet: {key_sheet.title}")
             return
 
         # Rubric parsing
@@ -137,7 +148,7 @@ class GradingRubric:
         try:
             rubric_score = float(rubric_score)
         except Exception:
-            raise ValueError(f"Invalid rubric score found for cell: {cell_coord} in sheet: {key_sheet}")
+            raise ValueError(f"Invalid rubric score found for cell: {cell_coord} in sheet: {key_sheet.title}")
             return
 
         # Rubric type parsing
@@ -145,14 +156,15 @@ class GradingRubric:
             rubric_type = GradingRubricType.type_from_string(rubric_type)
 
         if not rubric_type:
-            raise ValueError(f"Invalid rubric comment score and type found for cell: {cell_coord} in sheet: {key_sheet}")
+            raise ValueError(f"Invalid rubric comment score and type found for cell: {cell_coord} "
+                             f"in sheet: {key_sheet.title}")
             return
 
         # Rubric delta
         try:
             rubric_delta = float(rubric_delta)
         except ValueError:
-            raise ValueError(f"Invalid rubric delta format found for cell: {cell_coord} in sheet: {key_sheet}")
+            raise ValueError(f"Invalid rubric delta format found for cell: {cell_coord} in sheet: {key_sheet.title}")
             return
 
         # Rubric test cases

@@ -1,4 +1,5 @@
 from pysheetgrader.grading.rubric import GradingRubric
+from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.document import Document
 
 
@@ -31,3 +32,12 @@ class BaseStrategy:
         :exception NotImplemented   raised when this method called directly (instead of the subclass').
         """
         raise NotImplemented("The `grade` method should've been implemented in the subclasses.")
+
+    def create_initial_report(self):
+        """
+        Returns initial GradingReport instance with max_possible_score assigned to this instance's rubric score.
+        :return: GradingReport instance.
+        """
+        report: GradingReport = GradingReport()
+        report.max_possible_score += self.grading_rubric.score
+        return report

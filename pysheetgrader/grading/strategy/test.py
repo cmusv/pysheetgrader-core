@@ -1,7 +1,5 @@
 from pysheetgrader.grading.strategy.base import BaseStrategy
 from pysheetgrader.grading.test_case import GradingTestCase
-from pysheetgrader.grading.rubric import GradingRubric
-from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.formula_parser import parse_formula
 from pysheetgrader.formula_parser import encode_cell_reference
 from pysheetgrader.custom_excel_formula import get_excel_formula_lambdas
@@ -13,12 +11,17 @@ class TestRunStrategy(BaseStrategy):
     """
 
     def grade(self):
-        sub_sheet = self.sub_document.formula_wb[self.sheet_name]
+        report = self.create_initial_report()
+
+        # Retrieving sheets
+        try:
+            sub_sheet = self.sub_document.formula_wb[self.sheet_name]
+        except Exception as exc:
+            report.append_line(f"{self.report_line_prefix}{exc}")
+            return report
+
+        # Grading cells
         cell_coord = self.grading_rubric.cell_coord
-
-        report = GradingReport()
-        report.max_possible_score = self.grading_rubric.score
-
         sub_raw_formula = sub_sheet[cell_coord].value
 
         # Test runs
