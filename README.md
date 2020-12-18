@@ -1,4 +1,8 @@
-# PySheetGrader
+# PySheetGrader 
+
+[![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
+
+[![pysheetgrader-version](https://img.shields.io/badge/version-1.0-brightgreen.svg)](https://shields.io/)
 
 Sections:
 1. [What does PySheetGrader do?](#what-does-pysheetgrader-do)
@@ -233,7 +237,7 @@ In the `vocareum_scripts` folder, there's a folder named `shared_scripts`. Pleas
 
 ### 4. Copy configuration file (teacher)
 
-In the `vocareum_scripts` folder, there's a folder named `assignments`. Please copy the folder's contents to the `asnlib` folder in the workspace.
+In the `vocareum_scripts` folder, there's a folder named `shared_asnlib`. Please copy the folder's contents to the `asnlib` folder in the workspace.
 
 ### 5. Configure assignment variables (teacher)
 
@@ -263,7 +267,8 @@ There are some features that could be explored further for future versions:
 2. **Add comparison feature.** It is common to find assertion or comparison feature in unit test frameworks, such as finding equality or inequality. One could say that current PySheetGrader's implementation only supports the equality part. Perhaps there are needs to add a feature to do different type of comparison and a way to state it in the rubric note, e.g., not equal, greater than, or less than.
 3. **Add automated unit testing.** Currently all the tests for making sure PySheetGrader works correctly are done manually. To help future maintainers, it is desirable to have automated unit testing for positive, negative, and edge cases to ensure all feature works correctly after new changes.
 4. **Add fallback rubric types.** There are some discussions about using test cases when formula comparison is not enough, but current version only allows one rubric type for a cell. We might need to figure out how to define a clean, readable rubric to implement the feature.
-5. **Handle test case runs with different cell references.** Current test case runs only work when the submission cells when the cell references in the formula are defined in the rubric. There might be cases where the cell formula includes cell reference that is not defined in the rubric, and we need to do some sort of detection or replacement algorithm to do handle it properly. Or perhaps, one might tackle this from the perspective of mathematical formula definition. 
+5. **Handle test case runs with different cell references.** Current test case runs only work when the submission cells when the cell references in the formula are defined in the rubric. There might be cases where the cell formula includes cell reference that is not defined in the rubric, and we need to do some sort of detection or replacement algorithm to do handle it properly. Or perhaps, one might tackle this from the perspective of mathematical formula definition.
+6. **Add automated script for copying `shared` folders inside `vocareum_scripts`.** Currently, the content of `shared_scripts` and `shared_asnlib` needs to be copied manually. It is possible to do this through executing shell scripts, but it might need quite some time to do it in clean and proper manner - knowing Vocareum's access privilege might differs on their future updates.
  
 ## References
 
