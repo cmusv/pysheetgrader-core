@@ -233,7 +233,7 @@ In the `vocareum_scripts` folder, there's a folder named `shared_scripts`. Pleas
 
 ### 4. Copy configuration file (teacher)
 
-In the `vocareum_scripts` folder, there's a folder named `assignments`. Please copy the folder's contents to the `asnlib` folder in the workspace.
+In the `vocareum_scripts` folder, there's a folder named `shared_asnlib`. Please copy the folder's contents to the `asnlib` folder in the workspace.
 
 ### 5. Configure assignment variables (teacher)
 
