@@ -7,6 +7,8 @@ Sections:
 4. [Creating a key document](#creating-a-key-document)
 5. [Creating a rubric note](#creating-a-rubric-note)
 6. [How to setup in Vocareum](#how-to-setup-in-vocareum)
+7. [Known issues](#known-issues)
+8. [Possible improvements](#possible-improvements)
 7. [References](#references)
 
 ## What does PySheetGrader do?
@@ -245,6 +247,22 @@ The `submit.sh` script will take an excel file named `[ASSIGNMENT_PREFIX]Key.xls
 
 The student needs to upload their `*.xlsx` file to the root folder of their workspace and rename it to `[ASSIGNMENT_PREFIX]Submission.xlsx`. The `submit.sh` will take the submitted file and compare it to the corresponding key file. For example, if the `ASSIGNMENT_PREFIX` value is `A1` in the config file, the submission spreadsheet should be named as `A1Submission.xlsx`.
 
+## Known issues
+
+There are some known issues for current version of PySheetGrader:
+
+1. **Use plain text for writing the rubric note.** Excel's note are capable for rich text and it will hamper the rubric parsing process. When writing a new note, it is possible for us to just write plain YAML text - but copy and pasting from a rubric to another might end up copying the formatting information too. It is recommended to copy the original rubric note to a plain text editor (e.g., Sublime Text or VSCode), then re-copy the rubric to a new note.
+2. **Inability to parse other sheet references.** Currently, PySheetGrader can only parse a formula that refers the cells within the same sheet. It might break if it parses a cell that refers another sheet. To implement this function, we might to find the proper representation of another sheet in a formula. Please update the `parse_formula()` method in `formula_parser.py` when it is ready to be updated.  
+3. **Limited support for running Excel formulas.** By default, PySheetGrader will be able to do naive unknown formula comparison using Sympy, but there are cases where we need to rely on unit tests. To do so, we need to add custom implementation of Excel formulas through the `get_excel_formula_lambdas()` method inside the `pysheetgrader/custom_excel_formula.py`. The file provides currently-implemented sample methods and references to do so.
+
+## Possible improvements
+
+There are some features that could be explored further for future versions:
+
+1. **Handling cell shifts in submitted spreadsheets.** Current version of PySheetGrader assumes students' submission will use a certain templates and didn't move them around. To implement this, we might need to find a way to automatically find cell shifting between two sheets. After figuring out the automatic shift detector, we could recover the submitted cells to the original range by utilizing [openpyxl's move_range() method](https://stackoverflow.com/a/61908728/1448626).
+2. **Add comparison feature.** It is common to find assertion or comparison feature in unit test frameworks, such as finding equality or inequality. One could say that current PySheetGrader's implementation only supports the equality part. Perhaps there are needs to add a feature to do different type of comparison and a way to state it in the rubric note, e.g., not equal, greater than, or less than.
+3. **Add automated unit testing.** Currently all the tests for making sure PySheetGrader works correctly are done manually. To help future maintainers, it is desirable to have automated unit testing for positive, negative, and edge cases to ensure all feature works correctly after new changes.
+ 
 ## References
 
 1. Thomas G. Hill. 2004. Excel grader and access grader. SIGCSE Bull. 36, 2 (June 2004), 101–105. DOI: https://doi.org/10.1145/1024338.1024382
