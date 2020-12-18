@@ -1,4 +1,8 @@
-# PySheetGrader
+# PySheetGrader 
+
+[![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
+
+[![pysheetgrader-version](https://img.shields.io/badge/version-1.0-brightgreen.svg)](https://shields.io/)
 
 Sections:
 1. [What does PySheetGrader do?](#what-does-pysheetgrader-do)
