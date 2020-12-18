@@ -38,7 +38,7 @@ class Grader:
         for sheet_name in self.grading_sheet_names:
             report += self.grade_sheet(document, sheet_name)
 
-        report.append_line(f"Final score: {report.submission_score} / {report.max_possible_score}")
+        report.append_line(f"\nFinal score: {report.submission_score} / {report.max_possible_score}")
         return report
 
     def grade_sheet(self, document, sheet_name):
@@ -49,7 +49,7 @@ class Grader:
         :return: GradingReport instance of the grade for the sheet.
         """
         report = GradingReport()
-        report.append_line(f"Grading for sheet: {sheet_name}")
+        report.append_line(f"\nGrading for sheet: {sheet_name}")
         rubrics = GradingRubric.create_rubrics_for_sheet(self.key_document, sheet_name)
         for r in rubrics:
             report += self.grade_sheet_by_rubric(document, sheet_name, r)
