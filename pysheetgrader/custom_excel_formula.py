@@ -1,6 +1,6 @@
-import sympy
-from sympy import symbols, lambdify
 from sympy.utilities.lambdify import implemented_function
+from sympy import symbols, lambdify
+import sympy
 
 
 """
@@ -28,11 +28,27 @@ def get_excel_formula_lambdas():
 
     # This is just a sample.
 
-    custom_power = implemented_function('custom_pow', lambda base, power: pow(base, power))
+    roundup_f = implemented_function('roundup', lambda number, digits: roundup(number, digits))
+
     x, y = symbols("x y")
     ___excel_formula_lambdas = {
         'sum': sympy.Add,
-        'custom_pow': lambdify((x, y), custom_power(x, y))
+        'roundup': lambdify((x, y), roundup_f(x, y))
     }
 
     return ___excel_formula_lambdas
+
+
+# Custom formula definition
+
+def roundup(number, decimals=0):
+    multiplier = 10 ** decimals
+    # sympy.ceiling is preferable instead of math.ceil here to allow parsing unknown variables.
+    result = sympy.ceiling(number * multiplier) / multiplier
+
+    try:
+        float_result = sympy.Float(result)
+        return float_result
+    except Exception:
+        # Just in case the result cannot be converted to float, e.g. due to Formula comparison
+        return result
