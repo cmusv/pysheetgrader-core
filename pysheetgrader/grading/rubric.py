@@ -37,12 +37,12 @@ class GradingRubric:
     Representation of a grading rubric in a sheet.
     """
 
-    def __init__(self, cell_id: int, cell_coord: str, rubric_type: GradingRubricType,
+    def __init__(self, cell_id: str, cell_coord: str, rubric_type: GradingRubricType,
                  score: float, constant_delta: float = 0,
                  alt_cells: List[str] = [], test_cases: List[GradingTestCase] = []):
         """
         Initializer of this class' instance.
-        :param cell_id: Integer value of the rubric identifier
+        :param cell_id: String value of the rubric identifier
         :param cell_coord: String value of the main cell coordinate in this rubric.
         :param rubric_type: GradingRubricType enum value.
         :param score: Float value of the score for this rubric.
@@ -114,12 +114,12 @@ class GradingRubric:
         return rubrics
 
     @staticmethod
-    def create_rubric_from_cell(cell_id: int, cell_coord: str, key_sheet: Worksheet):
+    def create_rubric_from_cell(cell_id: str, cell_coord: str, key_sheet: Worksheet):
         """
         Creates GradingRubric instance from passed `cell_coord` of the `key_sheet`.
         This method assumes the cell of the passed coordinate will have notes that holds the rubric.
 
-        :param cell_id: Integer value of the cell identifier. It is the number left to the `cell_coord`
+        :param cell_id: String value of the cell identifier. It is the number left to the `cell_coord`
             in the `_CheckOrder` sheet
         :param cell_coord: String value of the cell coordinate in the `key_sheet`. It assumes that the cell coordinate
             has note value that holds the grading rubric.
