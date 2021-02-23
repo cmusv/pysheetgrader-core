@@ -79,5 +79,8 @@ class Grader:
             strategy = TestRunStrategy(self.key_document, document, sheet_name, rubric, report_line_prefix="\t\t")
             report += strategy.grade()
 
-        report.append_line(f"\tScore: {report.submission_score} / {report.max_possible_score}")
+        if rubric.description:
+            report.append_line(f"\t- Description: {rubric.description}.")
+
+        report.append_line(f"\tScore: {report.submission_score} / {report.max_possible_score}\n")
         return report

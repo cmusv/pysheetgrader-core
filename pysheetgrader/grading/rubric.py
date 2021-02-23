@@ -37,13 +37,15 @@ class GradingRubric:
     Representation of a grading rubric in a sheet.
     """
 
-    def __init__(self, cell_id: str, cell_coord: str, rubric_type: GradingRubricType,
+    def __init__(self, cell_id: str, cell_coord: str, description: str, hidden: bool, rubric_type: GradingRubricType,
                  score: float, constant_delta: float = 0,
                  alt_cells: List[str] = [], test_cases: List[GradingTestCase] = []):
         """
         Initializer of this class' instance.
         :param cell_id: String value of the rubric identifier
         :param cell_coord: String value of the main cell coordinate in this rubric.
+        :param description: String value of the description.
+        :param hidden: Boolean value indicating should the cell be hidden to students.
         :param rubric_type: GradingRubricType enum value.
         :param score: Float value of the score for this rubric.
         :param constant_delta: Float value of the delta / precision that allowed for a constant GradingRubricType.
@@ -61,6 +63,9 @@ class GradingRubric:
 
         self.alt_cells = alt_cells
         self.test_cases = test_cases
+
+        self.hidden = hidden
+        self.description = description
 
     def get_all_cell_coord(self):
         """
@@ -101,12 +106,16 @@ class GradingRubric:
         # 2. The scoring column always has a header (min_row=2)
         # 3. The scoring column is always in order
         # 4. The indexing column is always on A, one-cell left from the scoring column
-        for row in order_sheet.iter_rows(min_col=1, max_col=2, min_row=2):
+        for row in order_sheet.iter_rows(min_col=1, max_col=4, min_row=2):
             # Assuming this for-loop will only be executed for B column
             # TODO: Revisit if the failed rubric parsing is necessary to be reported.
             try:
-                cell_id, cell_coord = row[0].value, row[1].value
-                r = GradingRubric.create_rubric_from_cell(cell_id, cell_coord, key_sheet)
+                cell_id, cell_coord, cell_description, cell_hidden = \
+                    row[0].value, row[1].value, row[2].value, row[3].value
+
+                hidden = cell_hidden == "H" or cell_hidden == "h"
+
+                r = GradingRubric.create_rubric_from_cell(cell_id, cell_coord, cell_description, hidden, key_sheet)
                 rubrics.append(r)
             except Exception:
                 continue
@@ -114,7 +123,7 @@ class GradingRubric:
         return rubrics
 
     @staticmethod
-    def create_rubric_from_cell(cell_id: str, cell_coord: str, key_sheet: Worksheet):
+    def create_rubric_from_cell(cell_id: str, cell_coord: str, description: str, hidden: bool, key_sheet: Worksheet):
         """
         Creates GradingRubric instance from passed `cell_coord` of the `key_sheet`.
         This method assumes the cell of the passed coordinate will have notes that holds the rubric.
@@ -123,6 +132,8 @@ class GradingRubric:
             in the `_CheckOrder` sheet
         :param cell_coord: String value of the cell coordinate in the `key_sheet`. It assumes that the cell coordinate
             has note value that holds the grading rubric.
+        :param description: String value of the cell description. It is the third column in the `_CheckOrder` sheet.
+        :param hidden: True if the cell is hidden and not visible to students.
         :param key_sheet: Openpyxl's Worksheet instance of the key document.
         :return: GradingRubric instance.
         """
@@ -175,7 +186,7 @@ class GradingRubric:
         # Rubric test cases
         test_cases = GradingRubric.create_test_cases_from_dict(test_cases)
 
-        return GradingRubric(cell_id, cell_coord, rubric_type, rubric_score,
+        return GradingRubric(cell_id, cell_coord, description, hidden, rubric_type, rubric_score,
                              constant_delta=rubric_delta, alt_cells=alt_cells,
                              test_cases=test_cases)
 
