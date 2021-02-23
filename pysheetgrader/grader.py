@@ -70,20 +70,25 @@ class Grader:
         report = GradingReport()
 
         if rubric.rubric_type == GradingRubricType.CONSTANT:
-            report.append_line(f"\t- #{rubric.cell_id} Cell {rubric.cell_coord}, constant value comparison.")
+            if not rubric.hidden:
+                report.append_line(f"\t- #{rubric.cell_id} Cell {rubric.cell_coord}, constant value comparison.")
             report += ConstantStrategy(self.key_document, document, sheet_name, rubric).grade()
         elif rubric.rubric_type == GradingRubricType.FORMULA:
-            report.append_line(f"\t- #{rubric.cell_id} Cell {rubric.cell_coord}, formula comparison.")
+            if not rubric.hidden:
+                report.append_line(f"\t- #{rubric.cell_id} Cell {rubric.cell_coord}, formula comparison.")
             strategy = NaiveFormulaStrategy(self.key_document, document, sheet_name, rubric, report_line_prefix="\t")
             report += strategy.grade()
         else:
-            report.append_line(f"\t- #{rubric.cell_id} Cell {rubric.cell_coord}, test case runs.")
-            report.append_line(f"\t\tTest cases:")
+            if not rubric.hidden:
+                report.append_line(f"\t- #{rubric.cell_id} Cell {rubric.cell_coord}, test case runs.")
+                report.append_line(f"\t\tTest cases:")
             strategy = TestRunStrategy(self.key_document, document, sheet_name, rubric, report_line_prefix="\t\t")
             report += strategy.grade()
 
-        if rubric.description:
-            report.append_line(f"\t- Description: {rubric.description}.")
+        if not rubric.hidden:
+            if rubric.description:
+                report.append_line(f"\t- Description: {rubric.description}.")
 
-        report.append_line(f"\tScore: {report.submission_score} / {report.max_possible_score}")
+            report.append_line(f"\tScore: {report.submission_score} / {report.max_possible_score}")
+
         return report

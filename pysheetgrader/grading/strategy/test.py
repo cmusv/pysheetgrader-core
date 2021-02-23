@@ -42,7 +42,8 @@ class TestRunStrategy(BaseStrategy):
                 all_test_pass = False
                 result_suffix = f"FAIL\n{self.report_line_prefix}Exception found: Failed to process {sub_raw_formula}"
 
-            report.append_line(f"{self.report_line_prefix}- {test_case.name}: {result_suffix}")
+            if not self.grading_rubric.hidden:
+                report.append_line(f"{self.report_line_prefix}- {test_case.name}: {result_suffix}")
 
         if all_test_pass:
             report.submission_score = self.grading_rubric.score
