@@ -92,7 +92,7 @@ class Grader:
                 report.append_line(f"\t- Description: {rubric.description}.")
             if rubric.fail_msg and report.submission_score < report.max_possible_score:
                 report.append_line(
-                    f"\t- Fail Message: {self.render_failure_message(document, sheet_name, rubric.fail_msg)}")
+                    f"\t- Feedback: {self.render_failure_message(document, sheet_name, rubric.fail_msg)}")
 
             report.append_line(f"\tScore: {report.submission_score} / {report.max_possible_score}")
 
