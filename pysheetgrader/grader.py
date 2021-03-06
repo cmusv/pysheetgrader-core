@@ -5,6 +5,8 @@ from pysheetgrader.grading.strategy.constant import ConstantStrategy
 from pysheetgrader.grading.strategy.formula import NaiveFormulaStrategy
 from pysheetgrader.grading.strategy.test import TestRunStrategy
 
+import re
+
 
 class Grader:
     """
@@ -88,7 +90,32 @@ class Grader:
         if not rubric.hidden:
             if rubric.description:
                 report.append_line(f"\t- Description: {rubric.description}.")
+            if rubric.fail_msg and report.submission_score < report.max_possible_score:
+                report.append_line(
+                    f"\t- Feedback: {self.render_failure_message(document, sheet_name, rubric.fail_msg)}")
 
             report.append_line(f"\tScore: {report.submission_score} / {report.max_possible_score}")
 
         return report
+
+    @staticmethod
+    def render_failure_message(document, sheet_name, fail_msg_template: str):
+        """
+        Render generic failure message with failure message template. For example, if template is
+            "This cell should have used standard deviation, which was $B3 according to your calculation."
+
+        The rendered failure message can be
+            "This cell should have used standard deviation, which was 15 according to your calculation."
+
+        :param document: Document instance.
+        :param sheet_name: String value of the sheet name.
+        :param fail_msg_template: String value of the failure message template.
+        :return: String value of rendered failure message.
+        """
+        pattern = re.compile(r"(\$)([A-Z]+\d+)")
+        referred_cells = []
+        for match in re.finditer(pattern, fail_msg_template):
+            cell_coord = match.group(2)  # second group is whatever after $
+            referred_cells.append(document.computed_value_wb[sheet_name][cell_coord])
+
+        return re.sub(pattern, '{}', fail_msg_template).format(*[c.value for c in referred_cells])
