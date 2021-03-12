@@ -13,8 +13,10 @@ from pysheetgrader.grader import Grader
               help="File path where the score output will be saved.")
 @click.option('--report-output', type=click.Path(writable=True),
               help="File path where the detailed report will be saved.")
+@click.option('--html-report-output', type=click.Path(writable=True),
+              help="File path where the rendered HTML report will be saved.")
 @click.option('-v', '--verbose', is_flag=True)
-def cli(key_document_path, submission_document_path, score_output, report_output, verbose):
+def cli(key_document_path, submission_document_path, score_output, report_output, html_report_output, verbose):
     """ Grades the passed spreadsheet in SUBMISSION_DOCUMENT_PATH using the key spreadsheet from KEY_DOCUMENT_PATH."""
 
     print("PySheetGrader!")
@@ -35,6 +37,9 @@ def cli(key_document_path, submission_document_path, score_output, report_output
 
     if report_output:
         save_report(report, report_output)
+
+    if html_report_output:
+        save_html_report(report, html_report_output)
 
     key_doc.close()
     sub_doc.close()
@@ -58,3 +63,20 @@ def save_report(report, output_path):
     """
     with open(output_path, 'w') as file:
         file.writelines(report.report_lines)
+
+
+def save_html_report(report, output_path):
+    """
+    Save the HTML version of the passed report to the output_path
+    :param report: GradingReport instance.
+    :param output_path: String value of the output file path.
+    :return:
+    """
+    import jinja2
+    loader = jinja2.FileSystemLoader('./template')
+    env = jinja2.Environment(loader=loader)
+
+    with open(output_path, 'w') as file:
+        template = env.get_template('report.html.jinja')
+        rendered = template.render({'html_args': report.report_html_args})
+        file.write(rendered)

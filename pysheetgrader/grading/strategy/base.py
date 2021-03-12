@@ -1,5 +1,5 @@
 from pysheetgrader.grading.rubric import GradingRubric
-from pysheetgrader.grading.report import GradingReport
+from pysheetgrader.grading.report import GradingReport, GradingReportType
 from pysheetgrader.document import Document
 
 
@@ -38,6 +38,6 @@ class BaseStrategy:
         Returns initial GradingReport instance with max_possible_score assigned to this instance's rubric score.
         :return: GradingReport instance.
         """
-        report: GradingReport = GradingReport()
+        report: GradingReport = GradingReport(GradingReportType.RUBRIC)
         report.max_possible_score += self.grading_rubric.score
         return report

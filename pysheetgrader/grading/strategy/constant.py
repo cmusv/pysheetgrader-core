@@ -17,6 +17,7 @@ class ConstantStrategy(BaseStrategy):
             sub_sheet = self.sub_document.computed_value_wb[self.sheet_name]
         except Exception as exc:
             report.append_line(f"{self.report_line_prefix}{exc}")
+            report.report_html_args['error'] = exc
             return report
 
         # Grading cells
