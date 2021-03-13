@@ -13,6 +13,7 @@ class GradingRubricType(Enum):
     CONSTANT = 1
     FORMULA = 2
     TEST = 3
+    SOFT_FORMULA = 4
 
     @staticmethod
     def type_from_string(value):
@@ -28,6 +29,8 @@ class GradingRubricType(Enum):
             return GradingRubricType.FORMULA
         elif value == "test":
             return GradingRubricType.TEST
+        elif value == "soft_formula":
+            return GradingRubricType.SOFT_FORMULA
         else:
             return None
 

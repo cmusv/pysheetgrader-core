@@ -3,6 +3,7 @@ from pysheetgrader.grading.rubric import GradingRubricType
 from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.grading.strategy.constant import ConstantStrategy
 from pysheetgrader.grading.strategy.formula import NaiveFormulaStrategy
+from pysheetgrader.grading.strategy.formula import SoftFormulaStrategy
 from pysheetgrader.grading.strategy.test import TestRunStrategy
 
 import re
@@ -79,6 +80,10 @@ class Grader:
             if not rubric.hidden:
                 report.append_line(f"\t- #{rubric.cell_id} Cell {rubric.cell_coord}, formula comparison.")
             strategy = NaiveFormulaStrategy(self.key_document, document, sheet_name, rubric, report_line_prefix="\t")
+            report += strategy.grade()
+        elif rubric.rubric_type == GradingRubricType.SOFT_FORMULA:
+            report.append_line(f"\t- Cell {rubric.cell_coord}, soft formula comparison.")
+            strategy = SoftFormulaStrategy(self.key_document, document, sheet_name, rubric, report_line_prefix="\t")
             report += strategy.grade()
         else:
             if not rubric.hidden:
