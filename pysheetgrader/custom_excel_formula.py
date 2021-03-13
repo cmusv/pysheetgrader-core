@@ -24,7 +24,7 @@ def get_excel_formula_lambdas():
     # TODO: Implement more function here.
     # Custom implementation
     # The key and the first parameter of the `implemented_function` should be the same.
-    # We can also reuse Sympy's predefined function, especially for formula with variadic args like sum.
+    # We can also reuse Sympy's predefined function, especially for formula with variable args like sum.
 
     # This is just a sample.
 
