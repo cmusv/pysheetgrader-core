@@ -33,6 +33,8 @@ def get_excel_formula_lambdas():
     x, y = symbols("x y")
     ___excel_formula_lambdas = {
         'sum': sympy.Add,
+        'max': sympy.Max,
+        'min': sympy.Min,
         'roundup': lambdify((x, y), roundup_f(x, y))
     }
 
