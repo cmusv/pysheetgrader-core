@@ -20,6 +20,7 @@ class NaiveFormulaStrategy(BaseStrategy):
             sub_sheet = self.sub_document.formula_wb[self.sheet_name]
         except Exception as exc:
             report.append_line(f"{self.report_line_prefix}{exc}")
+            report.report_html_args['error'] = exc
             return report
 
         # Grading cells
@@ -45,4 +46,5 @@ class NaiveFormulaStrategy(BaseStrategy):
             # TODO: Revisit whether we should print the comparison key value here.
             #   It might leak the answers to the students, though.
             report.append_line(f"{self.report_line_prefix}Error: {exc}")
+            report.report_html_args['error'] = f"Error: {exc}"
             return report

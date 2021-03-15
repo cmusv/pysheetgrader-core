@@ -57,7 +57,7 @@ source venv/bin/activate
 Then, you can execute the `pysheetgrader` command:
 
 ```
-pysheetgrader $KEY_DOC_PATH $SUB_DOC_PATH --score-output $SCORE_OUTPUT_PATH --report-output $REPORT_OUTPUT_PATH
+pysheetgrader $KEY_DOC_PATH $SUB_DOC_PATH --score-output $SCORE_OUTPUT_PATH --report-output $REPORT_OUTPUT_PATH --html-report-output $HTML_REPORT_OUTPUT_PATH
 ```
 
 Arguments of `pysheetgrader` are:
@@ -66,6 +66,7 @@ Arguments of `pysheetgrader` are:
 - `SUB_DOC_PATH`: path to the submission document that will be graded (an excel spreadsheet with .xlsx extension).
 - `SCORE_OUTPUT_PATH`: path to the file where the grading score will be stored. This is optional, since the score will be shown in the terminal window.
 - `SCORE_REPORT_PATH`: path to the file where the detailed report will be stored. This is optional.
+- `HTML_REPORT_OUTPUT_PATH_`: path to the html file where a tabulated HTML report will be stored. This is optional.
 
 There's also the `--verbose` flag that will output the report to the terminal throughout the process.
 

@@ -1,6 +1,8 @@
 click==7.1.2
 et-xmlfile==1.0.1
 jdcal==1.4.1
+Jinja2==2.11.3
+MarkupSafe==1.1.1
 mpmath==1.1.0
 openpyxl==3.0.5
 pyaml==20.4.0
