@@ -12,7 +12,7 @@ class TestRunStrategy(BaseStrategy):
 
     def grade(self):
         report = self.create_initial_report()
-
+        html_args = {'test_cases': [], 'all_test_pass': False}
         # Retrieving sheets
         try:
             sub_sheet = self.sub_document.formula_wb[self.sheet_name]
@@ -30,6 +30,7 @@ class TestRunStrategy(BaseStrategy):
 
         all_test_pass = True
         for test_case in self.grading_rubric.test_cases:
+            test_case_html_args = {'success': False, 'error': '', 'name': test_case.name}
             result_suffix = "PASS"
             try:
                 result_match, result, lower_range, upper_range = self.test_run_match(test_case, sub_raw_formula)
@@ -37,17 +38,24 @@ class TestRunStrategy(BaseStrategy):
                     all_test_pass = False
                     result_suffix = f"FAIL\n{self.report_line_prefix}Expected result between {lower_range} " \
                                     f"and {upper_range}, got {result} instead"
+                    test_case_html_args['error'] = result_suffix
+                else:
+                    test_case_html_args['success'] = True
             except Exception as exc:
                 # TODO: Add more profound exception error message later.
                 all_test_pass = False
                 result_suffix = f"FAIL\n{self.report_line_prefix}Exception found: Failed to process {sub_raw_formula}"
+                test_case_html_args['error'] = result_suffix
 
             if not self.grading_rubric.hidden:
                 report.append_line(f"{self.report_line_prefix}- {test_case.name}: {result_suffix}")
+            html_args['test_cases'].append(test_case_html_args)
 
         if all_test_pass:
             report.submission_score = self.grading_rubric.score
+        html_args['all_test_pass'] = all_test_pass
 
+        report.report_html_args = html_args
         return report
 
     def test_run_match(self, test_case: GradingTestCase, sub_raw_formula: str):
