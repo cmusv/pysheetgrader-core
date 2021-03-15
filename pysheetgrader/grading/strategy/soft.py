@@ -37,7 +37,7 @@ class SoftFormulaStrategy(ConstantStrategy):
                     report.append_line(f"\t- Formula is missing.")
                     return report
                 if any(c.isalpha() for c in curr_cell_value):
-                    report.append_line(f"\t- Found Formula:", curr_cell_value)
+                    report.append_line(f"\t- Found Formula: {curr_cell_value}")
                     return super().grade()
                 else:
                     report.append_line(f"\t- Formula is missing.")
