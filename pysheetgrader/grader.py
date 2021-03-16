@@ -62,7 +62,7 @@ class Grader:
         for r in rubrics:
             report += self.grade_sheet_by_rubric(document, sheet_name, r)
 
-        report.append_line(f"Score for {sheet_name}: "
+        report.append_line(f"Score for {sheet_name} sheet: "
                            f"{report.submission_score} / {report.max_possible_score}")
         report.report_html_args['submission_score'] = report.submission_score
         report.report_html_args['max_possible_score'] = report.max_possible_score
@@ -81,38 +81,38 @@ class Grader:
                      'description': rubric.description}
         if rubric.rubric_type == GradingRubricType.CONSTANT:
             if not rubric.hidden:
-                report.append_line(f"\t- #{rubric.cell_id} Cell {rubric.cell_coord}, constant value comparison.")
+                report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, constant value comparison")
             report += ConstantStrategy(self.key_document, document, sheet_name, rubric).grade()
             html_args['rubric_type'] = "Value check"
         elif rubric.rubric_type == GradingRubricType.FORMULA:
             if not rubric.hidden:
-                report.append_line(f"\t- #{rubric.cell_id} Cell {rubric.cell_coord}, formula comparison.")
+                report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, formula comparison")
             strategy = NaiveFormulaStrategy(self.key_document, document, sheet_name, rubric, report_line_prefix="\t")
             report += strategy.grade()
             html_args['rubric_type'] = "Formula check"
         elif rubric.rubric_type == GradingRubricType.SOFT_FORMULA:
-            report.append_line(f"\t- Cell {rubric.cell_coord}, soft formula comparison.")
+            report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, soft formula comparison")
             strategy = SoftFormulaStrategy(self.key_document, document, sheet_name, rubric, report_line_prefix="\t")
             report += strategy.grade()
             html_args['rubric_type'] = "Soft formula check"
         else:
             if not rubric.hidden:
-                report.append_line(f"\t- #{rubric.cell_id} Cell {rubric.cell_coord}, test case runs.")
-                report.append_line(f"\t\tTest cases:")
+                report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, test case runs")
+                report.append_line(f"\t- Test cases:")
             strategy = TestRunStrategy(self.key_document, document, sheet_name, rubric, report_line_prefix="\t\t")
             report += strategy.grade()
             html_args['rubric_type'] = "Test runs"
 
         if not rubric.hidden:
             if rubric.description:
-                report.append_line(f"\t- Description: {rubric.description}.")
+                report.append_line(f"\t- Description: {rubric.description}")
             if rubric.fail_msg and report.submission_score < report.max_possible_score:
                 feedback = self.render_failure_message(document, sheet_name, rubric.fail_msg)
                 report.append_line(
                     f"\t- Feedback: {feedback}")
                 html_args['feedback'] = feedback
 
-            report.append_line(f"\tScore: {report.submission_score} / {report.max_possible_score}")
+            report.append_line(f"\t- Score: {report.submission_score} / {report.max_possible_score}")
 
         html_args['submission_score'] = report.submission_score
         html_args['max_possible_score'] = report.max_possible_score
