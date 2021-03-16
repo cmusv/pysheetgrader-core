@@ -44,7 +44,7 @@ class NaiveFormulaStrategy(BaseStrategy):
         except Exception as exc:
             # TODO: Revisit whether we should print the comparison key value here.
             #   It might leak the answers to the students, though.
-            report.append_line(f"{self.report_line_prefix}Error: {exc}")
+            report.append_line(f"{self.report_line_prefix}- Description: {exc}")
             return report
 
 class SoftFormulaStrategy(BaseStrategy):
@@ -77,19 +77,19 @@ class SoftFormulaStrategy(BaseStrategy):
             for key_coord in self.grading_rubric.get_all_cell_coord():
                 curr_cell_value = sub_sheet[key_coord].value
                 if(len(curr_cell_value)==1 and curr_cell_value[0]=='='):
-                    report.append_line(f"\t- Formula is missing.")
+                    report.append_line(f"\t- Description: Formula is missing.")
                     return report
                 if(any(c.isalpha() for c in curr_cell_value)):
-                    print(f"\t- Found Formula:", curr_cell_value)
+                    print(f"\t- Description: Found formula ", curr_cell_value[1:])
                     return self.grade_constant()
                 else:
-                    report.append_line(f"\t- Formula is missing.")
+                    report.append_line(f"\t- Description: Formula is missing.")
                     #report.submission_score = 0
                     return report
         except Exception as exc:
             # TODO: Revisit whether we should print the comparison key value here.
             #   It might leak the answers to the students, though.
-            report.append_line(f"{self.report_line_prefix}Error: {exc}")
+            report.append_line(f"{self.report_line_prefix}- Description: {exc}")
             return report
 
     def grade_constant(self):
