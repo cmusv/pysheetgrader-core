@@ -21,10 +21,12 @@ SUB_DOC_PATH="${HOME}/${ASSIGNMENT_PREFIX}Submission.xlsx"
 
 SCORE_OUTPUT_PATH=$vocareumGradeFile
 REPORT_OUTPUT_PATH=$vocareumReportFile
+HTML_REPORT_OUTPUT_PATH="${HOME}/${ASSIGNMENT_PREFIX}Report.html"
 
 # Execute grading
 
-pysheetgrader $KEY_DOC_PATH $SUB_DOC_PATH --score-output $SCORE_OUTPUT_PATH --report-output $REPORT_OUTPUT_PATH --verbose
+pysheetgrader $KEY_DOC_PATH $SUB_DOC_PATH --score-output $SCORE_OUTPUT_PATH --report-output $REPORT_OUTPUT_PATH \
+  --html-report-output $HTML_REPORT_OUTPUT_PATH --verbose
 
 
 

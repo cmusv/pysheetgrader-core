@@ -1,4 +1,4 @@
-import click
+import click, os
 from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.document import Document
 from pysheetgrader.grader import Grader
@@ -73,7 +73,7 @@ def save_html_report(report, output_path):
     :return:
     """
     import jinja2
-    loader = jinja2.FileSystemLoader('./template')
+    loader = jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), "template"))
     env = jinja2.Environment(loader=loader)
 
     with open(output_path, 'w') as file:

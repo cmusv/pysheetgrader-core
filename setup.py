@@ -10,5 +10,7 @@ setup(
     entry_points='''
         [console_scripts]
         pysheetgrader=pysheetgrader.main:cli
-    '''
+    ''',
+    package_dir={'pysheetgrader': 'pysheetgrader'},
+    package_data={'pysheetgrader': ['template/*.jinja']}
 )
