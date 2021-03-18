@@ -103,7 +103,7 @@ class Grader:
             report += strategy.grade()
             html_args['rubric_type'] = "Test runs"
 
-        feedback = self.render_failure_message(document, sheet_name, rubric.fail_msg)
+        feedback = self.render_failure_message(document, sheet_name, rubric.fail_msg) if rubric.fail_msg else ""
 
         if not rubric.hidden:
             if rubric.description:
