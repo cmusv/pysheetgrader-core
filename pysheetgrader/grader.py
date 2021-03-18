@@ -103,16 +103,22 @@ class Grader:
             report += strategy.grade()
             html_args['rubric_type'] = "Test runs"
 
+        feedback = self.render_failure_message(document, sheet_name, rubric.fail_msg)
+
         if not rubric.hidden:
             if rubric.description:
                 report.append_line(f"\t- Description: {rubric.description}")
             if rubric.fail_msg and report.submission_score < report.max_possible_score:
-                feedback = self.render_failure_message(document, sheet_name, rubric.fail_msg)
                 report.append_line(
                     f"\t- Feedback: {feedback}")
                 html_args['feedback'] = feedback
 
             report.append_line(f"\t- Score: {report.submission_score} / {report.max_possible_score}")
+
+        if rubric.hidden and report.submission_score < report.max_possible_score:
+            # student does not pass the hidden cell, show hint
+            html_args['hidden_hint'] = {'hint': feedback}
+            report.append_line(f"    #{rubric.cell_id} (Hidden): {feedback}")
 
         html_args['submission_score'] = report.submission_score
         html_args['max_possible_score'] = report.max_possible_score

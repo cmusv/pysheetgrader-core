@@ -47,13 +47,15 @@
                             <td rowspan="{{ test_case_num + 1 }}">{{ rubric['max_possible_score'] }}</td>
                             <td> Test runs</td>
                             <td>
+                                {{ rubric['feedback'] }}
+                            </td>
+                            <td>
                                 {% if rubric['all_test_pass'] %}
                                     All test cases pass!
                                 {% else %}
                                     At least one of the cell tests fail: all must pass
                                 {% endif %}
                             </td>
-                            <td></td>
                         </tr>
                         {% for test_case in rubric['test_cases'] %}
                             <tr class="{{ 'table-danger' if not test_case['success'] else 'table-success' }}">
@@ -74,10 +76,16 @@
                             <td>{{ rubric['error'] }}</td>
                         </tr>
                     {% endif %}
+                {% elif 'hidden_hint' in rubric %}
+                    <tr class='table-danger'>
+                        <th scope="col">{{ rubric['id'] }}</th>
+                        <td colspan="7"
+                            style="text-align: center; vertical-align: middle;">{{ rubric['hidden_hint']['hint'] }}</td>
+                    </tr>
                 {% endif %}
             {% endfor %}
             <tr class="table-secondary">
-                <td colspan="3">Grade of the sheet: <b>{{ sheet['name'] }}</b></td>
+                <td colspan="3">Grade for sheet: <b>{{ sheet['name'] }}</b></td>
                 <td>{{ sheet['submission_score'] }}</td>
                 <td>{{ sheet['max_possible_score'] }}</td>
             </tr>
