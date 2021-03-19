@@ -28,5 +28,9 @@ HTML_REPORT_OUTPUT_PATH="${HOME}/${ASSIGNMENT_PREFIX}Report.html"
 pysheetgrader $KEY_DOC_PATH $SUB_DOC_PATH --score-output $SCORE_OUTPUT_PATH --report-output $REPORT_OUTPUT_PATH \
   --html-report-output $HTML_REPORT_OUTPUT_PATH --verbose
 
-
-
+# Let student see the HTML report file
+if [ -x "$(vocSaveExecutionDataWorkarea)" ]; then
+  vocSaveExecutionDataWorkarea "${ASSIGNMENT_PREFIX}Report.html"
+else
+  echo "vocSaveExecutionDataWorkarea command not found!"
+fi
