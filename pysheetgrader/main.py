@@ -1,4 +1,4 @@
-import click, os
+import click, os, datetime
 from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.document import Document
 from pysheetgrader.grader import Grader
@@ -78,5 +78,6 @@ def save_html_report(report, output_path):
 
     with open(output_path, 'w') as file:
         template = env.get_template('report.html.jinja')
+        template.globals['now'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M %p')
         rendered = template.render({'html_args': report.report_html_args})
         file.write(rendered)

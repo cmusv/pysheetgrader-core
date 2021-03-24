@@ -8,6 +8,7 @@ from pysheetgrader.grading.strategy.soft import SoftFormulaStrategy
 from pysheetgrader.grading.strategy.test import TestRunStrategy
 
 import re
+import os
 
 
 class Grader:
@@ -37,7 +38,7 @@ class Grader:
         :return: GradingReport instance of the grade.
         """
         report = GradingReport(GradingReportType.ASSIGNMENT)
-        report.report_html_args = {'name': document.path, 'sheets': []}
+        report.report_html_args = {'name': os.path.basename(document.path), 'sheets': []}
         report.append_line(f"========== START GRADING PROCESS ==========")
 
         for sheet_name in self.grading_sheet_names:

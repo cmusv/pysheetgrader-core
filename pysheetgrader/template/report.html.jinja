@@ -13,6 +13,7 @@
 
 <div class="container">
     <h5>Grade report for <code>{{ html_args['name'] }}</code></h5>
+    <h6>Time: {{ now }}</h6>
 
     {% if html_args['sheets'] | length == 0 %}
         <h5 class="text-muted">There is no sheet to be graded.</h5>
