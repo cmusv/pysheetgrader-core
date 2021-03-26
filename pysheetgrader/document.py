@@ -58,6 +58,55 @@ class Document:
             sheet_names.extend([cell.value for cell in row])
 
         return sheet_names
+    def get_minimum_work(self):
+        """
+        Returns ordered list of sheet names to be graded. Will return an empty string if the `is_valid_key` is False.
+        :return: List of String.
+        """
+        # Early return
+        if not self.is_valid_key():
+            return []
+
+        minimum_threshold = []
+        order_sheet = self.formula_wb[self.GRADING_ORDER_SHEET_NAME]
+
+        # Assumptions of the order sheet
+        # 1. The scoring column is always on B. (min_col=2, max_col=2)
+        # 2. The scoring column always has a header (min_row=2)
+        # 3. The scoring column is always in order
+        for row in order_sheet.iter_rows(min_col=3, max_col=3, min_row=2):
+            # Assuming this for-loop will only be executed for B column
+            # And the cell always have the valid sheet name.
+            temp = [cell.value for cell in row]
+            #print("temp: ", temp)
+            if temp[0] is None:
+                minimum_threshold.extend([0])
+            else:
+                minimum_threshold.extend(temp)
+
+        return minimum_threshold
+    def get_minimum_work_feedback(self):
+        """
+        Returns ordered list of sheet names to be graded. Will return an empty string if the `is_valid_key` is False.
+        :return: List of String.
+        """
+        # Early return
+        if not self.is_valid_key():
+            return []
+
+        minimum_feedback = []
+        order_sheet = self.formula_wb[self.GRADING_ORDER_SHEET_NAME]
+
+        # Assumptions of the order sheet
+        # 1. The scoring column is always on B. (min_col=2, max_col=2)
+        # 2. The scoring column always has a header (min_row=2)
+        # 3. The scoring column is always in order
+        for row in order_sheet.iter_rows(min_col=4, max_col=4, min_row=2):
+            # Assuming this for-loop will only be executed for B column
+            # And the cell always have the valid sheet name.
+            minimum_feedback.extend([cell.value for cell in row])
+
+        return minimum_feedback
 
     def close(self):
         """

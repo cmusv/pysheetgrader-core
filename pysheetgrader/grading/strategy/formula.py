@@ -15,13 +15,15 @@ class NaiveFormulaStrategy(BaseStrategy):
         report = self.create_initial_report()
 
         # Retrieving sheets
+        report_copy = []
         try:
             key_sheet = self.key_document.formula_wb[self.sheet_name]
             sub_sheet = self.sub_document.formula_wb[self.sheet_name]
         except Exception as exc:
-            report.append_line(f"{self.report_line_prefix}{exc}")
+            #report.append_line(f"{self.report_line_prefix}{exc}")
+            report_copy.append(f"{self.report_line_prefix}{exc}")
             report.report_html_args['error'] = exc
-            return report
+            return report, report_copy
 
         # Grading cells
         cell_coord = self.grading_rubric.cell_coord
@@ -41,12 +43,13 @@ class NaiveFormulaStrategy(BaseStrategy):
                     report.submission_score = self.grading_rubric.score
                     break
 
-            return report
+            return report, report_copy
         except Exception as exc:
             # TODO: Revisit whether we should print the comparison key value here.
             #   It might leak the answers to the students, though.
-            report.append_line(f"{self.report_line_prefix}Error: {exc}")
+            #report.append_line(f"{self.report_line_prefix}Error: {exc}")
+            report_copy.append(f"{self.report_line_prefix}Error: {exc}")
             report.report_html_args['error'] = f"Error: {exc}"
-            return report
+            return report, report_copy
 
 
