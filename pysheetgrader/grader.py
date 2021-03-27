@@ -31,9 +31,9 @@ class Grader:
         self.key_document = key_document
         self.grading_sheet_names = key_document.grading_sheet_names()
         self.minimum_work = key_document.get_minimum_work()
-        print("minimum_work: ", self.minimum_work)
+        #print("minimum_work: ", self.minimum_work)
         self.minimum_work_feedback = key_document.get_minimum_work_feedback()
-        print("feedback min: ", self.minimum_work_feedback)
+        #print("feedback min: ", self.minimum_work_feedback)
 
     def grade(self, document):
         """
@@ -81,6 +81,7 @@ class Grader:
                            f"{report.submission_score} / {report.max_possible_score}")
         else:
             report.append_line(f"Score for {sheet_name} sheet:{self.minimum_work_feedback[index]}")
+            report.submission_score = 0
         report.report_html_args['submission_score'] = report.submission_score
         report.report_html_args['max_possible_score'] = report.max_possible_score
         return report
