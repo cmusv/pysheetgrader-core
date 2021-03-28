@@ -14,13 +14,11 @@ class SoftFormulaStrategy(ConstantStrategy):
         report = self.create_initial_report()
 
         # Retrieving sheets
-        report_copy = []
         try:
             key_sheet = self.key_document.formula_wb[self.sheet_name]
             sub_sheet = self.sub_document.formula_wb[self.sheet_name]
         except Exception as exc:
-            #report.append_line(f"{self.report_line_prefix}{exc}")
-            report_copy.append(f"{self.report_line_prefix}{exc}")
+            report.append_line(f"{self.report_line_prefix}{exc}")
             report.report_html_args['error'] = exc
             return report
 
@@ -36,21 +34,17 @@ class SoftFormulaStrategy(ConstantStrategy):
             for key_coord in self.grading_rubric.get_all_cell_coord():
                 curr_cell_value = sub_sheet[key_coord].value
                 if len(curr_cell_value) == 1 and curr_cell_value[0] == '=':
-                    #report.append_line(f"\t- Formula is missing.")
-                    report_copy.append(f"\t- Formula is missing.")
-                    return report, report_copy
+                    report.append_line(f"\t- Formula is missing.")
+                    return report
                 if any(c.isalpha() for c in curr_cell_value):
-                    # report.append_line(f"\t- Found Formula: {curr_cell_value}")
-                    report_copy.append(f"\t- Found Formula: {curr_cell_value}")
-                    return super().grade(), report_copy
+                    report.append_line(f"\t- Found Formula: {curr_cell_value}")
+                    return super().grade()
                 else:
-                    #report.append_line(f"\t- Formula is missing.")
-                    report_copy.append(f"\t- Formula is missing.")
-                    return report, report_copy
+                    report.append_line(f"\t- Formula is missing.")
+                    return report
         except Exception as exc:
             # TODO: Revisit whether we should print the comparison key value here.
             #   It might leak the answers to the students, though.
-            #report.append_line(f"{self.report_line_prefix}Error: {exc}")
-            report_copy.append(f"{self.report_line_prefix}Error: {exc}")
+            report.append_line(f"{self.report_line_prefix}Error: {exc}")
             report.report_html_args['error'] = f"Error: {exc}"
-            return report, report_copy
+            return report

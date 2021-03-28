@@ -13,14 +13,13 @@ class TestRunStrategy(BaseStrategy):
     def grade(self):
         report = self.create_initial_report()
         html_args = {'test_cases': [], 'all_test_pass': False}
-        report_copy = []
+
         # Retrieving sheets
         try:
             sub_sheet = self.sub_document.formula_wb[self.sheet_name]
         except Exception as exc:
-            #report.append_line(f"{self.report_line_prefix}{exc}")
-            report_copy.append(f"{self.report_line_prefix}{exc}")
-            return report, report_copy
+            report.append_line(f"{self.report_line_prefix}{exc}")
+            return report
 
         # Grading cells
         cell_coord = self.grading_rubric.cell_coord
@@ -50,8 +49,8 @@ class TestRunStrategy(BaseStrategy):
                 test_case_html_args['error'] = result_suffix
 
             if not self.grading_rubric.hidden:
-                #report.append_line(f"{self.report_line_prefix}- {test_case.name}: {result_suffix}")
-                report_copy.append(f"{self.report_line_prefix}- {test_case.name}: {result_suffix}")
+                report.append_line(f"{self.report_line_prefix}- {test_case.name}: {result_suffix}")
+
             html_args['test_cases'].append(test_case_html_args)
 
         if all_test_pass:
@@ -59,7 +58,7 @@ class TestRunStrategy(BaseStrategy):
         html_args['all_test_pass'] = all_test_pass
 
         report.report_html_args = html_args
-        return report, report_copy
+        return report
 
     def test_run_match(self, test_case: GradingTestCase, sub_raw_formula: str):
         """
