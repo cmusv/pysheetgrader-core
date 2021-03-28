@@ -20,8 +20,6 @@ class GradingReport:
         - print_appended_lines: Prints the appended line passed to the `append_line()` method. Defaults to `False`.
     """
 
-    print_appended_lines = False
-
     def __init__(self, t: GradingReportType):
         self.submission_score = 0
         self.max_possible_score = 0
@@ -61,5 +59,11 @@ class GradingReport:
         :param string_line: String instance.
         """
         self.report_lines.append(string_line + "\n")
-        if self.print_appended_lines:
-            print(string_line)
+
+    def print_lines(self):
+        """
+        Print all lines in this report
+        :return: None
+        """
+        for line in self.report_lines:
+            print(line, end='')

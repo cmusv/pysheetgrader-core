@@ -60,12 +60,25 @@ class Grader:
         :return: GradingReport instance of the grade for the sheet.
         """
         report = GradingReport(GradingReportType.SHEET)
-        report.report_html_args = {'name': sheet.name, 'rubrics': []}
+        report.report_html_args = {'name': sheet.name, 'rubrics': [], 'minimum_work_reached': True,
+                                   'minimum_work': sheet.minimum_work,
+                                   'minimum_work_feedback': sheet.feedback,
+                                   'submission_score': 0,
+                                   'max_possible_score': 0}
+
         report.append_line(f"\nGrading for sheet: {sheet.name}")
         rubrics = GradingRubric.create_rubrics_for_sheet(self.key_document, sheet)
 
         for r in rubrics:
             report += self.grade_sheet_by_rubric(document, sheet, r)
+
+        if report.submission_score < sheet.minimum_work:
+            # If the students don't give an assignment a real try,
+            # we don't want to give any feedback or provide a grade.
+            report.submission_score = 0.0
+            report.report_lines = report.report_lines[:1]
+            report.report_html_args['minimum_work_reached'] = False
+            report.append_line(f"Minimum work ({sheet.minimum_work}) not reached: {sheet.feedback}")
 
         report.append_line(f"Score for {sheet.name} sheet: "
                            f"{report.submission_score} / {report.max_possible_score}")
