@@ -48,5 +48,3 @@ class NaiveFormulaStrategy(BaseStrategy):
             report.append_line(f"{self.report_line_prefix}Error: {exc}")
             report.report_html_args['error'] = f"Error: {exc}"
             return report
-
-

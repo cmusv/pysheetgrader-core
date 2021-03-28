@@ -13,6 +13,7 @@ class TestRunStrategy(BaseStrategy):
     def grade(self):
         report = self.create_initial_report()
         html_args = {'test_cases': [], 'all_test_pass': False}
+
         # Retrieving sheets
         try:
             sub_sheet = self.sub_document.formula_wb[self.sheet_name]
@@ -49,6 +50,7 @@ class TestRunStrategy(BaseStrategy):
 
             if not self.grading_rubric.hidden:
                 report.append_line(f"{self.report_line_prefix}- {test_case.name}: {result_suffix}")
+
             html_args['test_cases'].append(test_case_html_args)
 
         if all_test_pass:

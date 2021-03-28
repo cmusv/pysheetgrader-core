@@ -26,9 +26,11 @@ def cli(key_document_path, submission_document_path, score_output, report_output
     key_doc = Document(key_document_path, read_only=False)
     sub_doc = Document(submission_document_path, read_only=True)
 
-    GradingReport.print_appended_lines = verbose
     grader = Grader(key_doc)
     report = grader.grade(sub_doc)
+
+    if verbose:
+        report.print_lines()
 
     print(f"Grade of the submission:\t{report.submission_score} / {report.max_possible_score}")
 

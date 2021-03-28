@@ -1,3 +1,5 @@
+from pysheetgrader.sheet import Sheet
+
 from openpyxl import load_workbook
 
 
@@ -36,28 +38,33 @@ class Document:
         """
         return self.GRADING_ORDER_SHEET_NAME in self.formula_wb.sheetnames
 
-    def grading_sheet_names(self):
+    def get_grading_sheets(self) -> [Sheet]:
         """
-        Returns ordered list of sheet names to be graded. Will return an empty string if the `is_valid_key` is False.
-        :return: List of String.
+        Returns ordered list of sheets to be graded (not including the GradingOrderSheet).
+        Will return an empty array if the `is_valid_key` is False.
+
+        :return: List of Sheet.
         """
+
         # Early return
         if not self.is_valid_key():
             return []
 
-        sheet_names = []
+        sheets = []
         order_sheet = self.formula_wb[self.GRADING_ORDER_SHEET_NAME]
 
         # Assumptions of the order sheet
-        # 1. The scoring column is always on B. (min_col=2, max_col=2)
+        # 1a. The scoring column is on B is the sheet name. (min_col=2, max_col=2, required)
+        # 1b. The scoring column is on C is the minimum work. (min_col=3, max_col=3, optional, default 0)
+        # 1c. The scoring column is on D is the feedback when not achieving minimum work.
+        # (min_col=4, max_col=4, optional, default "")
         # 2. The scoring column always has a header (min_row=2)
         # 3. The scoring column is always in order
-        for row in order_sheet.iter_rows(min_col=2, max_col=2, min_row=2):
-            # Assuming this for-loop will only be executed for B column
-            # And the cell always have the valid sheet name.
-            sheet_names.extend([cell.value for cell in row])
+        for row in order_sheet.iter_rows(min_col=2, max_col=4, min_row=2):
+            name, minimum_work, feedback = row
+            sheets.append(Sheet(name.value, minimum_work.value, feedback.value))
 
-        return sheet_names
+        return sheets
 
     def close(self):
         """

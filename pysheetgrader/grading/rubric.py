@@ -1,4 +1,6 @@
+from pysheetgrader.sheet import Sheet
 from pysheetgrader.grading.test_case import GradingTestCase
+
 from openpyxl.worksheet.worksheet import Worksheet
 from pysheetgrader.document import Document
 from typing import List
@@ -86,21 +88,21 @@ class GradingRubric:
         return result
 
     @staticmethod
-    def create_rubrics_for_sheet(key_document, sheet_name):
+    def create_rubrics_for_sheet(key_document, sheet: Sheet):
         """
         Create ordered list of GradingRubric instance from the passed `sheet_name` of the `key_document`.
         Will return empty list of the passed key_document is invalid or doesn't have rubrics in the passed sheet.
 
         :param key_document: Valid Document instance.
-        :param sheet_name: String value of the sheet name
+        :param sheet: The Sheet object that represents the sheet to be graded
         :return: List of GradingRubric.
         """
         # Sanity check
         if not key_document or not key_document.is_valid_key():
             return []
         try:
-            order_sheet = key_document.formula_wb[sheet_name + "_CheckOrder"]
-            key_sheet = key_document.formula_wb[sheet_name]
+            order_sheet = key_document.formula_wb[sheet.name + "_CheckOrder"]
+            key_sheet = key_document.formula_wb[sheet.name]
         except KeyError:
             return []
 
