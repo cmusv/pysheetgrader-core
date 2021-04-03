@@ -29,13 +29,14 @@ def get_excel_formula_lambdas():
     # This is just a sample.
 
     roundup_f = implemented_function('roundup', lambda number, digits: roundup(number, digits))
-
-    x, y = symbols("x y")
+    excel_if = implemented_function('execl_if', lambda cond, first, second: first if cond else second)
+    x, y, z = symbols("x y z")
     ___excel_formula_lambdas = {
         'sum': sympy.Add,
         'max': sympy.Max,
         'min': sympy.Min,
-        'roundup': lambdify((x, y), roundup_f(x, y))
+        'excel_if': lambdify((x, y, z), excel_if(x, y, z)),
+        'roundup': lambdify((x, y), roundup_f(x, y)),
     }
 
     return ___excel_formula_lambdas

@@ -75,6 +75,9 @@ class TestRunStrategy(BaseStrategy):
         # Lowercase the inputs and the custom functions, because Sympy supports simple functions out-of-the box
         #   e.g. sqrt, sin
         lowercased_formula = sub_raw_formula.lower()
+        # execl_if should be specified since it conflicts with python's if
+        lowercased_formula = lowercased_formula.replace("if(", "excel_if(")
+
         encoded_inputs = {encode_cell_reference(cell_coord).lower(): raw_inputs[cell_coord]
                           for cell_coord in raw_inputs}
         local_dict = get_excel_formula_lambdas()
