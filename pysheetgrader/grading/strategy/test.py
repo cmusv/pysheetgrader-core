@@ -15,10 +15,8 @@ class TestRunStrategy(BaseStrategy):
         html_args = {'test_cases': [], 'all_test_pass': False}
 
         # Retrieving sheets
-        try:
-            sub_sheet = self.sub_document.formula_wb[self.sheet_name]
-        except Exception as exc:
-            report.append_line(f"{self.report_line_prefix}{exc}")
+        _, sub_sheet = self.try_get_key_and_sub(report)
+        if sub_sheet is None:
             return report
 
         # Grading cells
