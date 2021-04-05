@@ -26,7 +26,7 @@ HTML_REPORT_OUTPUT_PATH="${HOME}/${ASSIGNMENT_PREFIX}Report.html"
 # Execute grading
 
 pysheetgrader $KEY_DOC_PATH $SUB_DOC_PATH --score-output $SCORE_OUTPUT_PATH --report-output $REPORT_OUTPUT_PATH \
-  --html-report-output $HTML_REPORT_OUTPUT_PATH --verbose
+  --html-report-output $HTML_REPORT_OUTPUT_PATH --verbose --ignore-warnings
 
 # Save HTML report file in submission
 

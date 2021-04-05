@@ -1,5 +1,6 @@
 import click, os, datetime
-from pysheetgrader.grading.report import GradingReport
+import warnings
+
 from pysheetgrader.document import Document
 from pysheetgrader.grader import Grader
 
@@ -15,13 +16,18 @@ from pysheetgrader.grader import Grader
               help="File path where the detailed report will be saved.")
 @click.option('--html-report-output', type=click.Path(writable=True),
               help="File path where the rendered HTML report will be saved.")
-@click.option('-v', '--verbose', is_flag=True)
-def cli(key_document_path, submission_document_path, score_output, report_output, html_report_output, verbose):
+@click.option('-v', '--verbose', is_flag=True, help="Print grading details verbosely in stdout")
+@click.option('-i', '--ignore-warnings', is_flag=True, help="Should suppress warnings from depending modules")
+def cli(key_document_path, submission_document_path, score_output, report_output, html_report_output, verbose,
+        ignore_warnings):
     """ Grades the passed spreadsheet in SUBMISSION_DOCUMENT_PATH using the key spreadsheet from KEY_DOCUMENT_PATH."""
 
     print("PySheetGrader!")
     print(f"Key document path:\t\t{key_document_path}")
     print(f"Submission document path:\t{submission_document_path}")
+
+    if ignore_warnings:
+        warnings.filterwarnings(action='ignore')
 
     key_doc = Document(key_document_path, read_only=False)
     sub_doc = Document(submission_document_path, read_only=True)
