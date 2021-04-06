@@ -5,6 +5,29 @@ from sympy.parsing.sympy_parser import parse_expr
 import re
 
 
+def transform_excel_formula_to_sympy(formula: str) -> str:
+    """
+    Transform the string value of an excel formula and turns it into Sympy friendly format.
+
+    Steps include:
+        1. to lowercase
+
+    :param formula: the string value of an excel formula.
+    :return: the string value of a Sympy friendly formula.
+    """
+    # Lowercase the inputs and the custom functions, because Sympy supports simple functions out-of-the box
+    #   e.g. sqrt, sin
+    lowercased_formula = formula.lower()
+    # execl_if should be specified since it conflicts with python's if
+    lowercased_formula = lowercased_formula.replace("if(", "excel_if(")
+
+    # replace all = except the first one, with == (condition)
+    lowercased_formula = re.sub(r"(?<!=)=(?!=)", '==', lowercased_formula)
+    lowercased_formula = lowercased_formula[1:]
+
+    return lowercased_formula
+
+
 def parse_formula_tokens(formula: str) -> [str]:
     """
     Parse the string tokens from the formula.

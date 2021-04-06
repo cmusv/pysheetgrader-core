@@ -1,7 +1,7 @@
 import unittest
 
 from pysheetgrader.formula_parser import parse_formula_tokens, parse_formula, parse_formula_inputs, \
-    encode_cell_reference, decode_cell_reference
+    encode_cell_reference, decode_cell_reference, transform_excel_formula_to_sympy
 
 from pysheetgrader.custom_excel_formula import get_excel_formula_lambdas
 
@@ -22,6 +22,11 @@ class TestFormulaParser(unittest.TestCase):
         formula = '= excel_if(a2 = "ok", b2, c2)'
         self.assertEqual(parse_formula_inputs(formula), ['a_2', 'b_2', 'c_2'])
         self.assertEqual(parse_formula_inputs(formula, False), ['A2', 'B2', 'C2'])
+
+    def test_transform_excel_formula_to_sympy(self):
+        self.assertEqual(transform_excel_formula_to_sympy('= if(a2 = "ok", b2, c2)'), '= excel_if(a2 == "ok", b2, c2)')
+        self.assertEqual(transform_excel_formula_to_sympy('= if(a2 = "ok", b2 = 3, c2)'), '= excel_if(a2 == "ok", b2 '
+                                                                                          '== 3, c2)')
 
     def test_parse_formula_max(self):
         formula = '= max(b2, b3, b4)'

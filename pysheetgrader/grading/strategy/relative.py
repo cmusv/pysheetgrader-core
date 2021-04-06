@@ -1,5 +1,6 @@
 from pysheetgrader.grading.strategy.base import BaseStrategy
-from pysheetgrader.formula_parser import parse_formula_inputs, parse_formula, encode_cell_reference
+from pysheetgrader.formula_parser import parse_formula_inputs, parse_formula, \
+    encode_cell_reference, transform_excel_formula_to_sympy
 from pysheetgrader.custom_excel_formula import get_excel_formula_lambdas
 
 
@@ -49,14 +50,10 @@ class RelativeStrategy(BaseStrategy):
         :param key_raw_formula: the String value of the relative formula from the Key.
         :return:
         """
-        # Lowercase the inputs and the custom functions, because Sympy supports simple functions out-of-the box
-        #   e.g. sqrt, sin
-        lowercased_formula = key_raw_formula.lower()
-        # execl_if should be specified since it conflicts with python's if
-        lowercased_formula = lowercased_formula.replace("if(", "excel_if(")
+        lowercased_formula = transform_excel_formula_to_sympy(key_raw_formula)
 
         # extract input coordinates
-        input_coords = parse_formula_inputs(lowercased_formula, encoded=False)
+        input_coords = parse_formula_inputs(key_raw_formula, encoded=False)
 
         encoded_inputs = {encode_cell_reference(coord): sub_sheet[coord].value for coord in input_coords}
         local_dict = get_excel_formula_lambdas()
