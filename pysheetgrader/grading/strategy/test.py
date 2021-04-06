@@ -2,6 +2,7 @@ from pysheetgrader.grading.strategy.base import BaseStrategy
 from pysheetgrader.grading.test_case import GradingTestCase
 from pysheetgrader.formula_parser import parse_formula
 from pysheetgrader.formula_parser import encode_cell_reference
+from pysheetgrader.formula_parser import transform_excel_formula_to_sympy
 from pysheetgrader.custom_excel_formula import get_excel_formula_lambdas
 
 
@@ -15,10 +16,8 @@ class TestRunStrategy(BaseStrategy):
         html_args = {'test_cases': [], 'all_test_pass': False}
 
         # Retrieving sheets
-        try:
-            sub_sheet = self.sub_document.formula_wb[self.sheet_name]
-        except Exception as exc:
-            report.append_line(f"{self.report_line_prefix}{exc}")
+        _, sub_sheet = self.try_get_key_and_sub(report)
+        if sub_sheet is None:
             return report
 
         # Grading cells
@@ -72,12 +71,7 @@ class TestRunStrategy(BaseStrategy):
 
         raw_inputs = test_case.inputs
 
-        # Lowercase the inputs and the custom functions, because Sympy supports simple functions out-of-the box
-        #   e.g. sqrt, sin
-        lowercased_formula = sub_raw_formula.lower()
-        # execl_if should be specified since it conflicts with python's if
-        lowercased_formula = lowercased_formula.replace("if(", "excel_if(")
-
+        lowercased_formula = transform_excel_formula_to_sympy(sub_raw_formula)
         encoded_inputs = {encode_cell_reference(cell_coord).lower(): raw_inputs[cell_coord]
                           for cell_coord in raw_inputs}
         local_dict = get_excel_formula_lambdas()

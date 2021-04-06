@@ -14,12 +14,8 @@ class SoftFormulaStrategy(ConstantStrategy):
         report = self.create_initial_report()
 
         # Retrieving sheets
-        try:
-            key_sheet = self.key_document.formula_wb[self.sheet_name]
-            sub_sheet = self.sub_document.formula_wb[self.sheet_name]
-        except Exception as exc:
-            report.append_line(f"{self.report_line_prefix}{exc}")
-            report.report_html_args['error'] = exc
+        _, sub_sheet = self.try_get_key_and_sub(report)
+        if sub_sheet is None:
             return report
 
         # Grading cells

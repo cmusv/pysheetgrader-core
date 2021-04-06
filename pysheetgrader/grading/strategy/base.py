@@ -41,3 +41,63 @@ class BaseStrategy:
         report: GradingReport = GradingReport(GradingReportType.RUBRIC)
         report.max_possible_score += self.grading_rubric.score
         return report
+
+    def get_key_sheet(self):
+        """
+        Retrieve the key sheet from the key document, according to `sheet_name`
+        :return: the key sheet
+        """
+        key_sheet = self.key_document.formula_wb[self.sheet_name]
+        return key_sheet
+
+    def get_sub_sheet(self):
+        """
+        Retrieve the submission sheet from the submission document, according to `sheet_name`
+        :return: the submission sheet
+        """
+        sub_sheet = self.sub_document.formula_wb[self.sheet_name]
+        return sub_sheet
+
+    def try_get_key_and_sub(self, report):
+        """
+        Attempt to load both key and submission sheet according to `sheet_name`. Log any exception if occurs to report.
+        :param report: the report to log any exception
+        :return: the key sheet and submission sheet, None if execption occurs
+        """
+        try:
+            key_sheet = self.get_key_sheet()
+            sub_sheet = self.get_sub_sheet()
+        except Exception as exc:
+            report.append_line(f"{self.report_line_prefix}{exc}")
+            report.report_html_args['error'] = exc
+            return None, None
+        return key_sheet, sub_sheet
+
+    def value_matches(self, key_value, sub_value):
+        """
+        Returns boolean whether the passed `sub_value` match the `key_value`. If both of them are numeric and there's
+        a `constant_delta` in current rubric, it will check if `sub_value` is in the range of `constant_delta`.
+
+        :param key_value: Any value.
+        :param sub_value: Any value.
+        :return: True if they match, False otherwise.
+        """
+
+        # Best case: both are equals by default
+        if key_value == sub_value:
+            return True
+
+        # If both of them are numbers, and there's no constant delta
+        # Directly return False.
+        if self.grading_rubric.constant_delta is None:
+            return False
+
+        delta = self.grading_rubric.constant_delta
+
+        try:
+            key_float = float(key_value)
+            sub_float = float(sub_value)
+            return (key_float - delta) <= sub_float <= (key_float + delta)
+        except Exception:
+            # TODO: Check if we should log an error here.
+            return False
