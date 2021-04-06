@@ -131,6 +131,8 @@ class Grader:
                 report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, relative comparison")
             report += RelativeStrategy(self.key_document, document, sheet.name, rubric,
                                        report_line_prefix="\t").grade()
+            html_args['rubric_type'] = "Relative formula check"
+
         feedback = self.render_failure_message(document, sheet.name, rubric.fail_msg) if rubric.fail_msg else ""
 
         if not rubric.hidden:

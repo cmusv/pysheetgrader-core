@@ -37,7 +37,16 @@ class RelativeStrategy(BaseStrategy):
         # compare submission value and relative evaluation value
         sub_value = sub_sheet[cell_coord].value
         key_value = self.get_relative_value(sub_sheet, key_raw_formula)
+
+        match = False
         if self.value_matches(key_value, sub_value):
+            match = True
+
+        for alt_coord in self.grading_rubric.alt_cells:
+            if self.value_matches(key_sheet[alt_coord].value, sub_value):
+                match = True
+
+        if match:
             report.submission_score += self.grading_rubric.score
 
         return report
