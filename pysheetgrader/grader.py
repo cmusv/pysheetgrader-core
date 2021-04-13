@@ -9,6 +9,7 @@ from pysheetgrader.grading.strategy.formula import NaiveFormulaStrategy
 from pysheetgrader.grading.strategy.soft import SoftFormulaStrategy
 from pysheetgrader.grading.strategy.test import TestRunStrategy
 from pysheetgrader.grading.strategy.relative import RelativeStrategy
+from pysheetgrader.grading.strategy.relative_f import RelativeFormulaStrategy
 
 import re
 import os
@@ -128,10 +129,18 @@ class Grader:
             html_args['rubric_type'] = "Test runs"
         elif rubric.rubric_type == GradingRubricType.RELATIVE:
             if not rubric.hidden:
-                report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, relative comparison")
+                report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, relative comparison (only accept "
+                                   f"constant cell)")
             report += RelativeStrategy(self.key_document, document, sheet.name, rubric,
                                        report_line_prefix="\t").grade()
-            html_args['rubric_type'] = "Relative formula check"
+            html_args['rubric_type'] = "Relative formula check (only accept constant cell)"
+        elif rubric.rubric_type == GradingRubricType.RELATIVE_F:
+            if not rubric.hidden:
+                report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, relative comparison (only accept "
+                                   f"formula cell)")
+            report += RelativeFormulaStrategy(self.key_document, document, sheet.name, rubric,
+                                              report_line_prefix="\t").grade()
+            html_args['rubric_type'] = "Relative formula check (only accept formula cell)"
 
         feedback = self.render_failure_message(document, sheet.name, rubric.fail_msg) if rubric.fail_msg else ""
 

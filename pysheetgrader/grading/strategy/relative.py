@@ -36,8 +36,23 @@ class RelativeStrategy(BaseStrategy):
 
         # compare submission value and relative evaluation value
         sub_value = sub_sheet[cell_coord].value
-        key_value = self.get_relative_value(sub_sheet, key_raw_formula)
+        key_value = self.get_formula_value(sub_sheet, key_raw_formula)
 
+        if self.is_key_sub_match(key_sheet, key_value, sub_value):
+            report.submission_score += self.grading_rubric.score
+
+        return report
+
+    def is_key_sub_match(self, key_sheet, key_value, sub_value):
+        """
+        Does the key value match the submission value? This function also consider
+        the alt_cells and delta, if they are presented in the rubric
+
+        :param key_sheet: the key sheet
+        :param key_value: the evaluated key value for the cell
+        :param sub_value: the evaluated submission value for the cell
+        :return:
+        """
         match = False
         if self.value_matches(key_value, sub_value):
             match = True
@@ -46,12 +61,9 @@ class RelativeStrategy(BaseStrategy):
             if self.value_matches(key_sheet[alt_coord].value, sub_value):
                 match = True
 
-        if match:
-            report.submission_score += self.grading_rubric.score
+        return match
 
-        return report
-
-    def get_relative_value(self, sub_sheet, key_raw_formula: str):
+    def get_formula_value(self, sub_sheet, key_raw_formula: str):
         """
         Evaluate the relative value from student's submission cells, using the formula from the Key cell.
 

@@ -16,6 +16,7 @@ class GradingRubricType(Enum):
     TEST = 3
     SOFT_FORMULA = 4
     RELATIVE = 5
+    RELATIVE_F = 6
 
     @staticmethod
     def type_from_string(value):
@@ -35,6 +36,8 @@ class GradingRubricType(Enum):
             return GradingRubricType.SOFT_FORMULA
         elif value == "relative":
             return GradingRubricType.RELATIVE
+        elif value == "relative_f":
+            return GradingRubricType.RELATIVE_F
         else:
             raise Exception(f"Unsupported rubric type {value}")
 
