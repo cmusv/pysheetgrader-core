@@ -129,11 +129,12 @@ class Grader:
             html_args['rubric_type'] = "Test runs"
         elif rubric.rubric_type == GradingRubricType.RELATIVE:
             if not rubric.hidden:
-                report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, relative comparison (only accept "
-                                   f"constant cell)")
+                report.append_line(
+                    f"    #{rubric.cell_id} Cell {rubric.cell_coord}, relative comparison (accept both "
+                    f"constant and formula cell)")
             report += RelativeStrategy(self.key_document, document, sheet.name, rubric,
                                        report_line_prefix="\t").grade()
-            html_args['rubric_type'] = "Relative formula check (only accept constant cell)"
+            html_args['rubric_type'] = "Relative formula check (accept both constant and formula cell)"
         elif rubric.rubric_type == GradingRubricType.RELATIVE_F:
             if not rubric.hidden:
                 report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, relative comparison (only accept "

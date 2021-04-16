@@ -25,7 +25,34 @@ class RelativeStrategy(BaseStrategy):
     """
 
     def grade(self):
-        raise NotImplementedError("relative rubric has been deprecated, please use relative_f instead")
+
+        report = self.create_initial_report()
+
+        # Retrieving both key and submission document
+        key_sheet, sub_sheet = self.try_get_key_and_sub(report, computed=True)
+        key_sheet_formula, sub_sheet_formula = self.try_get_key_and_sub(report, computed=False)
+
+        # Grading cells
+        cell_coord = self.grading_rubric.cell_coord
+
+        key_raw_formula = key_sheet_formula[cell_coord].value
+        sub_raw_formula = sub_sheet_formula[cell_coord].value
+
+        # compare submission value and relative evaluation value
+        key_value = self.get_formula_value(sub_sheet, key_raw_formula)
+        try:
+            sub_value = self.get_formula_value(sub_sheet, sub_raw_formula)
+        except SyntaxError as exc:
+            # if cannot evaluate student's formula, treat it as a constant string
+            sub_value = sub_sheet[cell_coord].value
+            if self.is_key_sub_match(key_sheet, key_value, sub_value):
+                report.submission_score += self.grading_rubric.score
+            return report
+
+        if self.is_key_sub_match(key_sheet, key_value, sub_value):
+            report.submission_score += self.grading_rubric.score
+
+        return report
 
     def is_key_sub_match(self, key_sheet, key_value, sub_value):
         """
