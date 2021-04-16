@@ -14,7 +14,7 @@ class SoftFormulaStrategy(ConstantStrategy):
         report = self.create_initial_report()
 
         # Retrieving sheets
-        _, sub_sheet = self.try_get_key_and_sub(report)
+        _, sub_sheet = self.try_get_key_and_sub(report, computed=False)
         if sub_sheet is None:
             return report
 

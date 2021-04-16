@@ -16,7 +16,7 @@ class TestRunStrategy(BaseStrategy):
         html_args = {'test_cases': [], 'all_test_pass': False}
 
         # Retrieving sheets
-        _, sub_sheet = self.try_get_key_and_sub(report)
+        _, sub_sheet = self.try_get_key_and_sub(report, computed=False)
         if sub_sheet is None:
             return report
 

@@ -15,7 +15,7 @@ class NaiveFormulaStrategy(BaseStrategy):
         report = self.create_initial_report()
 
         # Retrieving sheets
-        key_sheet, sub_sheet = self.try_get_key_and_sub(report)
+        key_sheet, sub_sheet = self.try_get_key_and_sub(report, computed=False)
         if key_sheet is None:
             return report
 
