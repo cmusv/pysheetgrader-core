@@ -5,7 +5,7 @@ class GradingTestCase:
     Currently only work for a numeric inputs and output.
     """
 
-    def __init__(self, name: str, expected_output: float, inputs: dict, output_delta: float = 0):
+    def __init__(self, name: str, expected_output: float, inputs: dict, output_delta: float = 0, failmsg:str=""):
         """
         Initializer of this class.
         :param name: String value of the test case's name.
@@ -17,3 +17,4 @@ class GradingTestCase:
         self.expected_output = expected_output
         self.output_delta = output_delta
         self.inputs = inputs
+        self.failmsg = failmsg
