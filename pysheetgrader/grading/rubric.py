@@ -167,6 +167,8 @@ class GradingRubric:
         rubric_dict = parsed_comment['rubric'] if 'rubric' in parsed_comment else None
         alt_cells = parsed_comment['alt_cells'] if 'alt_cells' in parsed_comment else []
         test_cases = parsed_comment['test_cases'] if 'test_cases' in parsed_comment else {}
+        fail_msg_tst = parsed_comment['fail'] if 'fail' in parsed_comment else {}
+        test_cases['fail'] = fail_msg_tst
 
         if not rubric_dict:
             raise ValueError(f"No valid rubric found for cell: {cell_coord} in sheet: {key_sheet.title}")
@@ -222,12 +224,13 @@ class GradingRubric:
             output = single_case_dict['output']
             input = single_case_dict['input']
             delta = single_case_dict['delta'] if 'delta' in single_case_dict else 0
+            failmsg = single_case_dict['fail'] if 'fail' in single_case_dict else ""
 
             try:
                 new_case = GradingTestCase(name=case_name,
                                            expected_output=float(output),
                                            inputs=input,
-                                           output_delta=float(delta))
+                                           output_delta=float(delta), failmsg=failmsg)
 
                 test_cases.append(new_case)
             except Exception as exc:
