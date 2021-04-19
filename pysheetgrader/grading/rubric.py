@@ -156,21 +156,16 @@ class GradingRubric:
         try:
             key_cell = key_sheet[cell_coord]
             key_comment = key_cell.comment.text
-            # print("key comment: ", key_comment)
         except Exception:
             raise Exception(f"No rubric note found for cell: {cell_coord} in sheet: {key_sheet.title}")
 
         # Comment parsing
         parsed_comment = yaml.load(key_comment, Loader=yaml.Loader)
-        #print("parsed comment: ", parsed_comment)
         rubric_dict = parsed_comment['rubric'] if 'rubric' in parsed_comment else None
         alt_cells = parsed_comment['alt_cells'] if 'alt_cells' in parsed_comment else []
         test_cases = parsed_comment['test_cases'] if 'test_cases' in parsed_comment else {}
         fail_msg_tst = parsed_comment['fail'] if 'fail' in parsed_comment else {}
         test_cases['fail'] = fail_msg_tst
-        # print("test cases in parsed comment: ", test_cases)
-        # print("fail msg in parsed comment: ", fail_msg_tst)
-        # print("fail msg as input inside create rubric: ", fail_msg_tst)
 
         if not rubric_dict:
             raise ValueError(f"No valid rubric found for cell: {cell_coord} in sheet: {key_sheet.title}")
@@ -216,10 +211,8 @@ class GradingRubric:
         """
 
         test_cases = []
-        # print("raw cases: ", raw_cases)
         for case_name in raw_cases:
             single_case_dict = raw_cases[case_name]
-            # print("dictionary test case: ", single_case_dict)
 
             # Mandatory key check
             if 'output' not in single_case_dict or 'input' not in single_case_dict:
@@ -229,7 +222,6 @@ class GradingRubric:
             input = single_case_dict['input']
             delta = single_case_dict['delta'] if 'delta' in single_case_dict else 0
             failmsg = single_case_dict['fail'] if 'fail' in single_case_dict else ""
-            # print("failmsg inside test case from dict: ", failmsg)
 
             try:
                 new_case = GradingTestCase(name=case_name,

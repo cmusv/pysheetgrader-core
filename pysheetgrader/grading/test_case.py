@@ -1,11 +1,10 @@
-
 class GradingTestCase:
     """
     Represents a test case for the formula inside of a cell.
     Currently only work for a numeric inputs and output.
     """
 
-    def __init__(self, name: str, expected_output: float, inputs: dict, output_delta: float = 0, failmsg:str=""):
+    def __init__(self, name: str, expected_output: float, inputs: dict, output_delta: float = 0, failmsg: str = ""):
         """
         Initializer of this class.
         :param name: String value of the test case's name.

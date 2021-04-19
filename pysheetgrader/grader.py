@@ -126,7 +126,6 @@ class Grader:
             report += TestRunStrategy(self.key_document, document, sheet.name, rubric,
                                       report_line_prefix="\t\t").grade()
             html_args['rubric_type'] = "Test runs"
-            # print("********Test Rubric*******: ", rubric.test_cases.)
         elif rubric.rubric_type == GradingRubricType.RELATIVE:
             if not rubric.hidden:
                 report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, relative comparison")
@@ -135,7 +134,6 @@ class Grader:
             html_args['rubric_type'] = "Relative formula check"
 
         feedback = self.render_failure_message(document, sheet.name, rubric.fail_msg) if rubric.fail_msg else ""
-        # print("feedback in grader: ", feedback)
 
         if not rubric.hidden:
             if rubric.description:
