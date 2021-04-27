@@ -41,6 +41,8 @@ class RelativeStrategy(BaseStrategy):
         # compare submission value and relative evaluation value
         key_value = self.get_formula_value(sub_sheet, key_raw_formula)
         try:
+            if not sub_raw_formula:
+                raise SyntaxError("submission cell value is empty")
             sub_value = self.get_formula_value(sub_sheet, sub_raw_formula)
         except SyntaxError as exc:
             # if cannot evaluate student's formula, treat it as a constant string
