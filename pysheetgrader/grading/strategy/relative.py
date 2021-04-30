@@ -27,7 +27,6 @@ class RelativeStrategy(BaseStrategy):
     """
 
     def grade(self):
-
         report = self.create_initial_report()
 
         # Retrieving both key and submission document
@@ -36,26 +35,14 @@ class RelativeStrategy(BaseStrategy):
 
         # Grading cells
         cell_coord = self.grading_rubric.cell_coord
+        key_value = key_sheet[cell_coord].value
+        sub_value = sub_sheet[cell_coord].value
 
         key_raw_formula = key_sheet_formula[cell_coord].value
         sub_raw_formula = sub_sheet_formula[cell_coord].value
 
         # compare submission value and relative evaluation value
         key_value = self.get_formula_value(sub_sheet, key_raw_formula)
-        try:
-            if not sub_raw_formula:
-                raise SyntaxError("submission cell value is empty")
-            sub_value = self.get_formula_value(sub_sheet, sub_raw_formula)
-
-            if not self.is_key_sub_match(key_sheet, key_value, sub_value):
-                raise SyntaxError("wrong if evaluates submission as formula, fallback to the computed value")
-        except (SyntaxError, SympifyError) as exc:
-            # if cannot evaluate student's formula, treat it as a constant string
-            sub_value = sub_sheet[cell_coord].value
-            if self.is_key_sub_match(key_sheet, key_value, sub_value):
-                report.submission_score += self.grading_rubric.score
-            return report
-
         if self.is_key_sub_match(key_sheet, key_value, sub_value):
             report.submission_score += self.grading_rubric.score
 

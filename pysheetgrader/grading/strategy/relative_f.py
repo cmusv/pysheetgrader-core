@@ -30,11 +30,6 @@ class RelativeFormulaStrategy(RelativeStrategy):
 
         # compare submission value and relative evaluation value
         key_value = self.get_formula_value(sub_sheet, key_raw_formula)
-        try:
-            sub_value = self.get_formula_value(sub_sheet, sub_raw_formula)
-        except (SyntaxError, SympifyError) as exc:
-            # do not grant score if cannot evaluate student's formula
-            return report
 
         if self.is_key_sub_match(key_sheet, key_value, sub_value):
             report.submission_score += self.grading_rubric.score
