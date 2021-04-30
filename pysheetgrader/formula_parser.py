@@ -71,7 +71,7 @@ def parse_formula_inputs(formula: str, encoded: bool = True) -> [str]:
     tokens = parse_formula_tokens(formula)
     inputs = []
     for token in tokens:
-        result = re.match(r"^[a-z]+_\d+$", token)
+        result = re.search(r"[a-z]+_\d+", token)
         if result is not None:
             inputs.append(token if encoded else decode_cell_reference(token))
     return inputs
