@@ -46,6 +46,9 @@ class RelativeStrategy(BaseStrategy):
             if not sub_raw_formula:
                 raise SyntaxError("submission cell value is empty")
             sub_value = self.get_formula_value(sub_sheet, sub_raw_formula)
+
+            if not self.is_key_sub_match(key_sheet, key_value, sub_value):
+                raise SyntaxError("wrong if evaluates submission as formula, fallback to the computed value")
         except (SyntaxError, SympifyError) as exc:
             # if cannot evaluate student's formula, treat it as a constant string
             sub_value = sub_sheet[cell_coord].value
