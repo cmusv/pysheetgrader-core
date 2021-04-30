@@ -73,7 +73,14 @@ def parse_formula_inputs(formula: str, encoded: bool = True) -> [str]:
     for token in tokens:
         result = re.search(r"[a-z]+_\d+", token)
         if result is not None:
-            inputs.append(token if encoded else decode_cell_reference(token))
+            # check if the token is something from the range operator: e.g. b_14,c_14,d_14
+            if "," in token:
+                splits = token.split(",")
+                for split in splits:
+                    inputs.append(split if encoded else decode_cell_reference(split))
+            else:
+                inputs.append(token if encoded else decode_cell_reference(token))
+
     return inputs
 
 
