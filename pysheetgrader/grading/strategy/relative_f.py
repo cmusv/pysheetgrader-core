@@ -1,3 +1,5 @@
+from sympy import SympifyError
+
 from pysheetgrader.grading.strategy.relative import RelativeStrategy
 
 
@@ -30,7 +32,7 @@ class RelativeFormulaStrategy(RelativeStrategy):
         key_value = self.get_formula_value(sub_sheet, key_raw_formula)
         try:
             sub_value = self.get_formula_value(sub_sheet, sub_raw_formula)
-        except SyntaxError as exc:
+        except (SyntaxError, SympifyError) as exc:
             # do not grant score if cannot evaluate student's formula
             return report
 

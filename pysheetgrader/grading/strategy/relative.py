@@ -1,3 +1,5 @@
+from sympy import SympifyError
+
 from pysheetgrader.grading.strategy.base import BaseStrategy
 from pysheetgrader.formula_parser import parse_formula_inputs, parse_formula, \
     encode_cell_reference, transform_excel_formula_to_sympy
@@ -44,7 +46,7 @@ class RelativeStrategy(BaseStrategy):
             if not sub_raw_formula:
                 raise SyntaxError("submission cell value is empty")
             sub_value = self.get_formula_value(sub_sheet, sub_raw_formula)
-        except SyntaxError as exc:
+        except (SyntaxError, SympifyError) as exc:
             # if cannot evaluate student's formula, treat it as a constant string
             sub_value = sub_sheet[cell_coord].value
             if self.is_key_sub_match(key_sheet, key_value, sub_value):
