@@ -226,6 +226,7 @@ A message could be "if cell A1 = 5 and A2 = 3, this cell value should be 8, but 
 
 Without failure message:
 
+```
 rubric:
 score: 2
 type: test
@@ -236,9 +237,11 @@ delta: 0.1
 input:
 B7: 1000
 B8: 25
+```
 
 With failure message:
 
+```
 rubric:
 score: 2
 type: test
@@ -250,6 +253,7 @@ input:
 B7: 1000
 B8: 25
 fail: "When B7 is $B7 and B8 is $B8, this cell should be $expected, but was $actual!"
+```
 
 If the t1 fails, this message is printed next to in sub report next to the failure. The $ variables refer to input cells, the output cell (expected) and the actual evaluated value (actual). 
 So, in the above example, the output message will be: When B7 is 1000 and B8 is 25, this cell should be 3280.84, but was 2025.34!
