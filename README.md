@@ -206,7 +206,7 @@ Based on the rubric above, the submission will be regarded as right if the outpu
 This feature allows the instructor to specify the minimum score for every sheet and corresponding message in the SheetGradingOrder sheet.
 So, if for any sheet, a student scores less than the minimum value, the student does not get the feedback for questions answered in that sheet. The student instead receieves a message in the report saying "Need more work to recieve a grade". 
 
-Below is an example of the SheetOrder sheet: 
+Below is an example of the SheetGradingOrder sheet: 
 ![Image of the Check Order with Minimum Work](readme_images/min_work_crop.png)
 
 If there is no minimum threshold for any sheet, in that case, 0 is used as the default threshold.
