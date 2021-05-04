@@ -203,7 +203,7 @@ test_cases:
 Based on the rubric above, the submission will be regarded as right if the output falls between `3280.58` to `3281`.
 
 ## Minimum_threshold feature
-This feature allows the instructor to specify the minimum score for every sheet and corresponding message in the OrderSheet sheet.
+This feature allows the instructor to specify the minimum score for every sheet and corresponding message in the SheetGradingOrder sheet.
 So, if for any sheet, a student scores less than the minimum value, the student does not get the feedback for questions answered in that sheet. The student instead receieves a message in the report saying "Did not enough effort to recieve a grade". Below is an example of the SheetOrder sheet: [MasterGalleryKey.xlsx](sample_excel_files/MasterGalleryKey.xlsx)
 If there is no minimum threshold for any sheet, in that case, 0 is used as the default threshold.
 
