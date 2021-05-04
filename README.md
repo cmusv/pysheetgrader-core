@@ -201,6 +201,12 @@ test_cases:
 ```
 
 Based on the rubric above, the submission will be regarded as right if the output falls between `3280.58` to `3281`.
+## Rubric Types
+### Soft Rubric Type
+Introduced a new rubric type soft_formula, which evaluates the cell as follows:
+1) If the cell does not contain a formula, no credit.
+2) If the cell contains a formula, grade it like a constant formula (compare cell's evaluated result to key's evaluated result, does not compare formulas)
+For example, for a given cell the key expects the answer 0.5 using the formula 0.1 * B2. In this case, under soft_formula rubric, the grader checks the submission cell if contains a formula or not. If the formula is present(even if incorrect), it assigns grade based on the actual cell value. So, if the submission cell has 0.5 as the answer and the formula is 0.6* B3(incorrect), the stduent still gets full credit.
 
 ## Minimum Work feature
 This feature allows the instructor to specify the minimum score for every sheet and corresponding message in the SheetGradingOrder sheet.
