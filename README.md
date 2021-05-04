@@ -259,6 +259,18 @@ If the t1 fails, this message is printed next to in sub report next to the failu
 So, in the above example, the output message will be: When B7 is 1000 and B8 is 25, this cell should be 3280.84, but was 2025.34!
 Also, it is important to be careful about indentation while creating this rubric. fail should have the same indentation as input, output and delta. 
 
+## Sub sheet total
+This feature provides subtotals for each sheet in the GradingCheckOrder sheet. It provides the output as the subtotal for each sheet followed by total score for all sheets.
+
+```
+Sheet1
+Total: xx / yy
+
+Sheet2
+Total xx/ yy
+
+Assignment Score: << grand total of all subtotals >>
+```
 
 ## How to setup / reinstall in Vocareum
 
