@@ -106,17 +106,16 @@ Rubric notes of a cell are written in YAML format. It consists of mandatory sect
 
 ### Rubrics
 
-The `rubric` section consists of two children:
+The `rubric` section consists of these parts:
 
 1. `score`, which contains a score (integer or float) that will be awarded when the graded cell is correct in the submission sheet. 
 2. `type`, which determines how this cell will be graded. There are two options: 
-    - `constant`, which will only compare the computed value of the corresponding submission sheet cell to the computed value of this cell. Will utilize the `delta`, if any.
-    - `formula`, which will compare the formula of the corresponding submission sheet cell to the formula given in this cell.
-    - `test`, which will run the formula of the submission sheet cell against the test cases.
-3. `delta`, which will be used as the precision value of the expected value. Will only work for `constant` type.
-    - There are `delta` for test cases too, which will be explained on the `test_cases` section. 
-4. `soft_formula` type, which is described in the sections below.
-5. `relative` or `relative_f` type, which is described in the sections below.
+    - `constant`, which compares the evaluated value of the corresponding submission sheet cell to the evaluated value of the key cell. Will utilize the `delta`for precision, if specified for cells with numeric values.
+    - `formula`,  which compares the formula of the corresponding submission sheet cell to the formula given in this cell.
+    - `test`, which evaluates the formula of the submission sheet cell against the test cases.
+    - `soft_formula`, which requires the submission cell to be a formula, but otherwise performs the comparison with evaluated values as in the `constant` rubric type.
+    - `relative` or `relative_f`, which evaluates the formula in the key cell using values from the submission cells and compares the result to the value in the submission cell. 
+3. `delta`, which will be used as precision in numeric value comparisons. Will only work with `constant` type and `test` rubric types (inside individual test cases).  
 
 ### Alternative cells
 
@@ -206,7 +205,7 @@ Based on the rubric above, the submission will be regarded as right if the outpu
 
 ## Rubric Types
 ### Soft Rubric Type
-The rubric type `soft_formula` is evaluates the kye cell as follows:
+The rubric type `soft_formula` evaluates the key cell as follows:
 1) If the cell does not contain a formula, no credit is given.
 2) If the cell contains a formula, grade it like a constant rubric type (compare cell's evaluated result to key's evaluated result, ignoring the formulas). 
 For example, for a given cell the key expects the answer 0.5 using the formula `0.1* B2`. In this case, under the `soft_formula` rubric, the grader checks the submission cell if contains a formula or not. If the formula is present (even if it is not equivalent to the key cell's formula), it assigns grade based on the actual cell value. So, if the submission cell evaluates to 0.5 through theformula`0.6*B3`, the student still gets full credit.
@@ -214,7 +213,7 @@ For example, for a given cell the key expects the answer 0.5 using the formula `
 ### Relative Formula Type
 Relative formulas are now possible with two rubric types:  `relative` or `relative_f`.
 
-* `relative` compares the evaluation of key's formula using the **submission cells values** (the actual value of cell in the submission). For example, suppose the cell A1 in `A1Key.xlsx` contains a formula `=IF(A2 = "ok", B2, C2)` by the instructor. Inside the submission sheet by the student, suppose A1 contains 13, A2 contains "not_ok", B2 contains 13, and C2 contains 14. The instructor's formula will be evaluated with the student's cell, which gives a value of 14. This evaluated answer will be checked against the submission's evaluated A1 cell value. In this case, A1 doesn't pass the rubric (the actual value is 13, but the expected value is14).  
+* `relative` compares the evaluation of key's formula using the **submission cells values** (the actual values of the key cells referenced in the submission cell). For example, suppose the cell A1 in `A1Key.xlsx` contains a formula `=IF(A2 = "ok", B2, C2)`. Inside the student submission, suppose A1 contains 13, A2 contains "not_ok", B2 contains 13, and C2 contains 14. The instructor's formula will be evaluated with the student submission's cells, which gives a value of 14. This evaluated answer will be checked against the submission's evaluated A1 cell value, which is 13. In this case, A1 doesn't pass the rubric (the actual value is 13, but the expected value is 14).  
 
 * `relative_f` is a stricter version of `relative` rubric. It grades like the `relative`, but additionally it requires the evaluated submission cell to be a formula. If the evaluated cell is a hardcoded constant, the student will not get a score. In the above example, even if the student's A1 contains a hardcoded value 14, the rubric still doesn't pass.
 
@@ -311,9 +310,9 @@ The deprecated setup instruction is [here](./doc/how_to_setup_in_vocareum_deprec
 There are some known issues for current version of PySheetGrader:
 
 1. **Use plain text for writing the rubric note.** Excel's notes are capable for rich text and it will hamper the rubric parsing process. When writing a new note, it is possible for us to just write plain YAML text - but copy and pasting from a rubric to another might end up copying the formatting information too. It is recommended to copy the original rubric note to a plain text editor (e.g., Sublime Text or VSCode), then re-copy the rubric to a new note. Hakan's notes/tips: (A) To copy rubrics, copy the cell and use Edit > Paste Special > Comments, which copies the cell note as well as comments. (B) If you add a rubric with Right-Click > New Note, the author, if defined, is by default typset in bold (rich text), so make sure to delete this rich-text part otherwise rubric doesn't work. Deleting the author simply by backspacing here doesn't work: the whole rubric is then typset in bold!
-2. **Inability to parse other sheet references.** Currently, PySheetGrader can only parse a formula that refers the cells within the same sheet. It might break if it parses a cell that refers another sheet. To implement this function, we might to find the proper representation of another sheet in a formula. Please update the `parse_formula()` method in `formula_parser.py` when it is ready to be updated.  
-3. **Limited support for running Excel formulas.** By default, PySheetGrader will be able to do naive unknown formula comparison using Sympy, but there are cases where we need to rely on unit tests. To do so, we need to add custom implementation of Excel formulas through the `get_excel_formula_lambdas()` method inside the `pysheetgrader/custom_excel_formula.py`. The file provides currently-implemented sample methods and references to do so.
-4. **Excel built-in functions with a "." in their names (e.g., "T.INV") are not working.** Sounds like and easy fix. 
+2. **Inability to parse another sheet's references.** Currently, PySheetGrader can only parse a formula that refers the cells within the same sheet. It might break if it parses a cell that refers another sheet. To implement this function, we might to find the proper representation of another sheet in a formula. Please update the `parse_formula()` method in `formula_parser.py` when it is ready to be updated.  
+4. **Limited support for running Excel formulas.** By default, PySheetGrader will be able to do naive unknown formula comparison using Sympy, but there are cases where we may need to rely on unit tests. To do so, we need to add custom implementation of Excel formulas through the `get_excel_formula_lambdas()` method inside the `pysheetgrader/custom_excel_formula.py`. The file provides currently-implemented sample methods and references to do so.
+5. **Excel built-in functions with a "." in their names (e.g., "T.INV") are not working.** Note: Sounds like and easy fix. 
 
 ## Possible improvements
 
