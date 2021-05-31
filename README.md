@@ -206,19 +206,19 @@ Based on the rubric above, the submission will be regarded as right if the outpu
 
 ## Rubric Types
 ### Soft Rubric Type
-Introduced a new rubric type `soft_formula`, which evaluates the cell as follows:
-1) If the cell does not contain a formula, no credit.
-2) If the cell contains a formula, grade it like a constant formula (compare cell's evaluated result to key's evaluated result, does not compare formulas)
-For example, for a given cell the key expects the answer 0.5 using the formula 0.1 * B2. In this case, under soft_formula rubric, the grader checks the submission cell if contains a formula or not. If the formula is present(even if incorrect), it assigns grade based on the actual cell value. So, if the submission cell has 0.5 as the answer, and the formula is 0.6* B3(incorrect), the student still gets full credit.
+The rubric type `soft_formula` is evaluates the kye cell as follows:
+1) If the cell does not contain a formula, no credit is given.
+2) If the cell contains a formula, grade it like a constant rubric type (compare cell's evaluated result to key's evaluated result, ignoring the formulas). 
+For example, for a given cell the key expects the answer 0.5 using the formula `0.1* B2`. In this case, under the `soft_formula` rubric, the grader checks the submission cell if contains a formula or not. If the formula is present (even if it is not equivalent to the key cell's formula), it assigns grade based on the actual cell value. So, if the submission cell evaluates to 0.5 through theformula`0.6*B3`, the student still gets full credit.
 
 ### Relative Formula Type
-Introduced a new rubric type `relative` or `relative_f`.
+Relative formulas are now possible with two rubric types:  `relative` or `relative_f`.
 
-* `relative` compares the evaluation of key's formula using the **submission cells values** (the actual value of cell in the submission). For example, suppose the cell A1 in `A1Key.xlsx` contains a formula `=IF(A2 = "ok", B2, C2)` by the instructor. Inside the submission sheet by the student, suppose A1 contains 13, A2 contains "not_ok", B2 contains 13, and C2 contains 14. The instructor's formula will be evaluating with the student's cell which gives a value of 14. The evaluated answer will be checked against the submission's A1 cell. In this case, A1 doesn't pass (actual 13, expected 14).  
+* `relative` compares the evaluation of key's formula using the **submission cells values** (the actual value of cell in the submission). For example, suppose the cell A1 in `A1Key.xlsx` contains a formula `=IF(A2 = "ok", B2, C2)` by the instructor. Inside the submission sheet by the student, suppose A1 contains 13, A2 contains "not_ok", B2 contains 13, and C2 contains 14. The instructor's formula will be evaluated with the student's cell, which gives a value of 14. This evaluated answer will be checked against the submission's evaluated A1 cell value. In this case, A1 doesn't pass the rubric (the actual value is 13, but the expected value is14).  
 
-* `relative_f` is a stricter version of `relative` rubric. It grades like the `relative`, but additional it requires the evaluated submission cell to be a formula. If the evaluated cell is a hardcoded constant, the student will not get score. In the above example, even if the student's A1 contains a hardcoded 14, it still doesn't pass.
+* `relative_f` is a stricter version of `relative` rubric. It grades like the `relative`, but additionally it requires the evaluated submission cell to be a formula. If the evaluated cell is a hardcoded constant, the student will not get a score. In the above example, even if the student's A1 contains a hardcoded value 14, the rubric still doesn't pass.
 
-As a side note, both `relative` and `relative_f` supports the `delta` and `alt_coords` rubric modifiers to be more tolerant.
+As a side note, both `relative` and `relative_f` supports the `delta` and `alt_cells` rubric modifiers for flexibility.
 
 ## Minimum Work feature
 This feature allows the instructor to specify the minimum score for every sheet and corresponding message in the SheetGradingOrder sheet.
