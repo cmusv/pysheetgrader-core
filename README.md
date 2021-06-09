@@ -271,7 +271,7 @@ So, in the above example, the output message will be: When B7 is 1000 and B8 is 
 Also, it is important to be careful about indentation while creating this rubric. fail should have the same indentation as input, output and delta. 
 
 ## Sub sheet total
-This feature provides subtotals for each sheet in the GradingCheckOrder sheet. It provides the output as the subtotal for each sheet followed by total score for all sheets.
+This feature provides subtotals for each sheet in the SheetGradingOrder sheet. It provides the output as the subtotal for each sheet followed by total score for all sheets.
 
 ```
 Sheet1
@@ -282,6 +282,9 @@ Total xx/ yy
 
 Assignment Score: << grand total of all subtotals >>
 ```
+## Hidden cells
+
+Some cells can be graded secretively, with student feedback indicating that something went wrong in that cell without specifing which cell caused the problem. In the CheckOrder sheet of a graded tab, there is a decidaced column titled "Hidden" to indicated this. Enter H in this column if the cell is to be graded secretively. 
 
 ## How to setup / reinstall in Vocareum
 
