@@ -239,31 +239,31 @@ Without failure message:
 
 ```
 rubric:
-score: 2
-type: test
+ score: 2
+ type: test
 test_cases:
-t1:
-output: 3280.84
-delta: 0.1
-input:
-B7: 1000
-B8: 25
+ t1:
+  output: 3280.84
+  delta: 0.1
+  input:
+   B7: 1000
+   B8: 25
 ```
 
 With failure message:
 
 ```
 rubric:
-score: 2
-type: test
+ score: 2
+ type: test
 test_cases:
-t1:
-output: 3280.84
-delta: 0.1
-input:
-B7: 1000
-B8: 25
-fail: "When B7 is $B7 and B8 is $B8, this cell should be $expected, but was $actual!"
+ t1:
+  output: 3280.84
+  delta: 0.1
+  input:
+   B7: 1000
+   B8: 25
+  fail: "When B7 is $B7 and B8 is $B8, this cell should be $expected, but was $actual!"
 ```
 
 If the t1 fails, this message is printed next to in sub report next to the failure. The $ variables refer to input cells, the output cell (expected) and the actual evaluated value (actual). 
