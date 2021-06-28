@@ -1,5 +1,7 @@
 # PySheetGrader 
 
+Blog: https://se-edu.org/auto-grading-spreadsheet-assignments/
+
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
 [![pysheetgrader-version](https://img.shields.io/badge/version-1.0-brightgreen.svg)](https://shields.io/)
@@ -239,31 +241,31 @@ Without failure message:
 
 ```
 rubric:
-score: 2
-type: test
+ score: 2
+ type: test
 test_cases:
-t1:
-output: 3280.84
-delta: 0.1
-input:
-B7: 1000
-B8: 25
+ t1:
+  output: 3280.84
+  delta: 0.1
+  input:
+   B7: 1000
+   B8: 25
 ```
 
 With failure message:
 
 ```
 rubric:
-score: 2
-type: test
+ score: 2
+ type: test
 test_cases:
-t1:
-output: 3280.84
-delta: 0.1
-input:
-B7: 1000
-B8: 25
-fail: "When B7 is $B7 and B8 is $B8, this cell should be $expected, but was $actual!"
+ t1:
+  output: 3280.84
+  delta: 0.1
+  input:
+   B7: 1000
+   B8: 25
+  fail: "When B7 is $B7 and B8 is $B8, this cell should be $expected, but was $actual!"
 ```
 
 If the t1 fails, this message is printed next to in sub report next to the failure. The $ variables refer to input cells, the output cell (expected) and the actual evaluated value (actual). 
@@ -271,7 +273,7 @@ So, in the above example, the output message will be: When B7 is 1000 and B8 is 
 Also, it is important to be careful about indentation while creating this rubric. fail should have the same indentation as input, output and delta. 
 
 ## Sub sheet total
-This feature provides subtotals for each sheet in the GradingCheckOrder sheet. It provides the output as the subtotal for each sheet followed by total score for all sheets.
+This feature provides subtotals for each sheet in the SheetGradingOrder sheet. It provides the output as the subtotal for each sheet followed by total score for all sheets.
 
 ```
 Sheet1
@@ -282,6 +284,9 @@ Total xx/ yy
 
 Assignment Score: << grand total of all subtotals >>
 ```
+## Hidden cells
+
+Some cells can be graded secretively, with student feedback indicating that something went wrong in that cell without specifing which cell caused the problem. In the CheckOrder sheet of a graded tab, there is a decidaced column titled "Hidden" to indicated this. Enter H in this column if the cell is to be graded secretively. 
 
 ## How to setup / reinstall in Vocareum
 
@@ -311,8 +316,8 @@ There are some known issues for current version of PySheetGrader:
 
 1. **Use plain text for writing the rubric note.** Excel's notes are capable for rich text and it will hamper the rubric parsing process. When writing a new note, it is possible for us to just write plain YAML text - but copy and pasting from a rubric to another might end up copying the formatting information too. It is recommended to copy the original rubric note to a plain text editor (e.g., Sublime Text or VSCode), then re-copy the rubric to a new note. Hakan's notes/tips: (A) To copy rubrics, copy the cell and use Edit > Paste Special > Comments, which copies the cell note as well as comments. (B) If you add a rubric with Right-Click > New Note, the author, if defined, is by default typset in bold (rich text), so make sure to delete this rich-text part otherwise rubric doesn't work. Deleting the author simply by backspacing here doesn't work: the whole rubric is then typset in bold!
 2. **Inability to parse another sheet's references.** Currently, PySheetGrader can only parse a formula that refers the cells within the same sheet. It might break if it parses a cell that refers another sheet. To implement this function, we might to find the proper representation of another sheet in a formula. Please update the `parse_formula()` method in `formula_parser.py` when it is ready to be updated.  
-4. **Limited support for running Excel formulas.** By default, PySheetGrader will be able to do naive unknown formula comparison using Sympy, but there are cases where we may need to rely on unit tests. To do so, we need to add custom implementation of Excel formulas through the `get_excel_formula_lambdas()` method inside the `pysheetgrader/custom_excel_formula.py`. The file provides currently-implemented sample methods and references to do so.
-5. **Excel built-in functions with a "." in their names (e.g., "T.INV") are not working.** Note: Sounds like and easy fix. 
+4. **Limited support for running Excel formulas.** By default, PySheetGrader will be able to do naive unknown formula comparison using Sympy, but there are cases where we may need to rely on unit tests. To do so, we need to add custom implementation of Excel formulas through the `get_excel_formula_lambdas()` method inside the `pysheetgrader/custom_excel_formula.py`. The file provides currently-implemented sample methods and references to do so. Currently, Excel's `MIN`, `MAX`, and `IF` functions are recognized by PySheetGrader.
+6. **Excel built-in functions with a "." in their names (e.g., "T.INV") are not working.** Note: Sounds like and easy fix. 
 
 ## Possible improvements
 
