@@ -1,6 +1,7 @@
 from openpyxl.formula import Tokenizer
 from openpyxl.formula.tokenizer import Token
 from openpyxl.worksheet.datavalidation import expand_cell_ranges
+from sympy.simplify.simplify import simplify
 from sympy.parsing.sympy_parser import parse_expr
 import re
 
@@ -98,14 +99,14 @@ def parse_formula(formula: str, local_dict: dict = None):
         Again, it is preferred to have lowercased keys and custom functions.
     :return: Sympy expression that can be passed to Sympy's `simplify` method.
     """
-
+    
     if not formula or not isinstance(formula, str):
         raise ValueError(f"Expected formula, got {formula}")
 
     string_tokens = parse_formula_tokens(formula)
     # Lowercase the form, to allow Sympy use built-in functions.
     expanded_form = "".join(string_tokens).lower()
-
+    
     return parse_expr(expanded_form, local_dict=local_dict)
 
 

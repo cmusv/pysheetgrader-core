@@ -39,7 +39,8 @@ class BaseStrategy:
         :return: GradingReport instance.
         """
         report: GradingReport = GradingReport(GradingReportType.RUBRIC)
-        report.max_possible_score += self.grading_rubric.score
+        if self.grading_rubric.grading_nature == 'positive':
+            report.max_possible_score += self.grading_rubric.score
         return report
 
     def get_key_sheet(self, computed=True):

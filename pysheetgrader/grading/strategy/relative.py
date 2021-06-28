@@ -43,9 +43,24 @@ class RelativeStrategy(BaseStrategy):
 
         # compare submission value and relative evaluation value
         key_value = self.get_formula_value(sub_sheet, key_raw_formula)
-        if self.is_key_sub_match(key_sheet, key_value, sub_value):
+        
+        # Using a flag to check alternative cells for negative grading nature
+        checkflag_altcells = False
+        
+        if self.grading_rubric.grading_nature == 'positive':
+            if self.is_key_sub_match(key_sheet, key_value, sub_value):
+                report.submission_score += self.grading_rubric.score
+        elif self.grading_rubric.grading_nature == 'negative':
+            if not self.is_key_sub_match(key_sheet, key_value, sub_value):
+                checkflag_altcells = True
+            else:
+                checkflag_altcells = False
+        else:
+            # TODO: Revisit if we need to print an error here.
+            print("Relative formula Strategy - if new grading nature error needs to be added")
+        
+        if checkflag_altcells and self.grading_rubric.grading_nature == 'negative':
             report.submission_score += self.grading_rubric.score
-
         return report
 
     def is_key_sub_match(self, key_sheet, key_value, sub_value):

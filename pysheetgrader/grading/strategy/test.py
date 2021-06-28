@@ -11,7 +11,10 @@ class TestRunStrategy(BaseStrategy):
     """
     Runs all available test for the corresponding rubric.
     """
-
+    def printTestCase(test_case):
+        print('name: {} \n expected output : {}\n output delta: {}\n inputs: {}\n fail msf: {}'.format(test_case.name,test_case.expected_output,test_case.output_delta
+                                                                                                       , test_case.inputs, test_case.failmsg))
+        
     def grade(self):
         report = self.create_initial_report()
         html_args = {'test_cases': [], 'all_test_pass': False}
@@ -28,22 +31,28 @@ class TestRunStrategy(BaseStrategy):
         # Test runs
         if not self.report_line_prefix:
             self.report_line_prefix = ""
-
+        
+       
         all_test_pass = True
         feedback = None
         for test_case in self.grading_rubric.test_cases:
+            
             significant = len(str(test_case.expected_output).split('.')[-1])
+            
+            
             test_case_html_args = {'success': False, 'error': '', 'feedback': '', 'name': test_case.name}
             result_suffix = "PASS"
             try:
                 result_match, result, lower_range, upper_range = self.test_run_match(test_case, sub_raw_formula)
-                actual_result = round(result, -significant)
+                actual_result = float(str(result))
+                
+                    
                 if not result_match:
                     all_test_pass = False
                     result_suffix = f"FAIL\n{self.report_line_prefix}Expected result between {lower_range} " \
-                                    f"and {upper_range}, got {result} instead"
+                                    f"and {upper_range}, got {actual_result} instead"
                     test_case_html_args['error'] = result_suffix
-                    fail_template = test_case.failmsg.replace("$actual", str(int(actual_result)))
+                    fail_template = test_case.failmsg.replace("$actual", str(actual_result))
                     fail_template = fail_template.replace("$expected", str(test_case.expected_output))
                     feedback = self.failure_message_testcase(self.sub_document, self.sheet_name, fail_template)
                     test_case_html_args['feedback'] = feedback
@@ -86,8 +95,10 @@ class TestRunStrategy(BaseStrategy):
                           for cell_coord in raw_inputs}
         local_dict = get_excel_formula_lambdas()
         local_dict.update(encoded_inputs)
+    
 
         result = parse_formula(lowercased_formula, local_dict=local_dict)
+        
         expected_lower_range = test_case.expected_output
         expected_upper_range = test_case.expected_output
 

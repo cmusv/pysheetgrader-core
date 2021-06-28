@@ -17,6 +17,7 @@ class GradingRubricType(Enum):
     SOFT_FORMULA = 4
     RELATIVE = 5
     RELATIVE_F = 6
+    
 
     @staticmethod
     def type_from_string(value):
@@ -48,7 +49,7 @@ class GradingRubric:
     """
 
     def __init__(self, cell_id: str, cell_coord: str, description: str, hidden: bool, fail_msg: str,
-                 rubric_type: GradingRubricType, score: float, constant_delta: float = 0,
+                 rubric_type: GradingRubricType, score: float, grading_nature: str = 'positive',  constant_delta: float = 0, 
                  alt_cells: List[str] = [], test_cases: List[GradingTestCase] = []):
         """
         Initializer of this class' instance.
@@ -70,6 +71,7 @@ class GradingRubric:
         self.cell_coord = cell_coord
         self.rubric_type = rubric_type
 
+        self.grading_nature = grading_nature
         self.score = score
         self.constant_delta = constant_delta
 
@@ -130,6 +132,7 @@ class GradingRubric:
 
                 r = GradingRubric.create_rubric_from_cell(cell_id, cell_coord,
                                                           cell_description, hidden, fail_msg, key_sheet)
+                
                 rubrics.append(r)
             except Exception as exc:
                 print(f"Exception when creating rubric: {exc}", file=sys.stderr)
@@ -174,6 +177,7 @@ class GradingRubric:
             raise ValueError(f"No valid rubric found for cell: {cell_coord} in sheet: {key_sheet.title}")
 
         # Rubric parsing
+        rubric_grading_nature = rubric_dict['grading'] if 'grading' in rubric_dict else 'positive'
         rubric_score = rubric_dict['score'] if 'score' in rubric_dict else None
         rubric_type = rubric_dict['type'] if 'type' in rubric_dict else None
         rubric_delta = rubric_dict['delta'] if 'delta' in rubric_dict else 0
@@ -183,7 +187,13 @@ class GradingRubric:
             rubric_score = float(rubric_score)
         except Exception:
             raise ValueError(f"Invalid rubric score found for cell: {cell_coord} in sheet: {key_sheet.title}")
+            
+        # Rubric Grading Parse
 
+        if rubric_grading_nature == 'negative' and rubric_score > 0:
+            raise ValueError(f" For neagtive rubric, the score has to be negative in the cell {cell_coord} in sheet: {key_sheet.title}")
+        
+        
         # Rubric type parsing
         if rubric_type is not None:
             rubric_type = GradingRubricType.type_from_string(rubric_type)
@@ -200,8 +210,8 @@ class GradingRubric:
 
         # Rubric test cases
         test_cases = GradingRubric.create_test_cases_from_dict(test_cases)
-
-        return GradingRubric(cell_id, cell_coord, description, hidden, fail_msg, rubric_type, rubric_score,
+        
+        return GradingRubric(cell_id, cell_coord, description, hidden, fail_msg, rubric_type, rubric_score, grading_nature = rubric_grading_nature ,
                              constant_delta=rubric_delta, alt_cells=alt_cells,
                              test_cases=test_cases)
 
