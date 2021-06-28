@@ -119,7 +119,7 @@ The `rubric` section consists of these parts:
     - `relative` or `relative_f`, which evaluates the formula in the key cell using values from the submission cells and compares the result to the value in the submission cell. 
 3. `delta`, which will be used as precision in numeric value comparisons. Will only work with `constant` type and `test` rubric types (inside individual test cases). 
 4. `grading`, which is use to allow negative grading:
-   - `positive`,  If the result matches the key, then no points are removed. If grading is not specified, it is assumed to be positive. 
+   - `positive`,  If the result matches the key, then no points are removed. No feedback is given (green row in HTML report). If grading is not specified, it is assumed to be positive. 
    - `negative`, If the result does not match the key, then negative points are assigned and a feedback is reported in red (in the HTML report)
    - Maximum score for this rubric is 0 
 
