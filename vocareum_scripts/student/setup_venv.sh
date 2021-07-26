@@ -13,7 +13,7 @@ if [ -d "venv" ];
 then
   echo "Folder 'venv' already exists."
 else
-  echo "Folder 'venv' not exist yet. Creating virtual environment in venv."
+  echo "Folder 'venv' does not exist yet. Creating virtual environment in the venv folder."
   python3 -m venv ./venv
 fi
 
