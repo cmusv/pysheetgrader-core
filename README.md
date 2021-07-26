@@ -6,16 +6,6 @@ Blog: https://se-edu.org/auto-grading-spreadsheet-assignments/
 
 [![pysheetgrader-version](https://img.shields.io/badge/version-1.0-brightgreen.svg)](https://shields.io/)
 
-Sections:
-1. [What does PySheetGrader do?](#what-does-pysheetgrader-do)
-2. [How to setup](#how-to-setup)
-3. [How to run](#how-to-run)
-4. [Creating a key document](#creating-a-key-document)
-5. [Creating a rubric note](#creating-a-rubric-note)
-6. [How to setup in Vocareum](#how-to-setup-in-vocareum)
-7. [Known issues](#known-issues)
-8. [Possible improvements](#possible-improvements)
-7. [References](#references)
 
 ## What does PySheetGrader do?
 
@@ -366,6 +356,7 @@ Here are the general steps on setting or updating PySheetGrader in Vocareum for 
 5. On Vocareum console, navigate to the vocaruem library directory by executing `cd $LIB/pysheetgrader-vocareum`.
 6. Run `./deploy_on_vocareum.sh` in the `$LIB/pysheetgrader-vocareum` directory to run the compilation scripts and copy the necessary files to the right course folders. 
 
+
 ### Assignment-wide setup by instructor
 
 For each assignment, these additional steps are necessary: 
@@ -380,10 +371,11 @@ For each assignment, these additional steps are necessary:
 #### Teacher View 
 
 1. Go to the assignment's workspace (`Edit Assignments > Configure Workspace`).
-2. Upload the submission file `[ASSIGNMENT_PREFIX]Submission.xlsx` to the `work` subfolder. 
-3. Run the submission script by selectiong `Submission` from the `Run Scripts` drop-down tab. 
-4. Wait for the submission script to complete. This may take several minutes. 
-5. Check standard output on consolde and the generated reports and grade file under the `work` subfolder: vocStudentSubmissionReport.txt, vocSubmissionReport.txt, vocareum_report.txt, `[ASSIGNMENT_PREFIX]Report.xlsx`, vocareum_grade.csv.
+2. Run `source venv/bin/activate` in the `$LIB/pysheetgrader-vocareum` to activate the Python virtual environment. 
+3. Upload the submission file `[ASSIGNMENT_PREFIX]Submission.xlsx` to the `work` subfolder. 
+4. Run the submission script by selectiong `Submission` from the `Run Scripts` drop-down tab. 
+5. Wait for the submission script to complete. This may take several minutes. 
+6. Check standard output on consolde and the generated reports and grade file under the `work` subfolder: vocStudentSubmissionReport.txt, vocSubmissionReport.txt, vocareum_report.txt, `[ASSIGNMENT_PREFIX]Report.xlsx`, vocareum_grade.csv.
 
 #### Student View
 
