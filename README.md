@@ -106,6 +106,17 @@ The complete sample of a key document is available on the [MasterGalleryKey.xlsx
 
 Rubric notes of a cell are written in YAML format. It consists of mandatory section called `rubric` and optional sections: `alt_cells` and `test_cases`.
 
+### Typsetting rubric notes: known issue with rich text and workarounds 
+
+**Use striclty plain text for entering a rubric note.** 
+
+Excel's cell notes support rich text, and using rich text in rubric notes will crash the rubric parsing process. When writing a new rubric note, by default you will enter plain YAML text, however sometimes Excel will automatically add boilerplate text in rich text to a new cell note. Also be careful with copy-paste: copying the rubric content from an external text editor or another spreadsheet cell and pasting it into a new rubric note may also copy any rich-text formatting. Here are some tips and workarounds:
+
+1. When a rubric note is corrupted by rich text, try coping the rubric content to a plain text editor (e.g., Sublime Text or VSCode) first, delete the faulty rubric note, create a new rubric note, then copy the content back from the plain text editor to the new rubric note. 
+2. To clone a correclty typeset rubric note in an existing cell, simply copy the cell in Excel and use `Edit > Paste Special > Comments` to paste it onto the other cell. This paste command copies the cell note as well as comments, without copying the actual cell contents. 
+3. If you add a rubric with `Right-Click > New Note`, the author, if defined, is by default typset in bold (rich text), so make sure to completely zap this rich-text part otherwise the rubric will not work. Deleting the author simply by backspacing here may not work, and instead the whole rubric may end up being typset in bold!
+ 
+
 ### Rubrics
 
 The `rubric` section consists of these parts:
@@ -339,30 +350,5 @@ The surest way to test the setup and new deployment after publishing an assignme
 
 _The deprecated setup instruction is [here](./doc/how_to_setup_in_vocareum_deprecated.md)_
 
-## Known issues
 
-1. **Use striclty plain text for entering a rubric note.** Excel's cell notes support rich text, and using rich text in rubric notes will crash the rubric parsing process. When writing a new rubric note, by default you will enter plain YAML text, however sometimes Excel will automatically add the author in rich text. Also be careful with copy-paste: copying the rubric content from an external text editor or another spreadsheet cell and pasting it into a new rubric note may also copy any rich-text formatting. When this happens, try coping the rubric content to a plain text editor (e.g., Sublime Text or VSCode) first, delete the faulty rubric note, create a new rubric note, then copy the content back from the plain text editor to the new rubric note. These other strategies also work: (A) to clone a correclty typeset rubric note in another cell, simply copy the cell in Excel and use `Edit > Paste Special > Comments` onto the other cell, which copies the cell note as well as comments, without copying the actual cell contents. Caution: If you add a rubric with `Right-Click > New Note`, the author, if defined, is by default typset in bold (rich text), so make sure to completely zap this rich-text part otherwise the rubric will not work. Deleting the author simply by backspacing here may not work, and instead the whole rubric may end up being typset in bold!
- 
 
-## Possible improvements
-
-There are some features that could be explored further for future versions:
-
-1. **Handle cell shifts in submitted spreadsheets.** Current version of PySheetGrader assumes students' submission will use a certain templates and didn't move them around. To implement this, we might need to find a way to automatically find cell shifting between two sheets. After figuring out the automatic shift detector, we could recover the submitted cells to the original range by utilizing [openpyxl's move_range() method](https://stackoverflow.com/a/61908728/1448626).
-2. **Add comparison feature.** It is common to find assertion or comparison feature in unit test frameworks, such as finding equality or inequality. One could say that current PySheetGrader's implementation only supports the equality part. Perhaps there are needs to add a feature to do different type of comparison and a way to state it in the rubric note, e.g., not equal, greater than, or less than.
-3. **Add automated unit testing.** Currently all the tests for making sure PySheetGrader works correctly are done manually. To help future maintainers, it is desirable to have automated unit testing for positive, negative, and edge cases to ensure all feature works correctly after new changes.
-4. **Add fallback rubric types.** There are some discussions about using test cases when formula comparison is not enough, but current version only allows one rubric type for a cell. We might need to figure out how to define a clean, readable rubric to implement the feature.
-5. **Handle test case runs with different cell references.** Current test case runs only work when the submission cells when the cell references in the formula are defined in the rubric. There might be cases where the cell formula includes cell reference that is not defined in the rubric, and we need to do some sort of detection or replacement algorithm to do handle it properly. Or perhaps, one might tackle this from the perspective of mathematical formula definition.
-6. **Vocareum: Add automated script for copying `shared` folders inside `vocareum_scripts`.** Currently, the content of `shared_scripts` and `shared_asnlib` needs to be copied manually. It is possible to do this through executing shell scripts, but it might need quite some time to do it in clean and proper manner - knowing Vocareum's access privilege might differs on their future updates. NOTE: see item 9 instead. 
-7. **Vocareum: Suppress output in Submission Report as well as Vocareum console not meaningful to students or that should not be visible to students.** There is some console output produced that is visible to students. This is cryptic and not very meaningful, and should probably be suppressed. Also in Submission report the grading report is printed twice. Clean up the output shown to the student. 
-8. **Vocareum: Move submission script to lib folder.** The submission script should be moved to lib folder and just be a one-liner that calls the script from the lib folder (as was done in model-checking and unit testing assignments). This will avoid copying and pasting it for new assignments and allow any improvements to be done once in the lib folder and automatically propogated to all assignments. 
-9. **Improve error handling and reporting.** Right now when something goes wrong, it's not possible to figure out where the mistake happenned. This should be much improved with specific information for, e.g., when a rubric is syntactically wrong, when a graded cell doesn't have a rubric, etc. There could be a sanity-check process before deploying for just vefiying that the key file is correct with all the mistakes listed with descriptive error messages for easy correction. Another example is, if a cell is to graded in CheckOrder sheet, but there is no rubric, this should be reported.  
-10. **Vocareum: Improve performance.** Right now each submission takes 1.5-3 minutes to run. There is a lot of setup involved in the student's workspace before the grading script can run. Can this be improved? 
-12. **Better feedback to students.** Right now feedback to student is rudimentary, too generic, and not specific enough to be useful. This could be improved, for example by allowing custom, more meaningfule and actionable feedback messages in the rubrics when a student cell provides the wrong answer so that the student has a way of improving the solution. In test case and formula rubrics, the cells that should be involved in the formula or test cases could be specified. 
-13. **Better and comprehensive testing.** We need a comprehensive test suite to test all features and corner cases, as well as error reporting. 
- 
-## References
-
-1. Thomas G. Hill. 2004. Excel grader and access grader. SIGCSE Bull. 36, 2 (June 2004), 101–105. DOI: https://doi.org/10.1145/1024338.1024382
-2. James Reichwein, Gregg Rothermel, and Margaret Burnett. 2000. Slicing spreadsheets: an integrated methodology for spreadsheet testing and debugging. In Proceedings of the 2nd conference on Domain-specific languages (DSL '99). Association for Computing Machinery, New York, NY, USA, 25–38. DOI: https://doi.org/10.1145/331960.331968
-3. Meurer A, Smith CP, Paprocki M, Čertík O, Kirpichev SB, Rocklin M, Kumar A, Ivanov S, Moore JK, Singh S, Rathnayake T, Vig S, Granger BE, Muller RP, Bonazzi F, Gupta H, Vats S, Johansson F, Pedregosa F, Curry MJ, Terrel AR, Roučka Š, Saboo A, Fernando I, Kulal S, Cimrman R, Scopatz A. (2017) SymPy: symbolic computing in Python. PeerJ Computer Science 3:e103 https://doi.org/10.7717/peerj-cs.103
