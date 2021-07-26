@@ -110,18 +110,17 @@ Rubric notes of a cell are written in YAML format. It consists of mandatory sect
 
 The `rubric` section consists of these parts:
 
-1. `score`, which contains a score (integer or float) that will be awarded when the graded cell is correct in the submission sheet. 
+1. `score` (an integer or float), which contains a positive value that will be awarded when the graded cell is correct in the submission sheet or contains a negative value that will be deducted when the graded cell is incorrect in the submission sheet. 
 2. `type`, which determines how this cell will be graded. There are two options: 
     - `constant`, which compares the evaluated value of the corresponding submission sheet cell to the evaluated value of the key cell. Will utilize the `delta`for precision, if specified for cells with numeric values.
     - `formula`,  which compares the formula of the corresponding submission sheet cell to the formula given in this cell.
     - `test`, which evaluates the formula of the submission sheet cell against the test cases.
     - `soft_formula`, which requires the submission cell to be a formula, but otherwise performs the comparison with evaluated values as in the `constant` rubric type.
     - `relative` or `relative_f`, which evaluates the formula in the key cell using values from the submission cells and compares the result to the value in the submission cell. 
-3. `delta`, which will be used as precision in numeric value comparisons. Will only work with `constant` type and `test` rubric types (inside individual test cases). 
-4. `grading`, which is use to allow negative grading:
-   - `positive`,  If the result matches the key, then no points are removed. No feedback is given (green row in HTML report). If grading is not specified, it is assumed to be positive. 
-   - `negative`, If the result does not match the key, then negative points are assigned and a feedback is reported in red (in the HTML report)
-   - Maximum score for this rubric is 0 
+3. `delta`, which specifies precision in numeric value comparisons. Will only work with non-formula rubric types when they check numeric calculations; e.g., `constant`, `relative`, `relative_f`, `soft_formula`, and `test` (inside individual test cases) rubric types. 
+4. `grading`, which is used to allow negative grading:
+   - `positive` (default value): if the calculation is correct according to the specified rubric type, then the points specified in the `score` attribute is awarded for the cell, and no feedback is given (green row in the HTML report). Otherwise, no points are awarded and the specified feedback is given (red row in HTML report). If `grading` is unspecified, it is assumed to be `positive`. The rubric's `score` attribute must have a positive value. 
+   - `negative`: if the calculation is correct according to the specified rubric type, then no points are deducted, no feedback is given (green row in the HTML report), and the cell gets the maximum score of 0. Otherwise, the cell receives the negative points specified in the `score` attribute, which are deducted from the total grade, and the specified feedback is given (red row in HTML report). The rubric's `score` attribute must have a negative value, indicating a deduction or penalty. 
 
 ### Alternative cells
 
@@ -284,44 +283,66 @@ Sheet1
 Total: xx / yy
 
 Sheet2
-Total xx/ yy
+Total xx / yy
 
 Assignment Score: << grand total of all subtotals >>
 ```
+
 ## Hidden cells
 
 Some cells can be graded secretively, with student feedback indicating that something went wrong in that cell without specifing which cell caused the problem. In the CheckOrder sheet of a graded tab, there is a decidaced column titled "Hidden" to indicated this. Enter H in this column if the cell is to be graded secretively. 
 
-## How to setup / reinstall in Vocareum
+## How to setup or deploy to Vocareum for a new course
 
-Course-wise, here are the general steps on setting up PySheetGrader in Vocareum:
-1. Teacher sets up PySheetGrader inside Vocareum's teacher workspace
-   * Zip files with `bash ./vocareum_scripts/zip_for_vocareum.sh` from root. This will generate `pysheetgrader-vocareum.zip`
-   * Update `pysheetgrader-vocareum.zip` to `resource/lib` in Vocareum's teacher workspace
-   * In the Vocareum's terminal, go to the uploaded directory by executing `cd $LIB/pysheetgrader-vocareum`.
+### Course-wide setup by instructor
+
+Here are the general steps on setting or updating PySheetGrader in Vocareum for a specific course:
+
+1. Zip files on your local computer with `bash ./vocareum_scripts/zip_for_vocareum.sh` from root. This will generate the file `pysheetgrader-vocareum.zip`.
+2. Go to the course and choose any spreadsheet assignment (if none exists, create a new one). 
+3. Click on `Edit Assignments` and then `Configure Workspace`. This takes you to the `Teacher View` in the assignment's workspace. 
+4. Upload the file `pysheetgrader-vocareum.zip` to the`resource/lib` folder in the assignment's workspace.
+5. On Vocareum console, navigate to the vocaruem library directory by executing `cd $LIB/pysheetgrader-vocareum`.
+6. Run `./deploy_on_vocareum.sh` in the `$LIB/pysheetgrader-vocareum` directory to run the compilation scripts and copy the necessary files to the right course folders. 
+
+### Assignment-wide setup by instructor
+
+For each assignment, these additional steps are necessary: 
+
+1. In the assignment's workspace, set the value of the variable `ASSIGNMENT_PREFIX` in `resource/asnlib/pysheetgrader.config`. This variable contains the prefix that will be used in naming key, submission, and report files. For example `ASSIGNMENT_PREFIX=My`, then the key file must be named `MyKey.xlsx`, the submission file must be named `MySubmission.xlsx`, and the HTML report file will be named `MyReport.html`.   
+2. Upload key file to the folder `resource/asnlib`. The key file must be named `[ASSIGNMENT_PREFIX]Key.xlsx`. 
+3. Copy the `submit.sh` script into the assignment's `scripts` folder from the `/lib/pysheetgrader-vocareum/vocareum_scripts/shared_scripts` folder (or just copy and paste contents into the file `resource/scripts/submit.sh`).
+4. To deploy the changes to the students, click on the `Update*` button. Otherwise changes will be available only for the instructor for testing. 
    
-2. Teacher compiles scripts and copies files
-   * Run `./deploy_on_vocareum.sh` under the `$LIB/pysheetgrader-vocareum` directory
+### To test a new deployment or update 
 
-Assignment-wise, 
-1. Teacher sets up necessary files for each assignment
-   * Configure `ASSIGNMENT_PREFIX` in `resource/asnlib/pysheetgrader.config`
-   * Upload key file `[ASSIGNMENT_PREFIX]Key.xlsx` to `resource/asnlib`
-   * Copy the `submit.sh` script into the assignment's `scripts` folder from the `/lib/pysheetgrader-vocareum/vocareum_scripts/shared_scripts` folder.
-   * Remember to click `Update*` button
-   
-2. Teacher/student submits `[ASSIGNMENT_PREFIX]Submission.xlsx` in the student view
+#### Teacher View 
 
-The deprecated setup instruction is [here](./doc/how_to_setup_in_vocareum_deprecated.md)
+1. Go to the assignment's workspace (`Edit Assignments > Configure Workspace`).
+2. Upload the submission file `[ASSIGNMENT_PREFIX]Submission.xlsx` to the `work` subfolder. 
+3. Run the submission script by selectiong `Submission` from the `Run Scripts` drop-down tab. 
+4. Wait for the submission script to complete. This may take several minutes. 
+5. Check standard output on consolde and the generated reports and grade file under the `work` subfolder: vocStudentSubmissionReport.txt, vocSubmissionReport.txt, vocareum_report.txt, `[ASSIGNMENT_PREFIX]Report.xlsx`, vocareum_grade.csv.
+
+#### Student View
+
+1. Go to the assignment's workspace (`Edit Assignments > Configure Workspace`), and then click on `Student View`. This view emulates what the students see when they are submitting the assignment. 
+2. Upload the submission file `[ASSIGNMENT_PREFIX]Submission.xlsx` to the `work` subfolder. 
+3. Run the submission script by hitting the `Submit` button. 
+4. Wait for the submission script to complete. When ready, the submission report can be viewed from the `Details` drop-down tab. This may take several minutes. 
+5. Check the submission report (`Details > View Submission Report`) and the generated HTML report under the `work` subfolder. 
+
+
+#### Using a student account
+
+The surest way to test the setup and new deployment after publishing an assignment on Vocareum is by creating a mock student account and logging in as a student to Vocareum and submitting the assignment. 
+
+_The deprecated setup instruction is [here](./doc/how_to_setup_in_vocareum_deprecated.md)_
 
 ## Known issues
 
-There are some known issues for current version of PySheetGrader:
-
-1. **Use plain text for writing the rubric note.** Excel's notes are capable for rich text and it will hamper the rubric parsing process. When writing a new note, it is possible for us to just write plain YAML text - but copy and pasting from a rubric to another might end up copying the formatting information too. It is recommended to copy the original rubric note to a plain text editor (e.g., Sublime Text or VSCode), then re-copy the rubric to a new note. Hakan's notes/tips: (A) To copy rubrics, copy the cell and use Edit > Paste Special > Comments, which copies the cell note as well as comments. (B) If you add a rubric with Right-Click > New Note, the author, if defined, is by default typset in bold (rich text), so make sure to delete this rich-text part otherwise rubric doesn't work. Deleting the author simply by backspacing here doesn't work: the whole rubric is then typset in bold!
-2. **Inability to parse another sheet's references.** Currently, PySheetGrader can only parse a formula that refers the cells within the same sheet. It might break if it parses a cell that refers another sheet. To implement this function, we might to find the proper representation of another sheet in a formula. Please update the `parse_formula()` method in `formula_parser.py` when it is ready to be updated.  
-4. **Limited support for running Excel formulas.** By default, PySheetGrader will be able to do naive unknown formula comparison using Sympy, but there are cases where we may need to rely on unit tests. To do so, we need to add custom implementation of Excel formulas through the `get_excel_formula_lambdas()` method inside the `pysheetgrader/custom_excel_formula.py`. The file provides currently-implemented sample methods and references to do so. Currently, Excel's `MIN`, `MAX`, and `IF` functions are recognized by PySheetGrader.
-6. **Excel built-in functions with a "." in their names (e.g., "T.INV") are not working.** Note: Sounds like and easy fix. 
+1. **Use striclty plain text for entering a rubric note.** Excel's cell notes support rich text, and using rich text in rubric notes will crash the rubric parsing process. When writing a new rubric note, by default you will enter plain YAML text, however sometimes Excel will automatically add the author in rich text. Also be careful with copy-paste: copying the rubric content from an external text editor or another spreadsheet cell and pasting it into a new rubric note may also copy any rich-text formatting. When this happens, try coping the rubric content to a plain text editor (e.g., Sublime Text or VSCode) first, delete the faulty rubric note, create a new rubric note, then copy the content back from the plain text editor to the new rubric note. These other strategies also work: (A) to clone a correclty typeset rubric note in another cell, simply copy the cell in Excel and use `Edit > Paste Special > Comments` onto the other cell, which copies the cell note as well as comments, without copying the actual cell contents. Caution: If you add a rubric with `Right-Click > New Note`, the author, if defined, is by default typset in bold (rich text), so make sure to completely zap this rich-text part otherwise the rubric will not work. Deleting the author simply by backspacing here may not work, and instead the whole rubric may end up being typset in bold!
+ 
 
 ## Possible improvements
 
