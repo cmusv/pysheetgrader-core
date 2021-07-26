@@ -343,7 +343,7 @@ Some cells can be graded secretively, with student feedback indicating that some
 
 Here are the general steps on setting or updating PySheetGrader in Vocareum for a specific course:
 
-1. Zip files on your local computer with `bash ./vocareum_scripts/zip_for_vocareum.sh` from root. This will generate the file `pysheetgrader-vocareum.zip`.
+1. On your local drive, navigate to PysheetGrader root folder. Zip the required files using `bash ./vocareum_scripts/zip_for_vocareum.sh`. This will generate the file `pysheetgrader-vocareum.zip`.
 2. Go to the course and choose any spreadsheet assignment (if none exists, create a new one). 
 3. Click on `Edit Assignments` and then `Configure Workspace`. This takes you to the `Teacher View` in the assignment's workspace. 
 4. Upload the file `pysheetgrader-vocareum.zip` to the`resource/lib` folder in the assignment's workspace.
