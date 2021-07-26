@@ -104,7 +104,17 @@ The complete sample of a key document is available on the [MasterGalleryKey.xlsx
 
 ## Creating a rubric note
 
-Rubric notes of a cell are written in YAML format. It consists of mandatory section called `rubric` and optional sections: `alt_cells` and `test_cases`.
+Rubric notes of a cell are written in YAML format. It consists of a mandatory section called `rubric` and optional sections called `alt_cells` and `test_cases`.
+
+```
+rubric:
+ ...
+alt_cells:
+ ...
+test_cases:
+ ...
+```
+
 
 ### Typsetting rubric notes: known issue with rich text and workarounds 
 
@@ -117,25 +127,45 @@ Excel's cell notes support rich text, and using rich text in rubric notes will c
 3. If you add a rubric with `Right-Click > New Note`, the author, if defined, is by default typset in bold (rich text), so make sure to completely zap this rich-text part otherwise the rubric will not work. Deleting the author simply by backspacing here may not work, and instead the whole rubric may end up being typset in bold!
  
 
-### Rubrics
+### Rubric 
 
-The `rubric` section consists of these parts:
+The `rubric` section defines the main rubric properties and consists of these attributes:
 
-1. `score` (an integer or float), which contains a positive value that will be awarded when the graded cell is correct in the submission sheet or contains a negative value that will be deducted when the graded cell is incorrect in the submission sheet. 
-2. `type`, which determines how this cell will be graded. There are two options: 
+```
+rubric:
+ score: ...
+ type: ... 
+ delta: ...
+ grading: ...
+```
+
+
+1. `score` (mandatory, an integer or float), which contains a positive value that will be awarded when the graded cell is correct in the submission sheet or contains a negative value that will be deducted when the graded cell is incorrect in the submission sheet. 
+2. `type` (mandatory), which determines how this cell will be graded. There are two options: 
     - `constant`, which compares the evaluated value of the corresponding submission sheet cell to the evaluated value of the key cell. Will utilize the `delta`for precision, if specified for cells with numeric values.
     - `formula`,  which compares the formula of the corresponding submission sheet cell to the formula given in this cell.
     - `test`, which evaluates the formula of the submission sheet cell against the test cases.
     - `soft_formula`, which requires the submission cell to be a formula, but otherwise performs the comparison with evaluated values as in the `constant` rubric type.
     - `relative` or `relative_f`, which evaluates the formula in the key cell using values from the submission cells and compares the result to the value in the submission cell. 
-3. `delta`, which specifies precision in numeric value comparisons. Will only work with non-formula rubric types when they check numeric calculations; e.g., `constant`, `relative`, `relative_f`, `soft_formula`, and `test` (inside individual test cases) rubric types. 
-4. `grading`, which is used to allow negative grading:
+3. `delta` (optional, an integer or float), which specifies precision in numeric value comparisons. Will only work with non-formula rubric types when they check numeric calculations; e.g., `constant`, `relative`, `relative_f`, `soft_formula`, and `test` (inside individual test cases) rubric types. 
+4. `grading` (optional), which is used to allow negative grading:
    - `positive` (default value): if the calculation is correct according to the specified rubric type, then the points specified in the `score` attribute is awarded for the cell, and no feedback is given (green row in the HTML report). Otherwise, no points are awarded and the specified feedback is given (red row in HTML report). If `grading` is unspecified, it is assumed to be `positive`. The rubric's `score` attribute must have a positive value. 
    - `negative`: if the calculation is correct according to the specified rubric type, then no points are deducted, no feedback is given (green row in the HTML report), and the cell gets the maximum score of 0. Otherwise, the cell receives the negative points specified in the `score` attribute, which are deducted from the total grade, and the specified feedback is given (red row in HTML report). The rubric's `score` attribute must have a negative value, indicating a deduction or penalty. 
 
-### Alternative cells
+### Alternative cells 
 
-The `alt_cells` section consists of an array of cell coordinates inside the key sheet. The given cell coordinates will be used as alternative value for `constant` type rubrics or alternative formula for the `formula` type rubrics. This will be useful if a single cell might have different formula or value as an answer. Here's a sample rubric with alternative cells, in cell H5 of the key:
+The `alt_cells` section consists of an array of cell references to the key sheet. 
+
+
+```
+alt_cells:
+ - ...
+ - ...
+ - ...
+ ...
+```
+
+The  cell references point to alternative contents in the key sheet to be used in grading the the cell. The references may contain constants or formulas, depending on the rubric type. This section is useful if a single cell has multiple correct answers or different ways of calculating the same correct answer. Below is an example rubric with alternative cells. Say this rubric note defined in cell H5 of the key sheet:
 
 ```
 rubric:
@@ -147,11 +177,30 @@ alt_cells:
  - R5
 ```
 
-Here PySheetGrader will compare the formula of the submission and key in the cell H5 first. If the formulas don't match, PySheetGrader will compare submission's H5 formula against the key's P5, Q5, and R5 formulas in that order. If any of them matches the submission formula, the submission formula will be considered as a correct answer.
+Here PySheetGrader will compare the formula of the submission and key in the cell H5 first. If the formulas don't match, PySheetGrader will compare submission's H5 formula against the key's P5, Q5, and R5 formulas, in that order. If any of them matches the submission formula, the submission cell will be graded as correct.
 
 ### Test cases
 
-The `test_cases` section will hold the test cases to run against the submission sheet cell's formula. It consist of test case name, which will hold three keys: `input`, `output`, and the optional `delta`. As the name mentions, this will only work with `test` rubric types.
+The `test_cases` section is used with the `test` rubric type and pecifies the test cases to run against the submission sheet cell's formula. It consist of a test case name, which holds three attributes: `input`, `output`, and the optional `delta`. The `test_cases` section is invalid with rubric types other than the `test` rubric type.
+
+```
+test_cases:
+ ...:
+  output: ...
+  input:
+   ...: ...
+   ...: ...
+   ...
+  delta: ...
+ ...:
+   output: ...
+   input:
+    ...: ...
+    ...: ...
+    ...
+   delta: ...
+ ...
+```
 
 Here's a sample use case. In the [MasterGalleryKey.xlsx](sample_excel_files/MasterGalleryKey.xlsx), cell `B5` of the `Test Case Samples` sheet has this formula:
 
@@ -220,13 +269,14 @@ test_cases:
 Based on the rubric above, the submission will be regarded as right if the output falls between `3280.58` to `3281`.
 
 ## Rubric Types
-### Soft Rubric Type
+
+### Soft Rubric type
 The rubric type `soft_formula` evaluates the key cell as follows:
 1) If the cell does not contain a formula, no credit is given.
 2) If the cell contains a formula, grade it like a constant rubric type (compare cell's evaluated result to key's evaluated result, ignoring the formulas). 
 For example, for a given cell the key expects the answer 0.5 using the formula `0.1* B2`. In this case, under the `soft_formula` rubric, the grader checks the submission cell if contains a formula or not. If the formula is present (even if it is not equivalent to the key cell's formula), it assigns grade based on the actual cell value. So, if the submission cell evaluates to 0.5 through theformula`0.6*B3`, the student still gets full credit.
 
-### Relative Formula Type
+### Relative Formula rubric type
 Relative formulas are now possible with two rubric types:  `relative` or `relative_f`.
 
 * `relative` compares the evaluation of key's formula using the **submission cells values** (the actual values of the key cells referenced in the submission cell). For example, suppose the cell A1 in `A1Key.xlsx` contains a formula `=IF(A2 = "ok", B2, C2)`. Inside the student submission, suppose A1 contains 13, A2 contains "not_ok", B2 contains 13, and C2 contains 14. The instructor's formula will be evaluated with the student submission's cells, which gives a value of 14. This evaluated answer will be checked against the submission's evaluated A1 cell value, which is 13. In this case, A1 doesn't pass the rubric (the actual value is 13, but the expected value is 14).  
@@ -235,7 +285,7 @@ Relative formulas are now possible with two rubric types:  `relative` or `relati
 
 As a side note, both `relative` and `relative_f` supports the `delta` and `alt_cells` rubric modifiers for flexibility.
 
-## Minimum Work feature
+## Minimum work feature
 This feature allows the instructor to specify the minimum score for every sheet and corresponding message in the SheetGradingOrder sheet.
 So, if for any sheet, a student scores less than the minimum value, the student does not get the feedback for questions answered in that sheet. The student instead receieves a message in the report saying "Need more work to recieve a grade". 
 
@@ -244,7 +294,7 @@ Below is an example of the SheetGradingOrder sheet:
 
 If there is no minimum threshold for any sheet, in that case, 0 is used as the default threshold.
 
-## Failure Message for Failed Test Cases
+## Failure message for failed test cases
 This feature allows us to provide a specialized, optional failure message per test case in the test_cases rubric. They can be used to give a useful clue without giving the answer, in the same manner as unit test failure messages.
 
 Example:
@@ -286,7 +336,7 @@ If the t1 fails, this message is printed next to in sub report next to the failu
 So, in the above example, the output message will be: When B7 is 1000 and B8 is 25, this cell should be 3280.84, but was 2025.34!
 Also, it is important to be careful about indentation while creating this rubric. fail should have the same indentation as input, output and delta. 
 
-## Sub sheet total
+## Sub-sheet totals
 This feature provides subtotals for each sheet in the SheetGradingOrder sheet. It provides the output as the subtotal for each sheet followed by total score for all sheets.
 
 ```
