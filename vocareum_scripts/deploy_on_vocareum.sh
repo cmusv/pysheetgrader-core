@@ -23,7 +23,7 @@ echo -e "${GREEN}Important TODOs for each individual assignment:
 1. Configure ASSIGNMENT_PREFIX in resource/asnlib/pysheetgrader.config
 2. Upload [ASSIGNMENT_PREFIX]Key.xlsx to resource/asnlib
 3. Click Update*
-4. Test [ASSIGNMENT_PREFIX]Submission.xlsx in student view
+4. Test [ASSIGNMENT_PREFIX]Submission.xlsx in Student View
 
 ${RESET}
 "
