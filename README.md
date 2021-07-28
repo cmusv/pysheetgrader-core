@@ -131,7 +131,10 @@ rubric:
     - `test`, which evaluates the formula of the submission sheet cell against the test cases.
     - `soft_formula`, which requires the submission cell to be a formula, but otherwise performs the comparison with evaluated values as in the `constant` rubric type.
     - `relative` or `relative_f`, which evaluates the formula in the key cell using values from the submission cells and compares the result to the value in the submission cell. 
+<<<<<<< HEAD
     - `check`, which compares the result to a given cell's value in the Key (rather than the submission) 
+=======
+>>>>>>> aea9f49941affcf42d1ed1d8309a9bb8e60906dc
 3. `delta` (optional, an integer or float), which specifies precision in numeric value comparisons. Will only work with non-formula rubric types when they check numeric calculations; e.g., `constant`, `relative`, `relative_f`, `soft_formula`, and `test` (inside individual test cases) rubric types. 
 4. `grading` (optional), which is used to allow negative grading:
    - `positive` (default value): if the calculation is correct according to the specified rubric type, then the points specified in the `score` attribute is awarded for the cell, and no feedback is given (green row in the HTML report). Otherwise, no points are awarded and the specified feedback is given (red row in HTML report). If `grading` is unspecified, it is assumed to be `positive`. The rubric's `score` attribute must have a positive value. 
@@ -349,8 +352,12 @@ Here are the general steps on setting or updating PySheetGrader in Vocareum for 
 3. Click on `Edit Assignments` and then `Configure Workspace`. This takes you to the `Teacher View` in the assignment's workspace. 
 4. Upload the file `pysheetgrader-vocareum.zip` to the`resource/lib` folder in the assignment's workspace.
 5. On Vocareum console, navigate to the vocaruem library directory by executing `cd $LIB/pysheetgrader-vocareum`.
+<<<<<<< HEAD
 6. Activate source environment by `source venv/bin/activate`
 7. Run `./deploy_on_vocareum.sh` in the `$LIB/pysheetgrader-vocareum` directory to run the compilation scripts and copy the necessary files to the right course folders. 
+=======
+6. Run `./deploy_on_vocareum.sh` in the `$LIB/pysheetgrader-vocareum` directory to run the compilation scripts and copy the necessary files to the right course folders. 
+>>>>>>> aea9f49941affcf42d1ed1d8309a9bb8e60906dc
 
 
 ### Assignment-wide setup by instructor
