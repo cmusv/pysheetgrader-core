@@ -17,6 +17,7 @@ class GradingRubricType(Enum):
     SOFT_FORMULA = 4
     RELATIVE = 5
     RELATIVE_F = 6
+    CHECK = 7
     
 
     @staticmethod
@@ -39,6 +40,8 @@ class GradingRubricType(Enum):
             return GradingRubricType.RELATIVE
         elif value == "relative_f":
             return GradingRubricType.RELATIVE_F
+        elif value == "check":
+            return GradingRubricType.CHECK
         else:
             raise Exception(f"Unsupported rubric type {value}")
 
@@ -49,7 +52,7 @@ class GradingRubric:
     """
 
     def __init__(self, cell_id: str, cell_coord: str, description: str, hidden: bool, fail_msg: str,
-                 rubric_type: GradingRubricType, score: float, grading_nature: str = 'positive',  constant_delta: float = 0, 
+                 rubric_type: GradingRubricType, score: float, result_coord: str, grading_nature: str = 'positive',  constant_delta: float = 0, 
                  alt_cells: List[str] = [], test_cases: List[GradingTestCase] = []):
         """
         Initializer of this class' instance.
@@ -61,6 +64,7 @@ class GradingRubric:
                 "This cell should have used standard deviation, which was $B3 according to your calculation."
         :param rubric_type: GradingRubricType enum value.
         :param score: Float value of the score for this rubric.
+        :param result_coord: String value of the result cell coordinate in this rubric.
         :param constant_delta: Float value of the delta / precision that allowed for a constant GradingRubricType.
             Defaults to 0.
         :param alt_cells: List of String of alternative cell coordinates to be reviewed by this rubric.
@@ -74,6 +78,7 @@ class GradingRubric:
         self.grading_nature = grading_nature
         self.score = score
         self.constant_delta = constant_delta
+        self.result_coord = result_coord
 
         self.alt_cells = alt_cells
         self.test_cases = test_cases
@@ -92,6 +97,15 @@ class GradingRubric:
         if self.alt_cells:
             result.extend(self.alt_cells)
 
+        return result
+
+    def get_result_cell_coord(self):
+        """
+        Returns result cell coordinate used in this rubric
+        """
+        result = [self.result_coord]
+        if self.alt_cells:
+            result.extend(self.alt_cells)
         return result
 
     @staticmethod
@@ -181,6 +195,7 @@ class GradingRubric:
         rubric_score = rubric_dict['score'] if 'score' in rubric_dict else None
         rubric_type = rubric_dict['type'] if 'type' in rubric_dict else None
         rubric_delta = rubric_dict['delta'] if 'delta' in rubric_dict else 0
+        rubric_result_coord = rubric_dict['result'] if 'result' in rubric_dict else None
 
         # Rubric score parsing
         try:
@@ -202,6 +217,10 @@ class GradingRubric:
             raise ValueError(f"Invalid rubric comment score and type found for cell: {cell_coord} "
                              f"in sheet: {key_sheet.title}")
 
+        # Rubric result cell parsing
+        if rubric_result_coord is not None:
+            rubric_result_coord = str(rubric_result_coord)
+
         # Rubric delta
         try:
             rubric_delta = float(rubric_delta)
@@ -211,7 +230,7 @@ class GradingRubric:
         # Rubric test cases
         test_cases = GradingRubric.create_test_cases_from_dict(test_cases)
         
-        return GradingRubric(cell_id, cell_coord, description, hidden, fail_msg, rubric_type, rubric_score, grading_nature = rubric_grading_nature ,
+        return GradingRubric(cell_id, cell_coord, description, hidden, fail_msg, rubric_type, rubric_score, rubric_result_coord,grading_nature = rubric_grading_nature ,
                              constant_delta=rubric_delta, alt_cells=alt_cells,
                              test_cases=test_cases)
 
