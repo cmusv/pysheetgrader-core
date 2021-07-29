@@ -1,4 +1,3 @@
-
 import unittest
 
 from pysheetgrader.formula_parser import parse_formula_tokens, parse_formula, parse_formula_inputs, \

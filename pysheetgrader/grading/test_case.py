@@ -1,4 +1,3 @@
-
 class GradingTestCase:
     """
     Represents a test case for the formula inside of a cell.

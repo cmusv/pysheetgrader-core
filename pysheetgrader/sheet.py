@@ -1,4 +1,3 @@
-
 class Sheet:
     """
     Represents a sheet in the grading process.

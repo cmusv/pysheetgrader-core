@@ -1,6 +1,5 @@
 #!/bin/bash
 
-echo "PySheetGrader is distributed under GNU GPL v3 or later!"
 echo "PySheetGrader Setup"
 echo "Checking environment"
 

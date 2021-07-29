@@ -23,8 +23,8 @@ class NaiveFormulaStrategy(BaseStrategy):
         cell_coord = self.grading_rubric.cell_coord
         custom_formulas = get_excel_formula_lambdas()
         
-        
 
+                
         # Using a flag to check alternative cells for negative grading nature
         checkflag_altcells = False
         

@@ -1,4 +1,3 @@
-
 import click, os, datetime
 import warnings
 
@@ -23,7 +22,7 @@ def cli(key_document_path, submission_document_path, score_output, report_output
         ignore_warnings):
     """ Grades the passed spreadsheet in SUBMISSION_DOCUMENT_PATH using the key spreadsheet from KEY_DOCUMENT_PATH."""
 
-    print("PySheetGrader is distributed under GNU GPL v3 or later!")
+    print("PySheetGrader!")
     print(f"Key document path:\t\t{key_document_path}")
     print(f"Submission document path:\t{submission_document_path}")
 

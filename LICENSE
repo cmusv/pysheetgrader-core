@@ -46,4 +46,3 @@ PySheetGrader reliaes on specific versions of the public Python libraries listed
 the requirements.txt document, without distributing their source code. 
 These libraries are variously provided under the MIT, BSD (2- and 3-Clause), 
 and WTFPL licenses. 
-

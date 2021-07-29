@@ -1,4 +1,3 @@
-
 from sympy.utilities.lambdify import implemented_function
 from sympy import symbols, lambdify
 import sympy

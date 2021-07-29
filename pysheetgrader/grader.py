@@ -1,4 +1,3 @@
-
 from pysheetgrader.sheet import Sheet
 
 from pysheetgrader.grading.rubric import GradingRubric
@@ -11,6 +10,7 @@ from pysheetgrader.grading.strategy.soft import SoftFormulaStrategy
 from pysheetgrader.grading.strategy.test import TestRunStrategy
 from pysheetgrader.grading.strategy.relative import RelativeStrategy
 from pysheetgrader.grading.strategy.relative_f import RelativeFormulaStrategy
+from pysheetgrader.grading.strategy.check import CheckStrategy
 
 import re
 import os
@@ -143,8 +143,12 @@ class Grader:
             report += RelativeFormulaStrategy(self.key_document, document, sheet.name, rubric,
                                               report_line_prefix="\t").grade()
             html_args['rubric_type'] = "Relative formula check (only accept formula cell)" if rubric.grading_nature == 'positive' else "Relative formula (penalty)"
+        elif  rubric.rubric_type == GradingRubricType.CHECK:
+            if not rubric.hidden:
+                report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, check result comparison ")
+            report += CheckStrategy(self.key_document, document, sheet.name, rubric).grade()
+            html_args['rubric_type'] = "Result check" if rubric.grading_nature == 'positive' else "Result check (penalty)"
         
-
         feedback = self.render_failure_message(document, sheet.name, rubric.fail_msg) if rubric.fail_msg else ""
 
         if not rubric.hidden:

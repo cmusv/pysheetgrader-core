@@ -1,4 +1,3 @@
-
 from openpyxl.formula import Tokenizer
 from openpyxl.formula.tokenizer import Token
 from openpyxl.worksheet.datavalidation import expand_cell_ranges

@@ -1,4 +1,3 @@
-
 from pysheetgrader.sheet import Sheet
 
 from openpyxl import load_workbook
