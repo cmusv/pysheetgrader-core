@@ -1,0 +1,38 @@
+
+# IntelliJ
+.idea/
+
+# CMake
+cmake-build-*/
+
+
+# File-based project format
+*.iws
+
+# IntelliJ
+out/
+
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+
+# JIRA plugin
+atlassian-ide-plugin.xml
+
+
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+# Virtualenv
+venv/
+venv-lite/
+
+# Misc
+__pycache__/
+*.egg-info/
+.DS_Store
+build/
+dist/
+*.whl
