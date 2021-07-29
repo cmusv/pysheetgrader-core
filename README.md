@@ -1,12 +1,10 @@
-## Copyright and License
+## License and Copyright
 
-See LICENSE file. 
+See LICENSE file.
 
 # PySheetGrader
 
 Blog: https://se-edu.org/auto-grading-spreadsheet-assignments/
-
-
 
 ## What does PySheetGrader do?
 
