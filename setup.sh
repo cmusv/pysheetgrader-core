@@ -1,23 +1,24 @@
 #!/bin/bash
 
-echo "PySheetGrader Setup"
-echo "Checking environment"
+echo ">>>> PySheetGrader Setup <<<<"
+echo "Checking environment..."
 
 if ! [ -x "$(command -v python3)" ];
 then
-  echo "Command 'python3' cannot be found. Aborting."
+  echo ">> Command 'python3' cannot be found. Aborting."
   exit 1
 fi
 
 if [ -d "venv" ];
 then
-  echo "Folder 'venv' already exists."
-else
-  echo "Folder 'venv' does not exist yet. Creating virtual environment in venv folder."
-  python3 -m venv ./venv
+  echo ">> Folder 'venv' already exists. Deleting..."
+  rm -rf venv
 fi
 
-echo "Installing dependencies."
+echo ">> Creating virtual environment in venv folder..."
+python3 -m venv ./venv
+
+echo ">> Activating virtual environment and installing dependencies..."
 
 source venv/bin/activate
 python3 -m pip install --upgrade pip
