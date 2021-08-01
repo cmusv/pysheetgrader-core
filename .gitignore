@@ -41,10 +41,10 @@ fabric.properties
 venv/
 venv-lite/
 
-# Custom ignores
+# Build/package related files
 __pycache__/
 *.egg-info/
 .DS_Store
 build/
-dist/
+dist/ls
 *.whl
