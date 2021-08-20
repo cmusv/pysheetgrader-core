@@ -6,7 +6,7 @@ See LICENSE file.
 
 Blog: https://se-edu.org/auto-grading-spreadsheet-assignments/
 
-Related repos: https://github.com/cmusv/pysheetgrader-extras, https://github.com/cmusv/pysheetgrader-obsolete
+Related repos: https://github.com/cmusv/pysheetgrader-extras, https://github.com/cmusv-svvt/pysheetgrader-obsolete
 
 
 ## What does PySheetGrader do?
