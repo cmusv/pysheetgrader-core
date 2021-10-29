@@ -51,15 +51,16 @@ class GradingRubric:
     Representation of a grading rubric in a sheet.
     """
 
-    def __init__(self, cell_id: str, cell_coord: str, description: str, hidden: bool, fail_msg: str,
+    def __init__(self, cell_id: str, cell_coord: str, description: str, hidden: bool, killer: bool,fail_msg: str,
                  rubric_type: GradingRubricType, score: float, result_coord: str, grading_nature: str = 'positive',  constant_delta: float = 0, 
-                 alt_cells: List[str] = [], test_cases: List[GradingTestCase] = []):
+                 alt_cells: List[str] = [], test_cases: List[GradingTestCase] = [], prereq_cells: List[str] = []):
         """
         Initializer of this class' instance.
         :param cell_id: String value of the rubric identifier
         :param cell_coord: String value of the main cell coordinate in this rubric.
         :param description: String value of the description.
         :param hidden: Boolean value indicating should the cell be hidden to students.
+        :param killer: Boolean value indicating if the cell is a killer cell
         :param fail_msg: String value of general failure message, for example,
                 "This cell should have used standard deviation, which was $B3 according to your calculation."
         :param rubric_type: GradingRubricType enum value.
@@ -68,7 +69,7 @@ class GradingRubric:
         :param constant_delta: Float value of the delta / precision that allowed for a constant GradingRubricType.
             Defaults to 0.
         :param alt_cells: List of String of alternative cell coordinates to be reviewed by this rubric.
-            Defaults to empty list.
+            Defaults to empty list.  
         :param test_cases: List of GradingTestCase instances. Defaults to empty list.
         """
         self.cell_id = cell_id
@@ -84,8 +85,10 @@ class GradingRubric:
         self.test_cases = test_cases
 
         self.hidden = hidden
+        self.killer = killer
         self.description = description
         self.fail_msg = fail_msg
+        self.prereq_cells = prereq_cells
 
     def get_all_cell_coord(self):
         """
@@ -129,7 +132,6 @@ class GradingRubric:
 
         # Rubric creation
         rubrics = []
-
         # Assumptions of the order sheet
         # 1. The scoring column is always on B. (min_col=2, max_col=2)
         # 2. The scoring column always has a header (min_row=2)
@@ -139,13 +141,14 @@ class GradingRubric:
             # Assuming this for-loop will only be executed for B column
             # TODO: Revisit if the failed rubric parsing is necessary to be reported.
             try:
-                cell_id, cell_coord, cell_description, cell_hidden, fail_msg = \
+                cell_id, cell_coord, cell_description, cell_hidden_or_killer,fail_msg = \
                     row[0].value, row[1].value, row[2].value, row[3].value, row[4].value
 
-                hidden = cell_hidden == "H" or cell_hidden == "h"
-
+                hidden = cell_hidden_or_killer == "H" or cell_hidden_or_killer == "h" or cell_hidden_or_killer == "HK" or cell_hidden_or_killer == "hk" or cell_hidden_or_killer == "KH" or cell_hidden_or_killer == "kh"
+                killer = cell_hidden_or_killer == "K" or cell_hidden_or_killer == "k" or cell_hidden_or_killer == "HK" or cell_hidden_or_killer == "hk" or cell_hidden_or_killer == "KH" or cell_hidden_or_killer == "kh"
+ 
                 r = GradingRubric.create_rubric_from_cell(cell_id, cell_coord,
-                                                          cell_description, hidden, fail_msg, key_sheet)
+                                                          cell_description, hidden, killer, fail_msg, key_sheet)
                 
                 rubrics.append(r)
             except Exception as exc:
@@ -155,7 +158,7 @@ class GradingRubric:
         return rubrics
 
     @staticmethod
-    def create_rubric_from_cell(cell_id: str, cell_coord: str, description: str, hidden: bool, fail_msg: str,
+    def create_rubric_from_cell(cell_id: str, cell_coord: str, description: str, hidden: bool, killer: bool,fail_msg: str,
                                 key_sheet: Worksheet):
         """
         Creates GradingRubric instance from passed `cell_coord` of the `key_sheet`.
@@ -167,6 +170,7 @@ class GradingRubric:
             has note value that holds the grading rubric.
         :param description: String value of the cell description. It is the third column in the `_CheckOrder` sheet.
         :param hidden: True if the cell is hidden and not visible to students.
+        :param killer: True if the cell is killer cell 
         :param fail_msg: String value of general failure message, for example,
                 "This cell should have used standard deviation, which was $B3 according to your calculation."
         :param key_sheet: Openpyxl's Worksheet instance of the key document.
@@ -196,6 +200,8 @@ class GradingRubric:
         rubric_type = rubric_dict['type'] if 'type' in rubric_dict else None
         rubric_delta = rubric_dict['delta'] if 'delta' in rubric_dict else 0
         rubric_result_coord = rubric_dict['result'] if 'result' in rubric_dict else None
+        rubric_prereq = rubric_dict['prereq'] if 'prereq' in rubric_dict else None
+
 
         # Rubric score parsing
         try:
@@ -230,9 +236,9 @@ class GradingRubric:
         # Rubric test cases
         test_cases = GradingRubric.create_test_cases_from_dict(test_cases)
         
-        return GradingRubric(cell_id, cell_coord, description, hidden, fail_msg, rubric_type, rubric_score, rubric_result_coord,grading_nature = rubric_grading_nature ,
-                             constant_delta=rubric_delta, alt_cells=alt_cells,
-                             test_cases=test_cases)
+        return GradingRubric(cell_id, cell_coord, description, hidden, killer, fail_msg, rubric_type, rubric_score, rubric_result_coord,grading_nature = rubric_grading_nature ,
+                             constant_delta=rubric_delta, alt_cells=alt_cells, 
+                             test_cases=test_cases, prereq_cells=rubric_prereq)
 
     @staticmethod
     def create_test_cases_from_dict(raw_cases):
@@ -267,3 +273,4 @@ class GradingRubric:
                 continue
 
         return test_cases
+        

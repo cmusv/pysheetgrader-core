@@ -121,6 +121,7 @@ rubric:
  type: ... 
  delta: ...
  grading: ...
+ prereq: ...
 ```
 
 
@@ -131,14 +132,12 @@ rubric:
     - `test`, which evaluates the formula of the submission sheet cell against the test cases.
     - `soft_formula`, which requires the submission cell to be a formula, but otherwise performs the comparison with evaluated values as in the `constant` rubric type.
     - `relative` or `relative_f`, which evaluates the formula in the key cell using values from the submission cells and compares the result to the value in the submission cell. 
-<<<<<<< HEAD
     - `check`, which compares the result to a given cell's value in the Key (rather than the submission) 
-=======
->>>>>>> aea9f49941affcf42d1ed1d8309a9bb8e60906dc
 3. `delta` (optional, an integer or float), which specifies precision in numeric value comparisons. Will only work with non-formula rubric types when they check numeric calculations; e.g., `constant`, `relative`, `relative_f`, `soft_formula`, and `test` (inside individual test cases) rubric types. 
 4. `grading` (optional), which is used to allow negative grading:
    - `positive` (default value): if the calculation is correct according to the specified rubric type, then the points specified in the `score` attribute is awarded for the cell, and no feedback is given (green row in the HTML report). Otherwise, no points are awarded and the specified feedback is given (red row in HTML report). If `grading` is unspecified, it is assumed to be `positive`. The rubric's `score` attribute must have a positive value. 
    - `negative`: if the calculation is correct according to the specified rubric type, then no points are deducted, no feedback is given (green row in the HTML report), and the cell gets the maximum score of 0. Otherwise, the cell receives the negative points specified in the `score` attribute, which are deducted from the total grade, and the specified feedback is given (red row in HTML report). The rubric's `score` attribute must have a negative value, indicating a deduction or penalty. 
+5. `prereq` (optional), which is used to mention the prerequisite cells which should be correct before the current cell can be graded
 
 ### Alternative cells 
 
@@ -339,7 +338,11 @@ Assignment Score: << grand total of all subtotals >>
 
 ## Hidden cells
 
-Some cells can be graded secretively, with student feedback indicating that something went wrong in that cell without specifing which cell caused the problem. In the CheckOrder sheet of a graded tab, there is a decidaced column titled "Hidden" to indicated this. Enter H in this column if the cell is to be graded secretively. 
+Some cells can be graded secretively, with student feedback indicating that something went wrong in that cell without specifing which cell caused the problem. In the CheckOrder sheet of a graded tab, there is a decidaced column titled "Hidden/Killed" to indicated this. Enter H in this column if the cell is to be graded secretively. 
+
+## Killer cells if they fail, the tab is not graded and a custom failure message is printed in the sub report.
+
+Some cells are made killer cells, if the student gets this cell wrong the tab is not graded and a custom failure message is printed in the sub report. In the CheckOrder sheet of a graded tab, there is a decidaced column titled "Hidden/Killed" to indicated this. Enter K in this column if the cell is to be made killer cell. 
 
 ## How to setup or deploy to Vocareum for a new course
 

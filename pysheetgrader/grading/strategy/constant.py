@@ -10,7 +10,6 @@ class ConstantStrategy(BaseStrategy):
 
     def grade(self):
         report = self.create_initial_report()
-        
         # Retrieving sheets
         key_sheet, sub_sheet = self.try_get_key_and_sub(report, computed=True)
         if key_sheet is None:
@@ -23,11 +22,16 @@ class ConstantStrategy(BaseStrategy):
         # Using a flag to check alternative cells for negative grading nature
         checkflag_altcells = False
         
-        
         for coord in self.grading_rubric.get_all_cell_coord():
             if self.grading_rubric.grading_nature == 'positive':
                 if self.value_matches(sub_value, key_sheet[coord].value):
-                    report.submission_score += self.grading_rubric.score
+                    if self.grading_rubric.prereq_cells is not None:
+                        if self.prereq_check(cell_coord, report):
+                            report.submission_score += self.grading_rubric.score
+                        else:
+                            return report
+                    else:
+                        report.submission_score += self.grading_rubric.score
             elif self.grading_rubric.grading_nature == 'negative':
                 if not self.value_matches(sub_value, key_sheet[coord].value):
                     checkflag_altcells = True

@@ -9,13 +9,12 @@ class CheckStrategy(BaseStrategy):
     This instance will check the alternative cells in the key if the submission value didn't match the key value
         in the main cell.
     """
-
     def grade(self):
         report = self.create_initial_report()
 
         # # Retrieving sheets
         key_sheet,_ = self.try_get_key_and_sub(report, computed=False)
-        _,sub_sheet = self.try_get_key_and_sub(report, computed=True)
+-        _,sub_sheet = self.try_get_key_and_sub(report, computed=True)
 
         if key_sheet is None:
             return report
@@ -27,11 +26,21 @@ class CheckStrategy(BaseStrategy):
             key_value = self.get_formula_value(sub_sheet, key_raw_formula)
             for coord in self.grading_rubric.get_result_cell_coord():
                 if coord is not None:
-                    if self.value_matches(key_value, key_sheet[coord].value):
-                        report.submission_score += self.grading_rubric.score
+                    if self.value_matches(sub_sheet[form_cell].value, key_sheet_computed[coord].value):
+                        if self.grading_rubric.prereq_cells is not None:
+                            if self.prereq_check(cell_coord,report):
+                                report.submission_score += self.grading_rubric.score
+                            else:
+                                break
+                        else:
+                            report.submission_score += self.grading_rubric.score
                         break
                 elif key_value:
-                    report.submission_score += self.grading_rubric.score
+                    if self.grading_rubric.prereq_cells is not None:
+                        if self.prereq_check(cell_coord, report):
+                            report.submission_score += self.grading_rubric.score
+                    else:
+                        report.submission_score += self.grading_rubric.score
                     break
             return report
         except Exception as exc:
@@ -49,10 +58,9 @@ class CheckStrategy(BaseStrategy):
         :return:
         """
         lowercased_formula = transform_excel_formula_to_sympy(key_raw_formula)
-
+        
         # extract input coordinates
         input_coords = parse_formula_inputs(key_raw_formula, encoded=False)
-
         encoded_inputs = {encode_cell_reference(coord): sub_sheet[coord].value for coord in input_coords}
         local_dict = get_excel_formula_lambdas()
         local_dict.update(encoded_inputs)

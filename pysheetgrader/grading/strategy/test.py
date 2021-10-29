@@ -45,7 +45,6 @@ class TestRunStrategy(BaseStrategy):
             try:
                 result_match, result, lower_range, upper_range = self.test_run_match(test_case, sub_raw_formula)
                 actual_result = float(str(result))
-                
                     
                 if not result_match:
                     all_test_pass = False

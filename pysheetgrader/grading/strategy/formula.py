@@ -40,8 +40,13 @@ class NaiveFormulaStrategy(BaseStrategy):
                 
                 if self.grading_rubric.grading_nature == 'positive':
                     if is_similar:
-                        report.submission_score += self.grading_rubric.score
-                        break
+                        if self.grading_rubric.prereq_cells is not None:
+                            if self.prereq_check(cell_coord, report):
+                                report.submission_score += self.grading_rubric.score
+                            else:
+                                return report
+                        else:
+                            report.submission_score += self.grading_rubric.score
                 elif self.grading_rubric.grading_nature == 'negative':
                     if not is_similar:
                         checkflag_altcells = True

@@ -15,7 +15,6 @@ from pysheetgrader.grading.strategy.check import CheckStrategy
 import re
 import os
 
-
 class Grader:
     """
     Responsible to grade submission Document instances against the key Document.
@@ -35,6 +34,7 @@ class Grader:
         # Attributes
         self.key_document = key_document
         self.grading_sheets = key_document.get_grading_sheets()
+        self.correct_cells = []
 
     def grade(self, document):
         """
@@ -71,10 +71,20 @@ class Grader:
 
         report.append_line(f"\nGrading for sheet: {sheet.name}")
         rubrics = GradingRubric.create_rubrics_for_sheet(self.key_document, sheet)
-
         for r in rubrics:
+            sub_score = report.submission_score
             report += self.grade_sheet_by_rubric(document, sheet, r)
-
+            if report.submission_score>sub_score:
+                self.correct_cells.append(r.cell_coord)
+            if r.killer and report.submission_score==sub_score:
+                report.submission_score = 0
+                if r.hidden:
+                    report.append_line(f"This tab didn't pass its prerequisites! - Please contact the professor")
+                    break
+                else:
+                    report.append_line(f"Cell {r.cell_coord} must be correct before this tab can be graded!")
+                    break
+        self.correct_cells = []
         if report.submission_score < sheet.minimum_work:
             # If the students don't give an assignment a real try,
             # we don't want to give any feedback or provide a grade.
@@ -103,29 +113,28 @@ class Grader:
 
         html_args = {'id': rubric.cell_id, 'cell': rubric.cell_coord, 'hidden': rubric.hidden,
                      'description': rubric.description}
-        
         if rubric.rubric_type == GradingRubricType.CONSTANT:
             if not rubric.hidden:
                 report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, constant value comparison")
-            report += ConstantStrategy(self.key_document, document, sheet.name, rubric).grade()
+            report += ConstantStrategy(self.key_document, document, sheet.name, rubric, self.correct_cells).grade()
             html_args['rubric_type'] = "Value check" if rubric.grading_nature == 'positive' else "Value check (penalty)"
         elif rubric.rubric_type == GradingRubricType.FORMULA:
             if not rubric.hidden:
                 report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, formula comparison")
-            report += NaiveFormulaStrategy(self.key_document, document, sheet.name, rubric,
+            report += NaiveFormulaStrategy(self.key_document, document, sheet.name, rubric, self.correct_cells,
                                            report_line_prefix="\t").grade()
             html_args['rubric_type'] = "Formula check" if rubric.grading_nature == 'positive' else "Formula check (penalty)"
         elif rubric.rubric_type == GradingRubricType.SOFT_FORMULA:
             if not rubric.hidden:
                 report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, soft formula comparison")
-            report += SoftFormulaStrategy(self.key_document, document, sheet.name, rubric,
+            report += SoftFormulaStrategy(self.key_document, document, sheet.name, rubric, self.correct_cells,
                                           report_line_prefix="\t").grade()
             html_args['rubric_type'] = "Soft formula check" if rubric.grading_nature == 'positive' else "Soft Formula Check (penalty)"
         elif rubric.rubric_type == GradingRubricType.TEST:
             if not rubric.hidden:
                 report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, test case runs")
                 report.append_line(f"\t- Test cases:")
-            report += TestRunStrategy(self.key_document, document, sheet.name, rubric,
+            report += TestRunStrategy(self.key_document, document, sheet.name, rubric, self.correct_cells,
                                       report_line_prefix="\t\t").grade()
             html_args['rubric_type'] = "Test runs" if rubric.grading_nature == 'positive' else "Test Runs check (penalty)"
         elif rubric.rubric_type == GradingRubricType.RELATIVE:
@@ -133,20 +142,20 @@ class Grader:
                 report.append_line(
                     f"    #{rubric.cell_id} Cell {rubric.cell_coord}, relative comparison (accept both "
                     f"constant and formula cell)")
-            report += RelativeStrategy(self.key_document, document, sheet.name, rubric,
+            report += RelativeStrategy(self.key_document, document, sheet.name, rubric, self.correct_cells,
                                        report_line_prefix="\t").grade()
             html_args['rubric_type'] = "Relative formula check (accept both constant and formula cell)" if rubric.grading_nature == 'positive' else "Relative formula check (accept both constant and formula cell) (penalty)"
         elif rubric.rubric_type == GradingRubricType.RELATIVE_F:
             if not rubric.hidden:
                 report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, relative comparison (only accept "
                                    f"formula cell)")
-            report += RelativeFormulaStrategy(self.key_document, document, sheet.name, rubric,
+            report += RelativeFormulaStrategy(self.key_document, document, sheet.name, rubric, self.correct_cells,
                                               report_line_prefix="\t").grade()
             html_args['rubric_type'] = "Relative formula check (only accept formula cell)" if rubric.grading_nature == 'positive' else "Relative formula (penalty)"
         elif  rubric.rubric_type == GradingRubricType.CHECK:
             if not rubric.hidden:
                 report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, check result comparison ")
-            report += CheckStrategy(self.key_document, document, sheet.name, rubric).grade()
+            report += CheckStrategy(self.key_document, document, sheet.name, rubric, self.correct_cells).grade()
             html_args['rubric_type'] = "Result check" if rubric.grading_nature == 'positive' else "Result check (penalty)"
         
         feedback = self.render_failure_message(document, sheet.name, rubric.fail_msg) if rubric.fail_msg else ""
