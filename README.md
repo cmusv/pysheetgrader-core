@@ -4,9 +4,11 @@ See LICENSE file.
 
 # PySheetGrader
 
-Blog: https://se-edu.org/auto-grading-spreadsheet-assignments/
+Blog describing PySheetGrader: https://se-edu.org/auto-grading-spreadsheet-assignments/
 
-Related repos: https://github.com/cmusv/pysheetgrader-extras, https://github.com/cmusv-svvt/pysheetgrader-obsolete
+Related repos: 
+- https://github.com/cmusv/pysheetgrader-extras: Vocareum scripts and setup and some extras  
+- https://github.com/cmusv-svvt/pysheetgrader-obsolete: Old version (a single repo)
 
 
 ## What does PySheetGrader do?
