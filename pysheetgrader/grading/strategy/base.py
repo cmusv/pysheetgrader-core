@@ -32,7 +32,7 @@ class BaseStrategy:
         :return: GradingReport instance of the grading.
         :exception NotImplemented   raised when this method called directly (instead of the subclass').
         """
-        raise NotImplemented("The `grade` method should've been implemented in the subclasses.")
+        raise NotImplementedError("The `grade` method should've been implemented in the subclasses.")
 
     def create_initial_report(self):
         """

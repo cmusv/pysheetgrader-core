@@ -14,7 +14,7 @@ class CheckStrategy(BaseStrategy):
 
         # # Retrieving sheets
         key_sheet,_ = self.try_get_key_and_sub(report, computed=False)
--        _,sub_sheet = self.try_get_key_and_sub(report, computed=True)
+        _,sub_sheet = self.try_get_key_and_sub(report, computed=True)
 
         if key_sheet is None:
             return report
@@ -26,7 +26,7 @@ class CheckStrategy(BaseStrategy):
             key_value = self.get_formula_value(sub_sheet, key_raw_formula)
             for coord in self.grading_rubric.get_result_cell_coord():
                 if coord is not None:
-                    if self.value_matches(sub_sheet[form_cell].value, key_sheet_computed[coord].value):
+                    if self.value_matches(key_value, key_sheet[coord].value):
                         if self.grading_rubric.prereq_cells is not None:
                             if self.prereq_check(cell_coord,report):
                                 report.submission_score += self.grading_rubric.score

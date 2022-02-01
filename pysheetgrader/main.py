@@ -30,7 +30,7 @@ def cli(key_document_path, submission_document_path, score_output, report_output
         warnings.filterwarnings(action='ignore')
 
     key_doc = Document(key_document_path, read_only=False)
-    sub_doc = Document(submission_document_path, read_only=False)
+    sub_doc = Document(submission_document_path, read_only=True)
 
     grader = Grader(key_doc)
     report = grader.grade(sub_doc)
@@ -48,7 +48,6 @@ def cli(key_document_path, submission_document_path, score_output, report_output
 
     if html_report_output:
         save_html_report(report, html_report_output)
-    sub_doc.save()
     key_doc.close()
     sub_doc.close()
 
