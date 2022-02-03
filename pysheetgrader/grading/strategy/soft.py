@@ -29,15 +29,19 @@ class SoftFormulaStrategy(ConstantStrategy):
             # Comparison
             for key_coord in self.grading_rubric.get_all_cell_coord():
                 curr_cell_value = sub_sheet[key_coord].value
+                # Below if is not visited as an error will be thrown before exec reaches here
                 if len(curr_cell_value) == 1 and curr_cell_value[0] == '=':
                     report.append_line(f"\t- Formula is missing.")
                     return report
+                # end
                 if any(c.isalpha() for c in curr_cell_value):
                     report.append_line(f"\t- Found Formula: {curr_cell_value}")
                     return super().grade()
+                # Below else is not visited as an error will be thrown before exec reaches here
                 else:
                     report.append_line(f"\t- Formula is missing.")
                     return report
+                # end
         except Exception as exc:
             # TODO: Revisit whether we should print the comparison key value here.
             #   It might leak the answers to the students, though.
