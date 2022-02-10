@@ -23,25 +23,26 @@ class CheckStrategy(BaseStrategy):
             # Grading cells
             cell_coord = self.grading_rubric.cell_coord
             key_raw_formula = key_sheet[cell_coord].value
-            key_value = self.get_formula_value(sub_sheet, key_raw_formula)
+            sub_evaluated_value = self.get_formula_value(sub_sheet, key_raw_formula)
             for coord in self.grading_rubric.get_result_cell_coord():
+
+                # if a result or alt cell is specified
                 if coord is not None:
-                    if self.value_matches(key_value, key_sheet[coord].value):
-                        if self.grading_rubric.prereq_cells is not None:
-                            if self.prereq_check(cell_coord,report):
-                                report.submission_score += self.grading_rubric.score
-                            else:
-                                break
-                        else:
-                            report.submission_score += self.grading_rubric.score
-                        break
-                elif key_value:
+                    key_evaluated_value = key_sheet[coord].value
+                # else check the value of the given cell in the key
+                else:
+                    key_evaluated_value = self.get_formula_value(key_sheet, key_raw_formula)
+
+                if self.value_matches(sub_evaluated_value, key_evaluated_value):
                     if self.grading_rubric.prereq_cells is not None:
-                        if self.prereq_check(cell_coord, report):
+                        if self.prereq_check(cell_coord,report):
                             report.submission_score += self.grading_rubric.score
+                        else:
+                            break
                     else:
                         report.submission_score += self.grading_rubric.score
                     break
+
             return report
         except Exception as exc:
             report.append_line(f"{self.report_line_prefix}Error: {exc}")
