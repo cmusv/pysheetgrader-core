@@ -107,5 +107,7 @@ class RelativeStrategy(BaseStrategy):
         local_dict.update(encoded_inputs)
 
         result = parse_formula(lowercased_formula, local_dict)
-
+        # The clear done below is required because setting the values in a global dict is persistent 
+        # and changes variables that affect other execution
+        local_dict.clear()
         return result

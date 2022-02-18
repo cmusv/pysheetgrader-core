@@ -106,11 +106,8 @@ def parse_formula(formula: str, local_dict: dict = None):
     string_tokens = parse_formula_tokens(formula)
     # Lowercase the form, to allow Sympy use built-in functions.
     expanded_form = "".join(string_tokens).lower()
-    parsed_expression = parse_expr(expanded_form, local_dict=local_dict)
-    # The clear done below is required because setting the values in a global dict is persistent 
-    # and changes variables that affect other execution
-    local_dict.clear()
-    return parsed_expression
+    
+    return parse_expr(expanded_form, local_dict=local_dict)
 
 
 def encode_cell_reference(reference: str):
