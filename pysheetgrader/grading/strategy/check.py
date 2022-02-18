@@ -67,4 +67,5 @@ class CheckStrategy(BaseStrategy):
         local_dict.update(encoded_inputs)
 
         result = parse_formula(lowercased_formula, local_dict)
+        local_dict.clear()
         return result
