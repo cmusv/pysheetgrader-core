@@ -2,7 +2,6 @@ from pysheetgrader.sheet import Sheet
 
 from openpyxl import load_workbook
 
-
 class Document:
     """
     Represents a document in the grading process. Please call the `close()` method when it's not used anymore.
@@ -72,3 +71,8 @@ class Document:
         """
         self.formula_wb.close()
         self.computed_value_wb.close()
+
+    def save(self):
+        # self.formula_wb.save(self.path)
+        self.computed_value_wb.save(self.path)
+

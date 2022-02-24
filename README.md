@@ -4,7 +4,11 @@ See LICENSE file.
 
 # PySheetGrader
 
-Blog describing PySheetGrader: https://se-edu.org/auto-grading-spreadsheet-assignments/
+Blog: https://se-edu.org/auto-grading-spreadsheet-assignments/
+
+[![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
+
+[![pysheetgrader-version](https://img.shields.io/badge/version-1.0-brightgreen.svg)](https://shields.io/)
 
 Related repos: 
 - https://github.com/cmusv/pysheetgrader-extras: Vocareum scripts and setup and some extras  
@@ -125,6 +129,7 @@ rubric:
  type: ... 
  delta: ...
  grading: ...
+ prereq: ...
 ```
 
 
@@ -140,6 +145,7 @@ rubric:
 4. `grading` (optional), which is used to allow negative grading:
    - `positive` (default value): if the calculation is correct according to the specified rubric type, then the points specified in the `score` attribute is awarded for the cell, and no feedback is given (green row in the HTML report). Otherwise, no points are awarded and the specified feedback is given (red row in HTML report). If `grading` is unspecified, it is assumed to be `positive`. The rubric's `score` attribute must have a positive value. 
    - `negative`: if the calculation is correct according to the specified rubric type, then no points are deducted, no feedback is given (green row in the HTML report), and the cell gets the maximum score of 0. Otherwise, the cell receives the negative points specified in the `score` attribute, which are deducted from the total grade, and the specified feedback is given (red row in HTML report). The rubric's `score` attribute must have a negative value, indicating a deduction or penalty. 
+5. `prereq` (optional), which is used to mention the prerequisite cells which should be correct before the current cell can be graded
 
 ### Alternative cells 
 
@@ -268,9 +274,9 @@ For example, for a given cell the key expects the answer 0.5 using the formula `
 ### Relative Formula rubric type
 Relative formulas are now possible with two rubric types:  `relative` or `relative_f`.
 
-* `relative` compares the evaluation of the key cell's formula using the **submission cells' values** and compares the result with the evaluated value of the submission cell. For example, suppose the cell A1 in `A1Key.xlsx` contains a formula `=IF(A2 = "ok", B2, C2)`. In the student submission, suppose A1 contains 13, A2 contains "not_ok", B2 contains 13, and C2 contains 14. The instructor's formula will be evaluated with the student submission's cells, which gives a value of 14. This evaluated answer will be checked against the submission's evaluated A1 cell value, which is 13. In this case, A1 doesn't pass the rubric (the actual value is 13, but the expected value is 14).  
+* `relative` compares the evaluation of key's formula using the **submission cells values** (the actual values of the key cells referenced in the submission cell). For example, suppose the cell A1 in `A1Key.xlsx` contains a formula `=IF(A2 = "ok", B2, C2)`. Inside the student submission, suppose A1 contains 13, A2 contains "not_ok", B2 contains 13, and C2 contains 14. The instructor's formula will be evaluated with the student submission's cells, which gives a value of 14. This evaluated answer will be checked against the submission's evaluated A1 cell value, which is 13. In this case, A1 doesn't pass the rubric (the actual value is 13, but the expected value is 14).  
 
-* `relative_f` is a stricter version of `relative` rubric. It grades like the `relative` rubric type, but additionally it requires the evaluated submission cell to be a formula. If the evaluated cell is a hardcoded constant, the student will not get a score. In the above example, even if the student's A1 contains a hardcoded value 14, the rubric still doesn't pass.
+* `relative_f` is a stricter version of `relative` rubric. It grades like the `relative`, but additionally it requires the evaluated submission cell to be a formula. If the evaluated cell is a hardcoded constant, the student will not get a score. In the above example, even if the student's A1 contains a hardcoded value 14, the rubric still doesn't pass.
 
 As a side note, both `relative` and `relative_f` supports the `delta` and `alt_cells` rubric modifiers for flexibility.
 
@@ -340,4 +346,58 @@ Assignment Score: << grand total of all subtotals >>
 
 ## Hidden cells
 
-Some cells can be graded secretively, with student feedback indicating that something went wrong in that cell without specifing which cell caused the problem. In the CheckOrder sheet of a graded tab, there is a decidaced column titled "Hidden" to indicated this. Enter H in this column if the cell is to be graded secretively. 
+Some cells can be graded secretively, with student feedback indicating that something went wrong in that cell without specifing which cell caused the problem. In the CheckOrder sheet of a graded tab, there is a decidaced column titled "Hidden/Killed" to indicated this. Enter H in this column if the cell is to be graded secretively. 
+
+## Killer cells if they fail, the tab is not graded and a custom failure message is printed in the sub report.
+
+Some cells are made killer cells, if the student gets this cell wrong the tab is not graded and a custom failure message is printed in the sub report. In the CheckOrder sheet of a graded tab, there is a decidaced column titled "Hidden/Killed" to indicated this. Enter K in this column if the cell is to be made killer cell. 
+
+## How to setup or deploy to Vocareum for a new course
+
+### Course-wide setup by instructor
+
+Here are the general steps on setting or updating PySheetGrader in Vocareum for a specific course:
+
+1. On your local drive, navigate to PysheetGrader root folder. Zip the required files using `bash ./vocareum_scripts/zip_for_vocareum.sh`. This will generate the file `pysheetgrader-vocareum.zip`.
+2. Go to the course and choose any spreadsheet assignment (if none exists, create a new one). 
+3. Click on `Edit Assignments` and then `Configure Workspace`. This takes you to the `Teacher View` in the assignment's workspace. 
+4. Upload the file `pysheetgrader-vocareum.zip` to the`resource/lib` folder in the assignment's workspace.
+5. On Vocareum console, navigate to the vocaruem library directory by executing `cd $LIB/pysheetgrader-vocareum`.
+6. Activate source environment by `source venv/bin/activate`
+7. Run `./deploy_on_vocareum.sh` in the `$LIB/pysheetgrader-vocareum` directory to run the compilation scripts and copy the necessary files to the right course folders. 
+
+
+### Assignment-wide setup by instructor
+
+For each assignment, these additional steps are necessary: 
+
+1. In the assignment's workspace, set the value of the variable `ASSIGNMENT_PREFIX` in `resource/asnlib/pysheetgrader.config`. This variable contains the prefix that will be used in naming key, submission, and report files. For example `ASSIGNMENT_PREFIX=My`, then the key file must be named `MyKey.xlsx`, the submission file must be named `MySubmission.xlsx`, and the HTML report file will be named `MyReport.html`.   
+2. Upload key file to the folder `resource/asnlib`. The key file must be named `[ASSIGNMENT_PREFIX]Key.xlsx`. 
+3. Copy the `submit.sh` script into the assignment's `scripts` folder from the `/lib/pysheetgrader-vocareum/vocareum_scripts/shared_scripts` folder (or just copy and paste contents into the file `resource/scripts/submit.sh`).
+4. To deploy the changes to the students, click on the `Update*` button. Otherwise changes will be available only for the instructor for testing. 
+   
+### To test a new deployment or update 
+
+#### Teacher View 
+
+1. Go to the assignment's workspace (`Edit Assignments > Configure Workspace`).
+2. Run `source venv/bin/activate` in the `$LIB/pysheetgrader-vocareum` to activate the Python virtual environment. 
+3. Upload the submission file `[ASSIGNMENT_PREFIX]Submission.xlsx` to the `work` subfolder. 
+4. Run the submission script by selectiong `Submission` from the `Run Scripts` drop-down tab. 
+5. Wait for the submission script to complete. This may take several minutes. 
+6. Check standard output on consolde and the generated reports and grade file under the `work` subfolder: vocStudentSubmissionReport.txt, vocSubmissionReport.txt, vocareum_report.txt, `[ASSIGNMENT_PREFIX]Report.xlsx`, vocareum_grade.csv.
+
+#### Student View
+
+1. Go to the assignment's workspace (`Edit Assignments > Configure Workspace`), and then click on `Student View`. This view emulates what the students see when they are submitting the assignment. 
+2. Upload the submission file `[ASSIGNMENT_PREFIX]Submission.xlsx` to the `work` subfolder. 
+3. Run the submission script by hitting the `Submit` button. 
+4. Wait for the submission script to complete. When ready, the submission report can be viewed from the `Details` drop-down tab. This may take several minutes. 
+5. Check the submission report (`Details > View Submission Report`) and the generated HTML report under the `work` subfolder. 
+
+
+#### Using a student account
+
+The surest way to test the setup and new deployment after publishing an assignment on Vocareum is by creating a mock student account and logging in as a student to Vocareum and submitting the assignment. 
+
+_The deprecated setup instruction is [here](./doc/how_to_setup_in_vocareum_deprecated.md)_

@@ -49,7 +49,13 @@ class RelativeStrategy(BaseStrategy):
         
         if self.grading_rubric.grading_nature == 'positive':
             if self.is_key_sub_match(key_sheet, key_value, sub_value):
-                report.submission_score += self.grading_rubric.score
+                if self.grading_rubric.prereq_cells is not None:
+                    if self.prereq_check(cell_coord,report):
+                        report.submission_score += self.grading_rubric.score
+                    else:
+                        return report
+                else:
+                    report.submission_score += self.grading_rubric.score
         elif self.grading_rubric.grading_nature == 'negative':
             if not self.is_key_sub_match(key_sheet, key_value, sub_value):
                 checkflag_altcells = True
@@ -101,4 +107,7 @@ class RelativeStrategy(BaseStrategy):
         local_dict.update(encoded_inputs)
 
         result = parse_formula(lowercased_formula, local_dict)
+        # The clear done below is required because setting the values in a global dict is persistent 
+        # and changes variables that affect other execution
+        local_dict.clear()
         return result

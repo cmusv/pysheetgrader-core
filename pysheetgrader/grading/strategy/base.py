@@ -8,7 +8,7 @@ class BaseStrategy:
     Base class of other grading strategies.
     """
 
-    def __init__(self, key_document: Document, sub_document: Document, sheet_name, grading_rubric: GradingRubric,
+    def __init__(self, key_document: Document, sub_document: Document, sheet_name, grading_rubric: GradingRubric,correct_cells,
                  report_line_prefix: str = ""):
         """
         Initializer of this class.
@@ -24,6 +24,7 @@ class BaseStrategy:
         self.sheet_name = sheet_name
         self.grading_rubric = grading_rubric
         self.report_line_prefix = report_line_prefix
+        self.correct_cells = correct_cells
 
     def grade(self):
         """
@@ -31,7 +32,7 @@ class BaseStrategy:
         :return: GradingReport instance of the grading.
         :exception NotImplemented   raised when this method called directly (instead of the subclass').
         """
-        raise NotImplemented("The `grade` method should've been implemented in the subclasses.")
+        raise NotImplementedError("The `grade` method should've been implemented in the subclasses.")
 
     def create_initial_report(self):
         """
@@ -59,7 +60,7 @@ class BaseStrategy:
         return self.sub_document.formula_wb[self.sheet_name] if not computed \
             else self.sub_document.computed_value_wb[self.sheet_name]
 
-    def try_get_key_and_sub(self, report, computed=True):
+    def  try_get_key_and_sub(self, report, computed=True):
         """
         Attempt to load both key and submission sheet according to `sheet_name`. Log any exception if occurs to report.
         :param computed: Should return the sheet with computed cells rather than formula strings
@@ -103,3 +104,22 @@ class BaseStrategy:
         except Exception:
             # TODO: Check if we should log an error here.
             return False
+
+    def prereq_check(self, cell_coord, report):
+        """
+        Checks if the pre-requistes mentioned are correct or not the
+        :param cell_coord: current correct cell coordinate to be added to correct cells list
+        :return: True if the pre-requistes
+        """
+        if len(self.correct_cells)>0:
+            prereq_check = all(item in self.correct_cells for item in self.grading_rubric.prereq_cells)
+        else:
+            prereq_check = False
+        if len(self.grading_rubric.prereq_cells) == 1:
+            prereq_string = 'Cell '+' '.join(self.grading_rubric.prereq_cells)
+        else:
+            prereq_string = 'Cells '+', '.join(self.grading_rubric.prereq_cells)
+        if not prereq_check:
+            report.append_line(f"{self.report_line_prefix} "+ prereq_string + " must be correct before this cell can be graded!")
+            report.report_html_args['feedback'] = f" "+ prereq_string + " must be correct before this cell can be graded!"
+        return prereq_check

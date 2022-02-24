@@ -9,7 +9,6 @@ class CheckStrategy(BaseStrategy):
     This instance will check the alternative cells in the key if the submission value didn't match the key value
         in the main cell.
     """
-
     def grade(self):
         report = self.create_initial_report()
 
@@ -24,15 +23,26 @@ class CheckStrategy(BaseStrategy):
             # Grading cells
             cell_coord = self.grading_rubric.cell_coord
             key_raw_formula = key_sheet[cell_coord].value
-            key_value = self.get_formula_value(sub_sheet, key_raw_formula)
+            sub_evaluated_value = self.get_formula_value(sub_sheet, key_raw_formula)
             for coord in self.grading_rubric.get_result_cell_coord():
+
+                # if a result or alt cell is specified
                 if coord is not None:
-                    if self.value_matches(key_value, key_sheet[coord].value):
+                    key_evaluated_value = key_sheet[coord].value
+                # else check the value of the given cell in the key
+                else:
+                    key_evaluated_value = self.get_formula_value(key_sheet, key_raw_formula)
+
+                if self.value_matches(sub_evaluated_value, key_evaluated_value):
+                    if self.grading_rubric.prereq_cells is not None:
+                        if self.prereq_check(cell_coord,report):
+                            report.submission_score += self.grading_rubric.score
+                        else:
+                            break
+                    else:
                         report.submission_score += self.grading_rubric.score
-                        break
-                elif key_value:
-                    report.submission_score += self.grading_rubric.score
                     break
+
             return report
         except Exception as exc:
             report.append_line(f"{self.report_line_prefix}Error: {exc}")
@@ -49,13 +59,13 @@ class CheckStrategy(BaseStrategy):
         :return:
         """
         lowercased_formula = transform_excel_formula_to_sympy(key_raw_formula)
-
+        
         # extract input coordinates
         input_coords = parse_formula_inputs(key_raw_formula, encoded=False)
-
         encoded_inputs = {encode_cell_reference(coord): sub_sheet[coord].value for coord in input_coords}
         local_dict = get_excel_formula_lambdas()
         local_dict.update(encoded_inputs)
 
         result = parse_formula(lowercased_formula, local_dict)
+        local_dict.clear()
         return result

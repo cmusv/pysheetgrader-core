@@ -48,7 +48,6 @@ def cli(key_document_path, submission_document_path, score_output, report_output
 
     if html_report_output:
         save_html_report(report, html_report_output)
-
     key_doc.close()
     sub_doc.close()
 

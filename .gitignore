@@ -48,3 +48,4 @@ __pycache__/
 build/
 dist/ls
 *.whl
+.project

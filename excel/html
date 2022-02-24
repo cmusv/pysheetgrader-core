@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pysheetgrader - Report</title>
+</head>
+<body>
+
+<div class="container">
+    <h5>Grade report for <code>Test_Check_Rubric_Submission.xlsx</code></h5>
+    <h6>Time: 2021-09-10 09:21 AM</h6>
+
+    
+    
+        <table class="table caption-top">
+            <caption>Result for sheet: <b> Constant Samples </b></caption>
+            <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Cell</th>
+                <th scope="col">Description</th>
+                <th scope="col">Score</th>
+                <th scope="col">Max</th>
+                <th scope="col">Rubric Type</th>
+                <th scope="col">Feedback</th>
+                <th scope="col">Error</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            
+                
+                    
+                        
+                            <tr class="table-success">
+                                <th scope="col">1</th>
+                                <td>B2</td>
+                                <td>None</td>
+                                <td>1.0</td>
+                                <td>1.0</td>
+                                <td>Value check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-success">
+                                <th scope="col">2</th>
+                                <td>B3</td>
+                                <td>None</td>
+                                <td>1.5</td>
+                                <td>1.5</td>
+                                <td>Value check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-success">
+                                <th scope="col">3</th>
+                                <td>B4</td>
+                                <td>None</td>
+                                <td>1.0</td>
+                                <td>1.0</td>
+                                <td>Value check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-success">
+                                <th scope="col">4</th>
+                                <td>B6</td>
+                                <td>None</td>
+                                <td>1.0</td>
+                                <td>1.0</td>
+                                <td>Value check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-danger">
+                                <th scope="col">5</th>
+                                <td>B7</td>
+                                <td>None</td>
+                                <td>0</td>
+                                <td>1.0</td>
+                                <td>Value check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-success">
+                                <th scope="col">6</th>
+                                <td>B8</td>
+                                <td>None</td>
+                                <td>1.5</td>
+                                <td>1.5</td>
+                                <td>Value check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-success">
+                                <th scope="col">7</th>
+                                <td>B9</td>
+                                <td>None</td>
+                                <td>1.5</td>
+                                <td>1.5</td>
+                                <td>Value check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+            
+
+
+            <tr class="table-secondary">
+                <td colspan="3">Grade for sheet: <b>Constant Samples</b></td>
+                <td>7.5</td>
+                <td>8.5</td>
+            </tr>
+            </tbody>
+        </table>
+    
+        <table class="table caption-top">
+            <caption>Result for sheet: <b> Formula Samples </b></caption>
+            <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Cell</th>
+                <th scope="col">Description</th>
+                <th scope="col">Score</th>
+                <th scope="col">Max</th>
+                <th scope="col">Rubric Type</th>
+                <th scope="col">Feedback</th>
+                <th scope="col">Error</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            
+                
+                    
+                        
+                            <tr class="table-danger">
+                                <th scope="col">2</th>
+                                <td>B3</td>
+                                <td>None</td>
+                                <td>0</td>
+                                <td>1.5</td>
+                                <td>Formula check</td>
+                                <td></td>
+                                <td>Error: Expected formula, got 202</td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-danger">
+                                <th scope="col">3</th>
+                                <td>B4</td>
+                                <td>None</td>
+                                <td>0</td>
+                                <td>1.5</td>
+                                <td>Formula check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-success">
+                                <th scope="col">4</th>
+                                <td>B7</td>
+                                <td>None</td>
+                                <td>1.0</td>
+                                <td>1.0</td>
+                                <td>Formula check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-danger">
+                                <th scope="col">5</th>
+                                <td>B8</td>
+                                <td>None</td>
+                                <td>0</td>
+                                <td>1.5</td>
+                                <td>Formula check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-success">
+                                <th scope="col">6</th>
+                                <td>B9</td>
+                                <td>None</td>
+                                <td>1.5</td>
+                                <td>1.5</td>
+                                <td>Formula check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-success">
+                                <th scope="col">7</th>
+                                <td>B11</td>
+                                <td>None</td>
+                                <td>2.0</td>
+                                <td>2.0</td>
+                                <td>Formula check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-success">
+                                <th scope="col">8</th>
+                                <td>B12</td>
+                                <td>None</td>
+                                <td>2.0</td>
+                                <td>2.0</td>
+                                <td>Formula check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+            
+
+
+            <tr class="table-secondary">
+                <td colspan="3">Grade for sheet: <b>Formula Samples</b></td>
+                <td>6.5</td>
+                <td>11.0</td>
+            </tr>
+            </tbody>
+        </table>
+    
+        <table class="table caption-top">
+            <caption>Result for sheet: <b> Check Samples </b></caption>
+            <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Cell</th>
+                <th scope="col">Description</th>
+                <th scope="col">Score</th>
+                <th scope="col">Max</th>
+                <th scope="col">Rubric Type</th>
+                <th scope="col">Feedback</th>
+                <th scope="col">Error</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            
+                
+                    
+                        
+                            <tr class="table-success">
+                                <th scope="col">1</th>
+                                <td>A2</td>
+                                <td>None</td>
+                                <td>1.0</td>
+                                <td>1.0</td>
+                                <td>Result check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-danger">
+                                <th scope="col">2</th>
+                                <td>A3</td>
+                                <td>None</td>
+                                <td>0</td>
+                                <td>1.0</td>
+                                <td>Result check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-success">
+                                <th scope="col">3</th>
+                                <td>A4</td>
+                                <td>None</td>
+                                <td>1.0</td>
+                                <td>1.0</td>
+                                <td>Result check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-danger">
+                                <th scope="col">4</th>
+                                <td>A5</td>
+                                <td>None</td>
+                                <td>0</td>
+                                <td>1.0</td>
+                                <td>Result check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-success">
+                                <th scope="col">5</th>
+                                <td>A6</td>
+                                <td>None</td>
+                                <td>1.0</td>
+                                <td>1.0</td>
+                                <td>Result check</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+            
+
+
+            <tr class="table-secondary">
+                <td colspan="3">Grade for sheet: <b>Check Samples</b></td>
+                <td>3.0</td>
+                <td>5.0</td>
+            </tr>
+            </tbody>
+        </table>
+    
+        <table class="table caption-top">
+            <caption>Result for sheet: <b> RelativeF Samples </b></caption>
+            <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Cell</th>
+                <th scope="col">Description</th>
+                <th scope="col">Score</th>
+                <th scope="col">Max</th>
+                <th scope="col">Rubric Type</th>
+                <th scope="col">Feedback</th>
+                <th scope="col">Error</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            
+                
+                    
+                        
+                            <tr class="table-success">
+                                <th scope="col">1</th>
+                                <td>A2</td>
+                                <td>None</td>
+                                <td>1.0</td>
+                                <td>1.0</td>
+                                <td>Relative formula check (only accept formula cell)</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-danger">
+                                <th scope="col">2</th>
+                                <td>A3</td>
+                                <td>None</td>
+                                <td>0</td>
+                                <td>1.0</td>
+                                <td>Relative formula check (only accept formula cell)</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-success">
+                                <th scope="col">3</th>
+                                <td>A4</td>
+                                <td>None</td>
+                                <td>1.0</td>
+                                <td>1.0</td>
+                                <td>Relative formula check (only accept formula cell)</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+                    
+                        
+                            <tr class="table-success">
+                                <th scope="col">4</th>
+                                <td>A5</td>
+                                <td>None</td>
+                                <td>1.0</td>
+                                <td>1.0</td>
+                                <td>Relative formula check (only accept formula cell)</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        
+                    
+                
+            
+
+
+            <tr class="table-secondary">
+                <td colspan="3">Grade for sheet: <b>RelativeF Samples</b></td>
+                <td>3.0</td>
+                <td>4.0</td>
+            </tr>
+            </tbody>
+        </table>
+    
+
+
+    <table class="table caption-top table-secondary">
+        <caption>Summary:</caption>
+        <thead>
+        <tr>
+            <td>Summary Report for:</td>
+            <td><b>Test_Check_Rubric_Submission.xlsx</b></td>
+            <td>Score</td>
+            <td>Max</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Total Grade for:</td>
+            <td>All Sheets</td>
+            <td><b>20.0</b></td>
+            <td><b>28.5</b></td>
+        </tr>
+
+
+        
+            <tr>
+                
+                    <td rowspan="4">Breakdown for:</td>
+                
+                <td><b>Constant Samples</b></td>
+                <td>7.5</td>
+                <td>8.5</td>
+            </tr>
+        
+            <tr>
+                
+                <td><b>Formula Samples</b></td>
+                <td>6.5</td>
+                <td>11.0</td>
+            </tr>
+        
+            <tr>
+                
+                <td><b>Check Samples</b></td>
+                <td>3.0</td>
+                <td>5.0</td>
+            </tr>
+        
+            <tr>
+                
+                <td><b>RelativeF Samples</b></td>
+                <td>3.0</td>
+                <td>4.0</td>
+            </tr>
+        
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>
