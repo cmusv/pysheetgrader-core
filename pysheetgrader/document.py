@@ -1,4 +1,5 @@
 from pysheetgrader.sheet import Sheet
+from pysheetgrader.utils import get_headers
 
 from openpyxl import load_workbook
 
@@ -9,9 +10,20 @@ class Document:
     Attributes:
         GRADING_ORDER_SHEET_NAME    Holds the name of the sheet in a key workbook that contains the order
                                     of grading other sheets.
+        COLUMN_HEADER_NAMES         Holds the variables (headers) to be extracted from the order sheet 
+                                    and possible names (for backwards compatibility) of those variables
     """
 
+    # How to add a new header:
+    # - add the name of the header in COLUMN_HEADER_NAMES. Since it is a new header, you can just add the same to the list
+    # - follow process for the "name" variable in get_grading_sheets function
+
     GRADING_ORDER_SHEET_NAME = 'SheetGradingOrder'
+    COLUMN_HEADER_NAMES = {
+        "name": ["name", "sheet", "tab"],
+        "minimum_work": ["min-work"],
+        "feedback": ["feedback"]
+    }
 
     def __init__(self, path, read_only=True):
         """
@@ -52,16 +64,18 @@ class Document:
         sheets = []
         order_sheet = self.formula_wb[self.GRADING_ORDER_SHEET_NAME]
 
-        # Assumptions of the order sheet
-        # 1a. The scoring column is on B is the sheet name. (min_col=2, max_col=2, required)
-        # 1b. The scoring column is on C is the minimum work. (min_col=3, max_col=3, optional, default 0)
-        # 1c. The scoring column is on D is the feedback when not achieving minimum work.
-        # (min_col=4, max_col=4, optional, default "")
-        # 2. The scoring column always has a header (min_row=2)
-        # 3. The scoring column is always in order
-        for row in order_sheet.iter_rows(min_col=2, max_col=4, min_row=2):
-            name, minimum_work, feedback = row
-            sheets.append(Sheet(name.value, minimum_work.value, feedback.value))
+        first_row = next(order_sheet.iter_rows(values_only=True))
+        header_index = get_headers(self.COLUMN_HEADER_NAMES, first_row)
+        has_name = "name" in header_index
+        has_minimum_work = "minimum_work" in header_index
+        has_feedback = "feedback" in header_index
+
+        for row in order_sheet.iter_rows(min_row=2, values_only=True):
+            name = row[header_index["name"]] if has_name else None
+            minimum_work = row[header_index["minimum_work"]] if has_minimum_work else None
+            feedback = row[header_index["feedback"]] if has_feedback else None
+
+            sheets.append(Sheet( name, minimum_work, feedback))
 
         return sheets
 
