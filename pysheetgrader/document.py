@@ -61,7 +61,8 @@ class Document:
         # 3. The scoring column is always in order
         for row in order_sheet.iter_rows(min_col=2, max_col=4, min_row=2):
             name, minimum_work, feedback = row
-            sheets.append(Sheet(name.value, minimum_work.value, feedback.value))
+            if name.value:
+                sheets.append(Sheet(name.value, minimum_work.value, feedback.value))
 
         return sheets
 

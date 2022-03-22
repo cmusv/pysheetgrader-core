@@ -12,7 +12,12 @@
 <body>
 
 <div class="container">
-    <h5>Grade report for <code>{{ html_args['name'] }}</code></h5>
+    {% set is_testmode = html_args['is_testmode'] %}
+    {% if is_testmode %}
+        <h5>Test Report for <code>{{ html_args['name'] }}</code></h5>
+    {% else %}
+        <h5>Grade report for <code>{{ html_args['name'] }}</code></h5>
+    {% endif %}
     <h6>Time: {{ now }}</h6>
 
     {% if html_args['sheets'] | length == 0 %}
@@ -25,11 +30,16 @@
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Cell</th>
-                <th scope="col">Description</th>
-                <th scope="col">Score</th>
-                <th scope="col">Max</th>
+                {% if is_testmode %}
+                    <th scope="col">Test Name</th>
+                    <th scope="col">Status</th>
+                {% else %}
+                    <th scope="col">Description</th>
+                    <th scope="col">Score</th>
+                    <th scope="col">Max</th>
+                    <th scope="col">Feedback</th>
+                {% endif %}
                 <th scope="col">Rubric Type</th>
-                <th scope="col">Feedback</th>
                 <th scope="col">Error</th>
             </tr>
             </thead>
@@ -46,27 +56,38 @@
 
             {% else %}
                 {% for rubric in sheet['rubrics'] %}
+                    {% set is_correct = (rubric['submission_score'] >= rubric['max_possible_score']) %}
+                    {% set test_params = rubric.get('test_params', {}) %}
+                    {% set is_test_pass = (is_correct and test_params.get("expected_result", "correct") == "correct") or 
+                                        ((not is_correct) and test_params.get("expected_result", "correct") == "incorrect")
+                    %}
                     {% if not rubric['hidden'] %}
                         {% if 'test_cases' in rubric %}
                             {% set test_case_num = rubric['test_cases'] | length %}
-
-                            <tr class="{{ 'table-danger' if rubric['submission_score'] < rubric['max_possible_score'] else 'table-success' }}">
+                            <tr class="{{ 'table-success' if ((is_testmode and is_test_pass) or (not is_testmode and is_correct)) else 'table-danger' }}">
                                 <th scope="row" rowspan="{{ test_case_num + 1 }}">{{ rubric['id'] }}</th>
                                 <td rowspan="{{ test_case_num + 1 }}">{{ rubric['cell'] }}</td>
-                                <td rowspan="{{ test_case_num + 1 }}">{{ rubric['description'] }}</td>
-                                <td rowspan="{{ test_case_num + 1 }}">{{ rubric['submission_score'] }}</td>
-                                <td rowspan="{{ test_case_num + 1 }}">{{ rubric['max_possible_score'] }}</td>
-                                <td> Test runs</td>
-                                <td>
-                                    {{ rubric['feedback'] }}
-                                </td>
-                                <td>
-                                    {% if rubric['all_test_pass'] %}
-                                        All test cases pass!
-                                    {% else %}
-                                        At least one of the cell tests fail: all must pass
-                                    {% endif %}
-                                </td>
+                                {% if is_testmode %}
+                                    <td>
+                                        {{ test_params["name"] }}
+                                    </td>
+                                    <td>{{ "PASS" if is_test_pass else "FAIL: %s"%(test_params.get("failure_message", "")) }}</td>
+                                {% else %}
+                                    <td rowspan="{{ test_case_num + 1 }}">{{ rubric['description'] }}</td>
+                                    <td rowspan="{{ test_case_num + 1 }}">{{ rubric['submission_score'] }}</td>
+                                    <td rowspan="{{ test_case_num + 1 }}">{{ rubric['max_possible_score'] }}</td>
+                                    <td> Test runs</td>
+                                    <td>
+                                        {{ rubric['feedback'] }}
+                                    </td>
+                                    <td>
+                                        {% if rubric['all_test_pass'] %}
+                                            All test cases pass!
+                                        {% else %}
+                                            At least one of the cell tests fail: all must pass
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
                             </tr>
                             {% for test_case in rubric['test_cases'] %}
                                 <tr class="{{ 'table-danger' if not test_case['success'] else 'table-success' }}">
@@ -76,14 +97,21 @@
                                 </tr>
                             {% endfor %}
                         {% else %}
-                            <tr class="{{ 'table-danger' if rubric['submission_score'] < rubric['max_possible_score'] else 'table-success' }}">
+                            <tr class="{{ 'table-success' if ((is_testmode and is_test_pass) or (not is_testmode and is_correct)) else 'table-danger' }}">
                                 <th scope="col">{{ rubric['id'] }}</th>
                                 <td>{{ rubric['cell'] }}</td>
-                                <td>{{ rubric['description'] }}</td>
-                                <td>{{ rubric['submission_score'] }}</td>
-                                <td>{{ rubric['max_possible_score'] }}</td>
+                                {% if is_testmode %}
+                                    <td>
+                                        {{ test_params["name"] }}
+                                    </td>
+                                    <td>{{ "PASS" if is_test_pass else "FAIL: %s"%(test_params.get("failure_message", "")) }}</td>
+                                {% else %}
+                                    <td>{{ rubric['description'] }}</td>
+                                    <td>{{ rubric['submission_score'] }}</td>
+                                    <td>{{ rubric['max_possible_score'] }}</td>
+                                    <td>{{ rubric['feedback'] }}</td>
+                                {% endif %}
                                 <td>{{ rubric['rubric_type'] }}</td>
-                                <td>{{ rubric['feedback'] }}</td>
                                 <td>{{ rubric['error'] }}</td>
                             </tr>
                         {% endif %}

@@ -20,11 +20,12 @@ class Grader:
     Responsible to grade submission Document instances against the key Document.
     """
 
-    def __init__(self, key_document):
+    def __init__(self, key_document, is_testmode):
         """
         Initializer of this instance.
 
         :param key_document: Document instance of a valid key.
+        :param is_testmode: Boolean to indicate that autograder is running in test mode.
         :exception ValueError: Raises a ValueError if the passed `key_document` is not a valid key.
         """
         # Sanity check
@@ -35,6 +36,7 @@ class Grader:
         self.key_document = key_document
         self.grading_sheets = key_document.get_grading_sheets()
         self.correct_cells = []
+        self.is_testmode = is_testmode
 
     def grade(self, document):
         """
@@ -51,6 +53,7 @@ class Grader:
 
         report.report_html_args['submission_score'] = report.submission_score
         report.report_html_args['max_possible_score'] = report.max_possible_score
+        report.report_html_args['is_testmode'] = self.is_testmode
         report.append_line(f"\nFinal score: {report.submission_score} / {report.max_possible_score}")
         return report
 
@@ -68,8 +71,7 @@ class Grader:
                                    'minimum_work_feedback': sheet.feedback,
                                    'submission_score': 0,
                                    'max_possible_score': 0}
-
-        report.append_line(f"\nGrading for sheet: {sheet.name}")
+        report.append_line(f"\n {'Running Tests' if self.is_testmode else 'Grading'} for sheet: {sheet.name}")
         rubrics = GradingRubric.create_rubrics_for_sheet(self.key_document, sheet)
         for r in rubrics:
             sub_score = report.submission_score
@@ -111,8 +113,13 @@ class Grader:
         """
         report = GradingReport(GradingReportType.RUBRIC)
 
-        html_args = {'id': rubric.cell_id, 'cell': rubric.cell_coord, 'hidden': rubric.hidden,
-                     'description': rubric.description}
+        html_args = {
+            'id': rubric.cell_id,
+            'cell': rubric.cell_coord,
+            'hidden': rubric.hidden,
+            'description': rubric.description,
+            'test_params': rubric.test_params
+        }
         if rubric.rubric_type == GradingRubricType.CONSTANT:
             if not rubric.hidden:
                 report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, constant value comparison")
@@ -159,19 +166,26 @@ class Grader:
             html_args['rubric_type'] = "Result check" if rubric.grading_nature == 'positive' else "Result check (penalty)"
         
         feedback = self.render_failure_message(document, sheet.name, rubric.fail_msg) if rubric.fail_msg else ""
+        is_correct = report.submission_score >= report.max_possible_score
+        if not self.is_testmode:
+            if not rubric.hidden:
+                if rubric.description:
+                    report.append_line(f"\t- Description: {rubric.description}")
+                if rubric.fail_msg and not is_correct:
+                    report.append_line(f"\t- Feedback: {feedback}")
+                    html_args['feedback'] = feedback
+                report.append_line(f"\t- Score: {report.submission_score} / {report.max_possible_score}")
 
-        if not rubric.hidden:
-            if rubric.description:
-                report.append_line(f"\t- Description: {rubric.description}")
-            if rubric.fail_msg and report.submission_score < report.max_possible_score:
-                report.append_line(f"\t- Feedback: {feedback}")
-                html_args['feedback'] = feedback
-            report.append_line(f"\t- Score: {report.submission_score} / {report.max_possible_score}")
-
-        if rubric.hidden and report.submission_score < report.max_possible_score:
-            # student does not pass the hidden cell, show hint
-            html_args['hidden_hint'] = {'hint': feedback}
-            report.append_line(f"    #{rubric.cell_id} (Hidden): {feedback}")
+            if rubric.hidden and not is_correct:
+                # student does not pass the hidden cell, show hint
+                html_args['hidden_hint'] = {'hint': feedback}
+                report.append_line(f"    #{rubric.cell_id} (Hidden): {feedback}")
+        else:
+            report.append_line(f"\t- Test: {rubric.test_params.get('name', '')}")
+            is_test_pass = (is_correct and rubric.test_params.get("expected_result", "correct") == "correct") or \
+                                        ((not is_correct) and rubric.test_params.get("expected_result", "correct") == "incorrect")
+            status = "PASS" if is_test_pass else f"FAIL: {rubric.test_params.get('failure_message', '')}"
+            report.append_line(f"\t- Status: {status}")
 
         html_args['submission_score'] = report.submission_score
         html_args['max_possible_score'] = report.max_possible_score
