@@ -78,6 +78,26 @@ PySheetGrader will require a key document to run. A proper *.xlsx key document s
 2. For each graded sheet, there should be a pairing sheet with name of `[sheet_name]_CheckOrder`, which contains the order of the cells that needs to be graded on the B column, starting from row 2.
 3. An Excel cell note, called rubric note, for each graded cell that contains a rubric specification to grade that cell. The details of the rubric note will be provided in the next section.
 
+    **All columns in the order sheets are position independent. But the headers of the columns must be as follows (case insensitive):**
+
+    For `SheetGradingOrder`:
+    - name of the sheet: "name" "sheet", "tab",
+    - minimum work to show per-cell feedback: "min-work",
+    - message in case minimum work is not reached: "feedback"
+
+    For `CheckOrder`:
+    - Cell ID": "number", "cell-id", "id",
+    - Cell Coordinate": "cell",
+    - Cell Description": "description",
+    - Hidden or Killer Cells": "special (H/K)", "hidden", "killer",       - "killer or hidden", "hidden or killer",
+
+        And in case of **`Test Mode`**
+
+    - Test Name": "test-name",
+    - Expected Result": "expected-result",
+    - Failure Message in case of test failure": "failure-message",
+
+
 Here are some sample images:
 
 - SheetGradingOrder content:
@@ -351,6 +371,14 @@ Some cells can be graded secretively, with student feedback indicating that some
 ## Killer cells if they fail, the tab is not graded and a custom failure message is printed in the sub report.
 
 Some cells are made killer cells, if the student gets this cell wrong the tab is not graded and a custom failure message is printed in the sub report. In the CheckOrder sheet of a graded tab, there is a decidaced column titled "Hidden/Killed" to indicated this. Enter K in this column if the cell is to be made killer cell. 
+
+## Test Mode
+
+Test mode can be activated with the `--test-mode` or `-T` parameter from the command line. The file specifications stay the same. Test Mode takes into consideration three other columns in the CheckOrder sheet: 
+
+  - Test-Name: Descriptive name of the test behavior
+  - Expected-Result: `correct` if you expect the rubric result to be correct, or `incorrect` if otherwise
+  - Failure-Message: Descriptive message to show in case the test fails
 
 ## How to setup or deploy to Vocareum for a new course
 
