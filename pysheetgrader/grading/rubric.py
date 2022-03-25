@@ -1,10 +1,13 @@
 import sys
 from enum import Enum
+from typing import List
 import yaml
 from openpyxl.worksheet.worksheet import Worksheet
 
+from email import header
 from pysheetgrader.sheet import Sheet
 from pysheetgrader.grading.test_case import GradingTestCase
+from pysheetgrader.utils import get_headers
 
 
 
@@ -134,21 +137,43 @@ class GradingRubric:
 
         # Rubric creation
         rubrics = []
-        # Assumptions of the order sheet
-        # 1. The scoring column is always on B. (min_col=2, max_col=2)
-        # 2. The scoring column always has a header (min_row=2)
-        # 3. The scoring column is always in order
-        # 4. The indexing column is always on A, one-cell left from the scoring column
-        for row in order_sheet.iter_rows(min_col=1, max_col=8, min_row=2):
+        COLUMN_HEADER_NAMES = {
+            "cell_id": ["number", "cell-id", "id"],
+            "cell_coord": ["cell"],
+            "cell_description": ["description"],
+            "cell_hidden_or_killer": ["special (H/K)", "hidden", "killer", "killer or hidden", "hidden or killer"],
+            "test_name": ["test-name"],
+            "test_result": ["expected-result"],
+            "test_failure_message": ["failure-message"],
+        }
+        first_row = next(order_sheet.iter_rows(values_only=True))
+        header_index = get_headers(COLUMN_HEADER_NAMES, first_row)
+        has_cell_id = "cell_id" in header_index
+        has_cell_coord = "cell_coord" in header_index
+        has_cell_description = "cell_description" in header_index
+        has_cell_hidden_or_killer = "cell_hidden_or_killer" in header_index
+        has_fail_msg = "fail_msg" in header_index
+        has_test_name = "test_name" in header_index
+        has_test_result = "test_result" in header_index
+        has_test_failure_message = "test_failure_message" in header_index
+        for row in order_sheet.iter_rows(min_row=2, values_only=True):
             # Assuming this for-loop will only be executed for B column
             # TODO: Revisit if the failed rubric parsing is necessary to be reported.
             try:
-                cell_id, cell_coord, cell_description, cell_hidden_or_killer,fail_msg, test_name, test_result, failure_message = \
-                    row[0].value, row[1].value, row[2].value, row[3].value, row[4].value, row[5].value, row[6].value, row[7].value
+                cell_id = row[header_index["cell_id"]] if has_cell_id else None
+                cell_coord = row[header_index["cell_coord"]] if has_cell_coord else None
+                cell_description = row[header_index["cell_description"]] if has_cell_description else None
+                cell_hidden_or_killer = row[header_index["cell_hidden_or_killer"]] if has_cell_hidden_or_killer else None
+                fail_msg = row[header_index["fail_msg"]] if has_fail_msg else None
+
 
                 hidden = cell_hidden_or_killer == "H" or cell_hidden_or_killer == "h" or cell_hidden_or_killer == "HK" or cell_hidden_or_killer == "hk" or cell_hidden_or_killer == "KH" or cell_hidden_or_killer == "kh"
                 killer = cell_hidden_or_killer == "K" or cell_hidden_or_killer == "k" or cell_hidden_or_killer == "HK" or cell_hidden_or_killer == "hk" or cell_hidden_or_killer == "KH" or cell_hidden_or_killer == "kh"
-                test_params = {"name": test_name, "expected_result": test_result, "failure_message": failure_message}
+                test_params = {
+                    "name": row[header_index["test_name"]] if has_test_name else None,
+                    "expected_result": row[header_index["test_result"]] if has_test_result else None,
+                    "failure_message": row[header_index["test_failure_message"]] if has_test_failure_message else None
+                }
                 r = GradingRubric.create_rubric_from_cell(cell_id, cell_coord,
                                                           cell_description, hidden, killer, fail_msg, key_sheet, test_params)
                 
