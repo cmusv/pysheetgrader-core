@@ -16,7 +16,7 @@ then
 fi
 
 echo ">> Creating a new virtual environment in venv folder..."
-python3 -m venv ./venv
+/usr/bin/python3.7 -m venv ./venv
 
 echo ">> Activating virtual environment..."
 
@@ -25,6 +25,6 @@ source venv/bin/activate
 
 echo ">> Installing dependencies..."
 
-python3 -m pip install --upgrade pip
-python3 -m pip install -r requirements.txt
-python3 -m pip install -e .
+# /usr/bin/pip3.7 install --upgrade pip
+/usr/bin/pip3.7 install -r requirements.txt
+/usr/bin/pip3.7 install -e .
