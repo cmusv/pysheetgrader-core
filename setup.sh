@@ -27,4 +27,5 @@ echo ">> Installing dependencies..."
 
 # /usr/bin/pip3.7 install --upgrade pip
 /usr/bin/pip3.7 install -r requirements.txt
+pip3.7 install -r pysheetgrader_reqs.txt
 pip3.7 install -e .
