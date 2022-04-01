@@ -27,4 +27,4 @@ echo ">> Installing dependencies..."
 
 # /usr/bin/pip3.7 install --upgrade pip
 /usr/bin/pip3.7 install -r requirements.txt
-/usr/bin/pip3.7 install -e .
+pip3.7 install -e .
