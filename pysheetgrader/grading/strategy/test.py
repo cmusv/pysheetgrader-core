@@ -72,6 +72,7 @@ class TestRunStrategy(BaseStrategy):
 
         if all_test_pass:
             report.submission_score = self.grading_rubric.score
+            self.grading_rubric.is_correct = True
         html_args['all_test_pass'] = all_test_pass
 
         report.report_html_args = html_args
