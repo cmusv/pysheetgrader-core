@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# update this with additional log messages from latest instance of the DASE course
+
 echo ">>>> Local PySheetGrader Setup <<<<"
 echo "Checking environment..."
 
