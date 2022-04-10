@@ -1,3 +1,5 @@
+## CAUTION: needs updating, pip upgrade should not be run in Vocareum -- it breaks the installation permanently: suggest to run it separately and remove from setup.sh
+
 ## License and Copyright
 
 See LICENSE file.
