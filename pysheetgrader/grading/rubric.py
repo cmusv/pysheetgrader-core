@@ -74,6 +74,7 @@ class GradingRubric:
             Defaults to empty list.
         :param test_cases: List of GradingTestCase instances. Defaults to empty list.
         :param test_params: Dictionary of data to be used in test mode.
+        :param is_correct: True if evaluated and correct, false otherwise.
         """
         self.cell_id = values["cell_id"]
         self.cell_coord = values["cell_coord"]
@@ -93,7 +94,7 @@ class GradingRubric:
         self.fail_msg = values["fail_msg"]
         self.prereq_cells = values.get("prereq_cells", [])
         self.test_params = values["test_params"]
-        
+        self.is_correct = False
 
     def get_all_cell_coord(self):
         """

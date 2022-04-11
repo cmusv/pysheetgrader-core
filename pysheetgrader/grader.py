@@ -76,9 +76,9 @@ class Grader:
         for r in rubrics:
             sub_score = report.submission_score
             report += self.grade_sheet_by_rubric(document, sheet, r)
-            if report.submission_score>sub_score:
+            if r.is_correct:
                 self.correct_cells.append(r.cell_coord)
-            if r.killer and report.submission_score==sub_score:
+            if r.killer and not r.is_correct:
                 report.submission_score = 0
                 if r.hidden:
                     report.append_line(f"This tab didn't pass its prerequisites! - Please contact the professor")
@@ -166,29 +166,30 @@ class Grader:
             html_args['rubric_type'] = "Result check" if rubric.grading_nature == 'positive' else "Result check (penalty)"
         
         feedback = self.render_failure_message(document, sheet.name, rubric.fail_msg) if rubric.fail_msg else ""
-        is_correct = report.submission_score >= report.max_possible_score
+
         if not self.is_testmode:
             if not rubric.hidden:
                 if rubric.description:
                     report.append_line(f"\t- Description: {rubric.description}")
-                if rubric.fail_msg and not is_correct:
+                if rubric.fail_msg and not rubric.is_correct:
                     report.append_line(f"\t- Feedback: {feedback}")
                     html_args['feedback'] = feedback
                 report.append_line(f"\t- Score: {report.submission_score} / {report.max_possible_score}")
 
-            if rubric.hidden and not is_correct:
+            if rubric.hidden and not rubric.is_correct:
                 # student does not pass the hidden cell, show hint
                 html_args['hidden_hint'] = {'hint': feedback}
                 report.append_line(f"    #{rubric.cell_id} (Hidden): {feedback}")
         else:
             report.append_line(f"\t- Test: {rubric.test_params.get('name', '')}")
-            is_test_pass = (is_correct and rubric.test_params.get("expected_result", "correct") == "correct") or \
-                                        ((not is_correct) and rubric.test_params.get("expected_result", "correct") == "incorrect")
+            is_test_pass = (rubric.is_correct and rubric.test_params.get("expected_result", "correct") == "correct") or \
+                                        ((not rubric.is_correct) and rubric.test_params.get("expected_result", "correct") == "incorrect")
             status = "PASS" if is_test_pass else f"FAIL: {rubric.test_params.get('failure_message', '')}"
             report.append_line(f"\t- Status: {status}")
 
         html_args['submission_score'] = report.submission_score
         html_args['max_possible_score'] = report.max_possible_score
+        html_args['is_correct'] = rubric.is_correct
         report.report_html_args.update(html_args)
         return report
 

@@ -37,10 +37,12 @@ class CheckStrategy(BaseStrategy):
                     if self.grading_rubric.prereq_cells is not None:
                         if self.prereq_check(cell_coord,report):
                             report.submission_score += self.grading_rubric.score
+                            self.grading_rubric.is_correct = True
                         else:
                             break
                     else:
                         report.submission_score += self.grading_rubric.score
+                        self.grading_rubric.is_correct = True
                     break
 
             return report

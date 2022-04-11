@@ -56,15 +56,14 @@
 
             {% else %}
                 {% for rubric in sheet['rubrics'] %}
-                    {% set is_correct = (rubric['submission_score'] >= rubric['max_possible_score']) %}
                     {% set test_params = rubric.get('test_params', {}) %}
-                    {% set is_test_pass = (is_correct and test_params.get("expected_result", "correct") == "correct") or 
-                                        ((not is_correct) and test_params.get("expected_result", "correct") == "incorrect")
+                    {% set is_test_pass = (rubric['is_correct'] and test_params.get("expected_result", "correct") == "correct") or 
+                                        ((not rubric['is_correct']) and test_params.get("expected_result", "correct") == "incorrect")
                     %}
                     {% if not rubric['hidden'] %}
                         {% if 'test_cases' in rubric %}
                             {% set test_case_num = rubric['test_cases'] | length %}
-                            <tr class="{{ 'table-success' if ((is_testmode and is_test_pass) or (not is_testmode and is_correct)) else 'table-danger' }}">
+                            <tr class="{{ 'table-success' if ((is_testmode and is_test_pass) or (not is_testmode and rubric['is_correct'])) else 'table-danger' }}">
                                 <th scope="row" rowspan="{{ test_case_num + 1 }}">{{ rubric['id'] }}</th>
                                 <td rowspan="{{ test_case_num + 1 }}">{{ rubric['cell'] }}</td>
                                 {% if is_testmode %}
@@ -97,7 +96,7 @@
                                 </tr>
                             {% endfor %}
                         {% else %}
-                            <tr class="{{ 'table-success' if ((is_testmode and is_test_pass) or (not is_testmode and is_correct)) else 'table-danger' }}">
+                            <tr class="{{ 'table-success' if ((is_testmode and is_test_pass) or (not is_testmode and rubric['is_correct'])) else 'table-danger' }}">
                                 <th scope="col">{{ rubric['id'] }}</th>
                                 <td>{{ rubric['cell'] }}</td>
                                 {% if is_testmode %}

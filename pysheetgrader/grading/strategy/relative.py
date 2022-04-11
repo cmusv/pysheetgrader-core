@@ -52,15 +52,18 @@ class RelativeStrategy(BaseStrategy):
                 if self.grading_rubric.prereq_cells is not None:
                     if self.prereq_check(cell_coord,report):
                         report.submission_score += self.grading_rubric.score
+                        self.grading_rubric.is_correct = True
                     else:
                         return report
                 else:
                     report.submission_score += self.grading_rubric.score
+                    self.grading_rubric.is_correct = True
         elif self.grading_rubric.grading_nature == 'negative':
             if not self.is_key_sub_match(key_sheet, key_value, sub_value):
                 checkflag_altcells = True
             else:
                 checkflag_altcells = False
+                self.grading_rubric.is_correct = True
         else:
             # TODO: Revisit if we need to print an error here.
             print("Relative formula Strategy - if new grading nature error needs to be added")
