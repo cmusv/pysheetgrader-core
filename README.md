@@ -91,7 +91,7 @@ PySheetGrader will require a key document to run. A proper *.xlsx key document s
     - Cell ID": "number", "cell-id", "id",
     - Cell Coordinate": "cell",
     - Cell Description": "description",
-    - Hidden or Killer Cells": "special (H/K)", "hidden", "killer",       - "killer or hidden", "hidden or killer",
+    - Hidden or Killer Cells": "special",
 
         And in case of **`Test Mode`**
 
