@@ -56,10 +56,10 @@
 
             {% else %}
                 {% for rubric in sheet['rubrics'] %}
-                    {% set test_params = rubric.get('test_params', {}) %}
-                    {% set is_test_pass = (rubric['is_correct'] and test_params.get("expected_result", "correct") == "correct") or 
-                                        ((not rubric['is_correct']) and test_params.get("expected_result", "correct") == "incorrect")
-                    %}
+                    {% if is_testmode %}
+                        {% set test_params = rubric.get('test_params', {}) %}
+                        {% set is_test_pass = rubric['is_test_pass'] %}
+                    {% endif %}
                     {% if not rubric['hidden'] %}
                         {% if 'test_cases' in rubric %}
                             {% set test_case_num = rubric['test_cases'] | length %}
@@ -124,12 +124,20 @@
                 {% endfor %}
             {% endif %}
 
-
-            <tr class="table-secondary">
-                <td colspan="3">Grade for sheet: <b>{{ sheet['name'] }}</b></td>
-                <td>{{ sheet['submission_score'] }}</td>
-                <td>{{ sheet['max_possible_score'] }}</td>
-            </tr>
+            {% if is_testmode %}
+                <tr class="table-secondary">
+                    <td colspan="3">Tests for sheet: <b>{{ sheet['name'] }}</b></td>
+                    <td>{{ sheet['passing_tests'] }}</td>
+                    <td>{{ sheet['total_tests'] }}</td>
+                </tr>
+            {% else %}
+                <tr class="table-secondary">
+                    <td colspan="3">Grade for sheet: <b>{{ sheet['name'] }}</b></td>
+                    <td>{{ sheet['submission_score'] }}</td>
+                    <td>{{ sheet['max_possible_score'] }}</td>
+                </tr>
+            {% endif %}
+ 
             </tbody>
         </table>
     {% endfor %}
@@ -146,23 +154,43 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>Total Grade for:</td>
-            <td>All Sheets</td>
-            <td><b>{{ html_args['submission_score'] }}</b></td>
-            <td><b>{{ html_args['max_possible_score'] }}</b></td>
-        </tr>
+        {% if is_testmode %}
+            <tr>
+                <td>Test Results for:</td>
+                <td>All Sheets</td>
+                <td><b>{{ html_args['passing_tests'] }}</b></td>
+                <td><b>{{ html_args['total_tests'] }}</b></td>
+            </tr>
+        {% else %}
+            <tr>
+                <td>Total Grade for:</td>
+                <td>All Sheets</td>
+                <td><b>{{ html_args['submission_score'] }}</b></td>
+                <td><b>{{ html_args['max_possible_score'] }}</b></td>
+            </tr>
+        {% endif %}
 
 
         {% for sheet in html_args['sheets'] %}
-            <tr>
-                {% if loop.index0 == 0 %}
-                    <td rowspan="{{ html_args['sheets'] | length }}">Breakdown for:</td>
-                {% endif %}
-                <td><b>{{ sheet['name'] }}</b></td>
-                <td>{{ sheet['submission_score'] }}</td>
-                <td>{{ sheet['max_possible_score'] }}</td>
-            </tr>
+            {% if is_testmode %}
+                <tr>
+                    {% if loop.index0 == 0 %}
+                        <td rowspan="{{ html_args['sheets'] | length }}">Breakdown for:</td>
+                    {% endif %}
+                    <td><b>{{ sheet['name'] }}</b></td>
+                    <td>{{ sheet['passing_tests'] }}</td>
+                    <td>{{ sheet['total_tests'] }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    {% if loop.index0 == 0 %}
+                        <td rowspan="{{ html_args['sheets'] | length }}">Breakdown for:</td>
+                    {% endif %}
+                    <td><b>{{ sheet['name'] }}</b></td>
+                    <td>{{ sheet['submission_score'] }}</td>
+                    <td>{{ sheet['max_possible_score'] }}</td>
+                </tr>
+            {% endif %}
         {% endfor %}
         </tbody>
     </table>

@@ -26,6 +26,8 @@ class GradingReport:
         self.report_lines = []
         self.report_type = t
         self.report_html_args = {}
+        self.total_tests = 0
+        self.passing_tests = 0
 
     def __add__(self, other):
         if self.report_type == GradingReportType.SHEET and other.report_type == GradingReportType.RUBRIC:
@@ -52,7 +54,9 @@ class GradingReport:
         self.submission_score += other_report.submission_score
         self.max_possible_score += other_report.max_possible_score
         self.report_lines.extend(other_report.report_lines)
-
+        if self.report_type == GradingReportType.ASSIGNMENT and other_report.report_type == GradingReportType.SHEET:
+            self.total_tests += other_report.total_tests
+            self.passing_tests += other_report.passing_tests
     def append_line(self, string_line):
         """
         Appends the passed string_line to this instance's `report_lines`.
