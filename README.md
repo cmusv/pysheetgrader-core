@@ -58,18 +58,18 @@ pysheetgrader $KEY_DOC_PATH $SUB_DOC_PATH --score-output $SCORE_OUTPUT_PATH --re
 
 Arguments of `pysheetgrader` are:
 
-- `KEY_DOC_PATH`: path to the key document, used for grading (an excel spreadsheet with .xlsx extension).
-- `SUB_DOC_PATH`: path to the submission document that will be graded (an excel spreadsheet with .xlsx extension).
-- `SCORE_OUTPUT_PATH`: path to the file where the grading score will be stored. This is optional, since the score will be shown in the terminal window.
-- `SCORE_REPORT_PATH`: path to the file where the detailed report will be stored. This is optional.
-- `HTML_REPORT_OUTPUT_PATH_`: path to the html file where a tabulated HTML report will be stored. This is optional.
+- `$KEY_DOC_PATH`: path to the key document, used for grading (an excel spreadsheet with .xlsx extension).
+- `$SUB_DOC_PATH`: path to the submission document that will be graded (an excel spreadsheet with .xlsx extension).
+- `--score-output $SCORE_OUTPUT_PATH`: write the grading score to a file at the provided path. This is optional: by default the score will be shown in the terminal window.
+- `--report-output $SCORE_REPORT_PATH`: produce a detailed text report stored at the provided path. This is optional: by default, no text report will be produced. 
+- `--html-report-output $HTML_REPORT_OUTPUT_PATH`: produce a detailed tabulated HTML report at the provided path. This is optional. By default, no HTML report will be produced. 
 
 There's also the `--verbose` flag that will output the report to the terminal throughout the process.
 
 For example, you could execute the command below to see how it works with a sample spreadsheet:
 
 ```
-pysheetgrader sample_excel_files/MasterGalleryKey.xlsx sample_excel_files/MasterGallerySubmission.xlsx --verbose
+pysheetgrader SomeKey.xlsx SomeSubmission.xlsx --verbose
 ```
 
 ## Creating a key document
