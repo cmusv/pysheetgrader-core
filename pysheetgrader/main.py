@@ -51,18 +51,8 @@ def cli(key_document_path, submission_document_path, score_output, report_output
         save_report(report, report_output)
 
     if html_report_output:
-        # Below assumes that the html report output structure will be ${HOME}/${ASSIGNMENT_PREFIX}Report.html or similar
-        # While looking complex, it ensures safety in case the prefix is present somewhere in the full path of the report
-        if test_mode:
-            original_report_split = html_report_output.split('/')
-            original_report_name = original_report_split[-1]
-            original_report_path = "/".join(original_report_split[:-1])
-            original_prefix = original_report_name.split('Report.html')[0]
-            test_report_name = f"{original_prefix}TestReport.html"
-            test_report_output = f"{original_report_path}/{test_report_name}"
-            save_html_report(report, test_report_output)
-        else:
-            save_html_report(report, html_report_output)
+        save_html_report(report, html_report_output)
+        
     key_doc.close()
     sub_doc.close()
 
