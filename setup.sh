@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# pip install --upgrade should not run Vocareum, so this should be removed for Vocareum installation!
+
 # update this with additional log messages from latest instance of the DASE course
 
 echo ">>>> Local PySheetGrader Setup <<<<"
