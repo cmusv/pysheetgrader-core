@@ -29,7 +29,8 @@ source venv/bin/activate
 
 echo ">> Installing dependencies..."
 
-echo "Are you deploying on Vocareum (Yes/No)?"
+echo ">> WARNING: Upgrading pip may break pysheetgrader installation on Vocareum!"
+echo ">> Do you want to upgrade pip (Yes/No)?"
 select yn in "Yes" "No"; do
     case $yn in
         Yes ) echo "You answered Yes: upgrading pip..."; python3 -m pip install --upgrade pip; break;;
