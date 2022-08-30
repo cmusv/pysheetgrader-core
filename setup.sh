@@ -29,6 +29,15 @@ source venv/bin/activate
 
 echo ">> Installing dependencies..."
 
-python3 -m pip install --upgrade pip
+echo "Are you deploying on Vocareum (Yes/No)?"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) echo "You answered Yes: upgrading pip..."; python3 -m pip install --upgrade pip; break;;
+        No )  echo "You answered No": skipping pip upgrade...""; break;;
+        * ) echo "Please enter 1 for Yes or 2 for No.";;
+    esac
+done
+
+# python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
 python3 -m pip install -e .
