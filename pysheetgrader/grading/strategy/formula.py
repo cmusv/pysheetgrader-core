@@ -47,7 +47,7 @@ class NaiveFormulaStrategy(BaseStrategy):
                             else:
                                 return report
                         else:
-                            report.submission_score += self.grading_rubric.score
+                            report.submission_score += self.grading_rubric.score if not self.grading_rubric.is_correct else 0
                             self.grading_rubric.is_correct = True
                 elif self.grading_rubric.grading_nature == 'negative':
                     if not is_similar:
