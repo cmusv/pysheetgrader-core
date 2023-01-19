@@ -49,3 +49,7 @@ build/
 dist/ls
 *.whl
 .project
+excel/~$TestModeKey.xlsx
+NormalReport.html
+TestModeReport.html
+excel/~$TestModeSubmission.xlsx
