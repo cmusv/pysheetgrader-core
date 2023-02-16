@@ -149,6 +149,7 @@ class GradingRubric:
             "test_name": ["test-name"],
             "test_result": ["expected-result"],
             "test_failure_message": ["failure-message"],
+            "expected_score": ["expected-score"],
         }
         first_row = next(order_sheet.iter_rows(values_only=True))
         header_index = get_headers(COLUMN_HEADER_NAMES, first_row)
@@ -160,6 +161,8 @@ class GradingRubric:
         has_test_name = "test_name" in header_index
         has_test_result = "test_result" in header_index
         has_test_failure_message = "test_failure_message" in header_index
+        has_expected_score = "expected_score" in header_index
+
         for row in order_sheet.iter_rows(min_row=2, values_only=True):
             # Assuming this for-loop will only be executed for B column
             # TODO: Revisit if the failed rubric parsing is necessary to be reported.
@@ -176,7 +179,8 @@ class GradingRubric:
                 test_params = {
                     "name": row[header_index["test_name"]] if has_test_name else None,
                     "expected_result": row[header_index["test_result"]] if has_test_result else None,
-                    "failure_message": row[header_index["test_failure_message"]] if has_test_failure_message else None
+                    "failure_message": row[header_index["test_failure_message"]] if has_test_failure_message else None,
+                    "expected_score": row[header_index["expected_score"]] if has_expected_score else None
                 }
                 r = GradingRubric.create_rubric_from_cell(cell_id, cell_coord,
                                                           cell_description, hidden, killer, fail_msg, key_sheet, test_params)
