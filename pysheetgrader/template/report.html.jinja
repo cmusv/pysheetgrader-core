@@ -41,6 +41,10 @@
                 {% endif %}
                 <th scope="col">Rubric Type</th>
                 <th scope="col">Error</th>
+                {% if is_testmode %}
+                <th scope="col">Score</th>
+                <th scope="col">Expected</th>
+                {% endif %}
             </tr>
             </thead>
 
@@ -112,6 +116,14 @@
                                 {% endif %}
                                 <td>{{ rubric['rubric_type'] }}</td>
                                 <td>{{ rubric['error'] }}</td>
+                                {% if is_testmode %}
+                                    <td>
+                                        {{ rubric["submission_score"] }}
+                                    </td>
+                                    <td>
+                                         {{ test_params["expected_score"] }}
+                                    </td>
+                                {% endif %}
                             </tr>
                         {% endif %}
                     {% elif 'hidden_hint' in rubric %}

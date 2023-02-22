@@ -123,3 +123,15 @@ class BaseStrategy:
             report.append_line(f"{self.report_line_prefix} "+ prereq_string + " must be correct before this cell can be graded!")
             report.report_html_args['feedback'] = f" "+ prereq_string + " must be correct before this cell can be graded!"
         return prereq_check
+
+    @staticmethod
+    def get_correct_score(grading_nature, score):
+        '''
+        gonna need to test this function
+        '''
+        if grading_nature == 'positive':
+            return score
+        elif grading_nature == 'negative':
+            return  0
+        else:
+            raise NotImplementedError(f'Bad grading nature: {grading_nature}')

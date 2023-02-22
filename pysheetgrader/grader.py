@@ -194,7 +194,7 @@ class Grader:
                 report.append_line(f"    #{rubric.cell_id} (Hidden): {feedback}")
         else:
             report.append_line(f"\t- Test: {rubric.test_params.get('name', '')}")
-            rubric.is_test_pass = (rubric.is_correct and rubric.test_params.get("expected_result", "correct") == "correct") or \
+            rubric.is_test_pass = (((rubric.test_params.get('expected_score', None) is None) or rubric.test_params['expected_score'] == report.submission_score) and rubric.is_correct and rubric.test_params.get("expected_result", "correct") == "correct") or \
                                         ((not rubric.is_correct) and rubric.test_params.get("expected_result", "correct") == "incorrect")
             status = "PASS" if rubric.is_test_pass else f"FAIL: {rubric.test_params.get('failure_message', '')}"
             report.append_line(f"\t- Status: {status}")
