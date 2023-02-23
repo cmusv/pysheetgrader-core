@@ -32,11 +32,11 @@ class ConstantStrategy(BaseStrategy):
                         else:
                             return report
                     else:
-                        report.submission_score += self.grading_rubric.score
+                        report.submission_score += self.grading_rubric.score if not self.grading_rubric.is_correct else 0
                         self.grading_rubric.is_correct = True
             elif self.grading_rubric.grading_nature == 'negative':
                 if not self.value_matches(sub_value, key_sheet[coord].value):
-                    checkflag_altcells = True
+                    checkflag_altcells = True # this is a hack
                 else:
                     checkflag_altcells = False
                     self.grading_rubric.is_correct = True
@@ -46,7 +46,7 @@ class ConstantStrategy(BaseStrategy):
                 print("Constant Strategy - if new grading nature error needs to be added")
                 continue
         
-        if checkflag_altcells and self.grading_rubric.grading_nature == 'negative':
+        if checkflag_altcells and self.grading_rubric.grading_nature == 'negative': # see?
             report.submission_score += self.grading_rubric.score
         return report
     

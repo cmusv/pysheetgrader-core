@@ -101,7 +101,8 @@ class BaseStrategy:
             key_float = float(key_value)
             sub_float = float(sub_value)
             return (key_float - delta) <= sub_float <= (key_float + delta)
-        except Exception:
+        except Exception: # basically always fails
+            print('error')
             # TODO: Check if we should log an error here.
             return False
 
@@ -113,10 +114,12 @@ class BaseStrategy:
         """
         if len(self.grading_rubric.prereq_cells) == 0:
             return True
+
         if len(self.correct_cells)>0:
             prereq_check = all(item in self.correct_cells for item in self.grading_rubric.prereq_cells)
         else:
             prereq_check = False
+
         if len(self.grading_rubric.prereq_cells) == 1:
             prereq_string = 'Cell '+' '.join(self.grading_rubric.prereq_cells)
         else:
