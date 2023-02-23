@@ -12,64 +12,50 @@ class NaiveFormulaStrategy(BaseStrategy):
     """
 
     def grade(self):
+        '''
+        loop through all cell cords
+        setup report, validate inputs, parse formulas
+        iterate through cells and compare to proper formula
+            as soon as we get a correct answer, stop and sum
+        
+        if we must, subtract at the end
+        '''
+        ### setup 
         report = self.create_initial_report()
-
-        # Retrieving sheets
-        key_sheet, sub_sheet = self.try_get_key_and_sub(report, computed=False)
-        if key_sheet is None:
-            return report
-
-        # Grading cells
         cell_coord = self.grading_rubric.cell_coord
+        key_sheet, sub_sheet = self.try_get_key_and_sub(report, computed=False)
+        
+        ### validate
+        if key_sheet is None or not self.prereq_check(cell_coord, report):
+            return report
+
+        ### grab the submitted formula
         custom_formulas = get_excel_formula_lambdas()
-        
+        sub_cell_value = sub_sheet[cell_coord].value
+        sub_formula = parse_formula(sub_cell_value, local_dict=custom_formulas)
 
-                
-        # Using a flag to check alternative cells for negative grading nature
-        checkflag_altcells = False
-        
-        try:
-            sub_cell_value = sub_sheet[cell_coord].value
-            sub_formula = parse_formula(sub_cell_value, local_dict=custom_formulas)
-            # Comparison
-            for key_coord in self.grading_rubric.get_all_cell_coord():
-                
-                key_cell_value = key_sheet[key_coord].value
-                key_formula = parse_formula(key_cell_value, local_dict=custom_formulas)
-                is_similar = simplify(key_formula - sub_formula) == 0
-                
-                if self.grading_rubric.grading_nature == 'positive':
-                    if is_similar:
-                        if self.grading_rubric.prereq_cells is not None:
-                            if self.prereq_check(cell_coord, report):
-                                report.submission_score += self.grading_rubric.score if not self.grading_rubric.is_correct else 0
-                                self.grading_rubric.is_correct = True
-                            else:
-                                return report
-                        else:
-                            report.submission_score += self.grading_rubric.score if not self.grading_rubric.is_correct else 0
-                            self.grading_rubric.is_correct = True
-                elif self.grading_rubric.grading_nature == 'negative':
-                    if not is_similar:
-                        checkflag_altcells = True
-                    else:
-                        checkflag_altcells = False
-                        self.grading_rubric.is_correct = True
-                        break 
-                else:
-                    # TODO: Revisit if we need to print an error here.
-                    print("Formula Strategy - if new grading nature error needs to be added")
-                    continue
+        ### loop thru all keys, including alt cells
+        for key_coord in self.grading_rubric.get_all_cell_coord():
             
-            if checkflag_altcells and self.grading_rubric.grading_nature == 'negative':
-                report.submission_score += self.grading_rubric.score
+            ### get proper answer and parse
+            key_cell_value = key_sheet[key_coord].value
+            key_formula = parse_formula(key_cell_value, local_dict=custom_formulas)
+            
+            ### compare to submitted
+            is_similar = simplify(key_formula - sub_formula) == 0
+            
+            if is_similar:
 
-            return report
-        except Exception as exc:
-            # TODO: Revisit whether we should print the comparison key value here.
-            #   It might leak the answers to the students, though.
-            if self.grading_rubric.grading_nature == 'negative':
-                report.submission_score += self.grading_rubric.score
-            report.append_line(f"{self.report_line_prefix}Error: {exc}")
-            report.report_html_args['error'] = f"Error: {exc}"
-            return report
+                ### here is where we can add weird logic for different grading natures
+                report.submission_score += self.get_correct_score(self.grading_rubric.grading_nature, self.grading_rubric.score)
+
+                #### mark as correct
+                self.grading_rubric.is_correct = True
+                break
+        
+        ### subtract if necessary
+        if  self.grading_rubric.grading_nature == 'negative' and not self.grading_rubric.is_correct:
+            report.submission_score += self.grading_rubric.score
+    
+        return report
+
