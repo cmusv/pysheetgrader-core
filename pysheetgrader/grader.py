@@ -4,7 +4,7 @@ from pysheetgrader.grading.rubric import GradingRubric
 from pysheetgrader.grading.rubric import GradingRubricType
 from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.grading.report import GradingReportType
-from pysheetgrader.grading.strategy.constant2 import ConstantStrategy
+from pysheetgrader.grading.strategy.constant import ConstantStrategy
 from pysheetgrader.grading.strategy.formula import NaiveFormulaStrategy
 from pysheetgrader.grading.strategy.soft import SoftFormulaStrategy
 from pysheetgrader.grading.strategy.test import TestRunStrategy

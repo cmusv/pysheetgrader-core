@@ -112,7 +112,7 @@ class BaseStrategy:
         :param cell_coord: current correct cell coordinate to be added to correct cells list
         :return: True if the pre-requistes
         """
-        if len(self.grading_rubric.prereq_cells) == 0:
+        if self.grading_rubric.prereq_cells is None or len(self.grading_rubric.prereq_cells) == 0:
             return True
 
         if len(self.correct_cells)>0:
