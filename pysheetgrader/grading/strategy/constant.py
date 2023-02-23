@@ -27,7 +27,7 @@ class ConstantStrategy(BaseStrategy):
                 if self.value_matches(sub_value, key_sheet[coord].value):
                     if self.grading_rubric.prereq_cells is not None:
                         if self.prereq_check(cell_coord, report):
-                            report.submission_score += self.grading_rubric.score
+                            report.submission_score += self.grading_rubric.score if not self.grading_rubric.is_correct else 0
                             self.grading_rubric.is_correct = True
                         else:
                             return report

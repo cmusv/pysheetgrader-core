@@ -2,6 +2,7 @@ import sys
 from enum import Enum
 from typing import List
 import yaml
+from striprtf.striprtf import rtf_to_text
 from openpyxl.worksheet.worksheet import Worksheet
 
 from email import header
@@ -55,7 +56,7 @@ class GradingRubric:
     Representation of a grading rubric in a sheet.
     """
 
-    def __init__(self, values: dict):
+    def __init__(self, values: dict, debug_mode):
         """
         Initializer of this class' instance. Accepts a dictionary with below parameters.
         :param cell_id: String value of the rubric identifier
@@ -89,11 +90,11 @@ class GradingRubric:
         self.alt_cells = values.get("alt_cells", [])
         self.test_cases = values.get("test_cases", [])
 
-        self.hidden = values["hidden"]
-        self.killer = values["killer"]
+        self.hidden = values["hidden"] if not debug_mode else False
+        self.killer = values["killer"] if not debug_mode else False
         self.description = values["description"]
         self.fail_msg = values["fail_msg"]
-        self.prereq_cells = values.get("prereq_cells", [])
+        self.prereq_cells = values.get("prereq_cells", []) if not debug_mode else []
         self.test_params = values["test_params"]
         self.is_correct = False
         self.is_test_pass = False
@@ -120,7 +121,7 @@ class GradingRubric:
         return result
 
     @staticmethod
-    def create_rubrics_for_sheet(key_document, sheet: Sheet):
+    def create_rubrics_for_sheet(key_document, sheet: Sheet, debug_mode):
         """
         Create ordered list of GradingRubric instance from the passed `sheet_name` of the `key_document`.
         Will return empty list of the passed key_document is invalid or doesn't have rubrics in the passed sheet.
@@ -183,7 +184,7 @@ class GradingRubric:
                     "expected_score": row[header_index["expected_score"]] if has_expected_score else None
                 }
                 r = GradingRubric.create_rubric_from_cell(cell_id, cell_coord,
-                                                          cell_description, hidden, killer, fail_msg, key_sheet, test_params)
+                                                          cell_description, hidden, killer, fail_msg, key_sheet, test_params, debug_mode)
                 
                 rubrics.append(r)
             except Exception as exc:
@@ -194,7 +195,7 @@ class GradingRubric:
 
     @staticmethod
     def create_rubric_from_cell(cell_id: str, cell_coord: str, description: str, hidden: bool, killer: bool,fail_msg: str,
-                                key_sheet: Worksheet, test_params: dict):
+                                key_sheet: Worksheet, test_params: dict, debug_mode: bool):
         """
         Creates GradingRubric instance from passed `cell_coord` of the `key_sheet`.
         This method assumes the cell of the passed coordinate will have notes that holds the rubric.
@@ -216,7 +217,8 @@ class GradingRubric:
         try:
             key_cell = key_sheet[cell_coord]
             key_comment = key_cell.comment.text
-        except Exception:
+        except Exception as e:
+            print(e)
             raise Exception(f"No rubric note found for cell: {cell_coord} in sheet: {key_sheet.title}")
 
         # Comment parsing
@@ -288,7 +290,7 @@ class GradingRubric:
             "prereq_cells": rubric_prereq,
             "test_params": test_params
         }
-        return GradingRubric(values)
+        return GradingRubric(values, debug_mode)
 
     @staticmethod
     def create_test_cases_from_dict(raw_cases):
