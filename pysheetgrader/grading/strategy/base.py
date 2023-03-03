@@ -53,6 +53,9 @@ class BaseStrategy:
         '''
         raise NotImplementedError()
     
+    def additional_validate(self):
+        return False
+    
     def grade(self):
         '''
         loop through all cell cords
@@ -63,7 +66,7 @@ class BaseStrategy:
         if we must, subtract at the end
         '''
         ### validate
-        if not self.key_sheet_raw:
+        if not self.key_sheet_raw or self.additional_validate():
             return self.report
 
         ### grab the submitted value
