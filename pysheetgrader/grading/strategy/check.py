@@ -1,7 +1,4 @@
 from pysheetgrader.grading.strategy.base import BaseStrategy
-from pysheetgrader.custom_excel_formula import get_excel_formula_lambdas
-from pysheetgrader.formula_parser import parse_formula_inputs, parse_formula, \
-    encode_cell_reference, transform_excel_formula_to_sympy
 
 class CheckStrategy(BaseStrategy):
     """
@@ -13,8 +10,8 @@ class CheckStrategy(BaseStrategy):
         report = self.create_initial_report()
 
         # # Retrieving sheets
-        key_sheet,_ = self.try_get_key_and_sub(report, computed=False)
-        _,sub_sheet = self.try_get_key_and_sub(report, computed=True)
+        key_sheet,_ = self.try_get_key_and_sub(computed=False)
+        _,sub_sheet = self.try_get_key_and_sub(computed=True)
 
         if key_sheet is None:
             return report
@@ -51,23 +48,3 @@ class CheckStrategy(BaseStrategy):
             report.report_html_args['error'] = f"Error: {exc}"
             return report
         
-
-    def get_formula_value(self, sub_sheet, key_raw_formula: str):
-        """
-        Evaluate the relative value from student's submission cells, using the formula from the Key cell.
-
-        :param sub_sheet: the student's submission sheet
-        :param key_raw_formula: the String value of the relative formula from the Key.
-        :return:
-        """
-        lowercased_formula = transform_excel_formula_to_sympy(key_raw_formula)
-        
-        # extract input coordinates
-        input_coords = parse_formula_inputs(key_raw_formula, encoded=False)
-        encoded_inputs = {encode_cell_reference(coord): sub_sheet[coord].value for coord in input_coords}
-        local_dict = get_excel_formula_lambdas()
-        local_dict.update(encoded_inputs)
-
-        result = parse_formula(lowercased_formula, local_dict)
-        local_dict.clear()
-        return result
