@@ -7,6 +7,7 @@ class BaseStrategy:
     """
     Base class of other grading strategies.
     """
+    COMPUTE_RESULT = True
 
     def __init__(self, key_document: Document, sub_document: Document, sheet_name, grading_rubric: GradingRubric,correct_cells,
                  report_line_prefix: str = ""):
@@ -26,13 +27,67 @@ class BaseStrategy:
         self.report_line_prefix = report_line_prefix
         self.correct_cells = correct_cells
 
+    def get_submitted_value(self, sub_sheet, cell_coord):
+        '''
+        template pattern: this is how to get the submitted value
+        '''
+        raise NotImplementedError()
+
+    def get_key_value(self, sub_sheet, cell_coord):
+        '''
+        template pattern: this is how to get the key value
+        '''
+        raise NotImplementedError()
+    
+    def check_correct(self, key_sheet, key_coord):
+        '''
+        template pattern: this is how to check if the value is correct
+        '''
+        raise NotImplementedError()
+ 
     def grade(self):
-        """
-        Returns the grading report of the `sub_document` of this instance, based on the `grading_rubric` and `key_document`.
-        :return: GradingReport instance of the grading.
-        :exception NotImplemented   raised when this method called directly (instead of the subclass').
-        """
-        raise NotImplementedError("The `grade` method should've been implemented in the subclasses.")
+        '''
+        loop through all cell cords
+        setup report, validate inputs, parse formulas
+        iterate through cells and compare to proper formula
+            as soon as we get a correct answer, stop and sum
+        
+        if we must, subtract at the end
+        '''
+        ### setup 
+        report = self.create_initial_report()
+        cell_coord = self.grading_rubric.cell_coord
+        key_sheet, sub_sheet = self.try_get_key_and_sub(report, computed=self.COMPUTE_RESULT)
+        
+        ### validate
+        if key_sheet is None:
+            return report
+
+        ### grab the submitted value
+        sub_cell_value = self.get_submitted_value(sub_sheet, cell_coord)
+ 
+        ### loop thru all keys, including alt cells
+        for key_coord in self.grading_rubric.get_all_cell_coord():
+            
+            ### get proper answer
+            key_cell_value = self.get_key_value(key_sheet, key_coord)
+            
+            ### compare to submitted
+            is_correct = self.check_correct(sub_cell_value, key_cell_value)
+            
+            if is_correct and self.prereq_check(cell_coord, report):
+                ### here is where we can add weird logic for different grading natures
+                report.submission_score += self.get_correct_score(self.grading_rubric.grading_nature, self.grading_rubric.score)
+
+                #### mark as correct
+                self.grading_rubric.is_correct = True
+                break
+        
+        ### subtract if necessary
+        if  self.grading_rubric.grading_nature == 'negative' and not self.grading_rubric.is_correct:
+            report.submission_score += self.grading_rubric.score
+    
+        return report
 
     def create_initial_report(self):
         """
