@@ -9,42 +9,17 @@ class SoftFormulaStrategy(ConstantStrategy):
     2. If the cell contains a formula, grade it like a constant formula
         (compare cell's evaluated result to key's evaluated result)
     """
+    def get_submitted_value(self):
+        return self.sub_sheet_raw[self.cell_coord].value
 
-    def grade(self):
-        report = self.create_initial_report()
+    def check_correct(self, sub_cell_value, key_cell_value, key_coord):
+        curr_cell_value = self.sub_sheet_raw[key_coord].value
+        
+        if len(curr_cell_value) == 1 and curr_cell_value[0] == '=':
+            return False
 
-        # Retrieving sheets
-        _, sub_sheet = self.try_get_key_and_sub(report, computed=False)
-        if sub_sheet is None:
-            return report
+        if any(c.isalpha() for c in curr_cell_value):
+            return super().check_correct(sub_cell_value, key_cell_value, key_coord)
 
-        # Grading cells
-        cell_coord = self.grading_rubric.cell_coord
-        custom_formulas = get_excel_formula_lambdas()
-
-        try:
-            sub_cell_value = sub_sheet[cell_coord].value
-            _ = parse_formula(sub_cell_value, local_dict=custom_formulas)
-
-            # Comparison
-            for key_coord in self.grading_rubric.get_all_cell_coord():
-                curr_cell_value = sub_sheet[key_coord].value
-                # Below if is not visited as an error will be thrown before exec reaches here
-                if len(curr_cell_value) == 1 and curr_cell_value[0] == '=':
-                    report.append_line(f"\t- Formula is missing.")
-                    return report
-                # end
-                if any(c.isalpha() for c in curr_cell_value):
-                    report.append_line(f"\t- Found Formula: {curr_cell_value}")
-                    return super().grade()
-                # Below else is not visited as an error will be thrown before exec reaches here
-                else:
-                    report.append_line(f"\t- Formula is missing.")
-                    return report
-                # end
-        except Exception as exc:
-            # TODO: Revisit whether we should print the comparison key value here.
-            #   It might leak the answers to the students, though.
-            report.append_line(f"{self.report_line_prefix}Error: {exc}")
-            report.report_html_args['error'] = f"Error: {exc}"
-            return report
+    def get_key_value(self, key_coord):
+        return self.key_sheet_compute[key_coord].value

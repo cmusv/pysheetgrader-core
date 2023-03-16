@@ -22,7 +22,7 @@ class RelativeStrategy(BaseStrategy):
     def get_submitted_value(self):
         return self.sub_sheet_compute[self.cell_coord].value
 
-    def check_correct(self, sub_cell_value, key_cell_value):
+    def check_correct(self, sub_cell_value, key_cell_value, key_coord):
         return self.is_key_sub_match(self.key_sheet_compute, key_cell_value, sub_cell_value)
 
     def get_key_value(self, key_coord):

@@ -41,20 +41,23 @@ class BaseStrategy:
         '''
         raise NotImplementedError()
 
-    def get_key_value(self):
+    def get_key_value(self, key_coord):
         '''
         template pattern: this is how to get the key value
         '''
         raise NotImplementedError()
     
-    def check_correct(self, key_sheet, key_coord):
+    def check_correct(self, sub_cell_value, key_cell_value, key_coord):
         '''
         template pattern: this is how to check if the value is correct
         '''
         raise NotImplementedError()
     
-    def additional_validate(self):
+    def additional_fail_check(self):
         return False
+    
+    def get_key_coord_set(self):
+        return self.grading_rubric.get_all_cell_coord()
     
     def grade(self):
         '''
@@ -66,20 +69,20 @@ class BaseStrategy:
         if we must, subtract at the end
         '''
         ### validate
-        if not self.key_sheet_raw or self.additional_validate():
+        if not self.key_sheet_raw or self.additional_fail_check():
             return self.report
 
         ### grab the submitted value
         sub_cell_value = self.get_submitted_value()
  
         ### loop thru all keys, including alt cells
-        for key_coord in self.grading_rubric.get_all_cell_coord():
+        for key_coord in self.get_key_coord_set():
             
             ### get proper answer
             key_cell_value = self.get_key_value(key_coord)
             
             ### compare to submitted
-            is_correct = self.check_correct(sub_cell_value, key_cell_value)
+            is_correct = self.check_correct(sub_cell_value, key_cell_value, key_coord)
             
             if is_correct and self.prereq_check():
                 ### here is where we can add weird logic for different grading natures
@@ -188,6 +191,10 @@ class BaseStrategy:
         if not prereq_check:
             self.report.append_line(f"{self.report_line_prefix} "+ prereq_string + " must be correct before this cell can be graded!")
             self.report.report_html_args['feedback'] = f" "+ prereq_string + " must be correct before this cell can be graded!"
+
+        if not prereq_check:
+            print('fail prereq')
+
         return prereq_check
 
     @staticmethod

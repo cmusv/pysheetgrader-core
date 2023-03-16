@@ -13,7 +13,7 @@ class NaiveFormulaStrategy(BaseStrategy):
         sub_cell_value = self.sub_sheet_raw[self.cell_coord].value
         return self.parse_formula(sub_cell_value, local_dict=self.custom_formulas)
 
-    def check_correct(self, sub_cell_value, key_cell_value):
+    def check_correct(self, sub_cell_value, key_cell_value, key_coord):
         return simplify(key_cell_value - sub_cell_value) == 0
 
     def get_key_value(self, key_coord):

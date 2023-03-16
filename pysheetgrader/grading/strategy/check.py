@@ -29,7 +29,7 @@ class CheckStrategy(BaseStrategy):
                 # else check the value of the given cell in the key
                 else:
                     key_evaluated_value = self.get_formula_value(key_sheet, key_raw_formula)
-
+                
                 if self.value_matches(sub_evaluated_value, key_evaluated_value):
                     if self.grading_rubric.prereq_cells is not None:
                         if self.prereq_check(cell_coord,report):

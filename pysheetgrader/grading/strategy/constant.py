@@ -10,7 +10,7 @@ class ConstantStrategy(BaseStrategy):
     def get_submitted_value(self):
         return self.sub_sheet_compute[self.cell_coord].value
 
-    def check_correct(self, sub_cell_value, key_cell_value):
+    def check_correct(self, sub_cell_value, key_cell_value, key_coord):
         return self.value_matches(sub_cell_value, key_cell_value)
 
     def get_key_value(self, key_coord):
