@@ -106,11 +106,6 @@ def parse_formula(formula: str, local_dict: dict = None):
     string_tokens = parse_formula_tokens(formula)
     # Lowercase the form, to allow Sympy use built-in functions.
     expanded_form = "".join(string_tokens).lower()
-
-    if(formula == '=b6  <== b7'):
-        print(type(expanded_form))
-        print(repr(expanded_form))
-        print(local_dict)
     
     return parse_expr(expanded_form, local_dict=local_dict)
 
