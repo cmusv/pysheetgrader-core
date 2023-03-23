@@ -235,7 +235,7 @@ class GradingRubric:
         rubric_type = rubric_dict['type'] if 'type' in rubric_dict else None
         rubric_delta = rubric_dict['delta'] if 'delta' in rubric_dict else 0
         rubric_result_coord = rubric_dict['result'] if 'result' in rubric_dict else None
-        rubric_prereq = rubric_dict['prereq'] if 'prereq' in rubric_dict else None
+        rubric_prereq = rubric_dict['prereq'] if 'prereq' in rubric_dict else parsed_comment['prereq'] if 'prereq' in parsed_comment else None
 
 
         # Rubric score parsing
