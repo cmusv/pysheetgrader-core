@@ -28,6 +28,7 @@ class CheckStrategy(BaseStrategy):
         '''
         if(key_coord and key_coord in self.grading_rubric.alt_cells):
             # we must get the sub cell value again if it is a formula
+             # TODO: consider?
             try:
                 sub_cell_value = self.get_formula_value(self.sub_sheet_compute, self.key_sheet_raw[key_coord].value)
             except:

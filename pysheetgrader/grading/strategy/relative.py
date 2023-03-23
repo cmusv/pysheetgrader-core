@@ -38,6 +38,7 @@ class RelativeStrategy(BaseStrategy):
         :param sub_value: the evaluated submission value for the cell
         :return:
         """
+         # TODO: REFACTOR
         match = False
         if self.value_matches(key_value, sub_value):
             match = True

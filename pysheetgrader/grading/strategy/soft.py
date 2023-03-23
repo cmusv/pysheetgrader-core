@@ -13,6 +13,7 @@ class SoftFormulaStrategy(ConstantStrategy):
         return self.sub_sheet_raw[self.cell_coord].value
 
     def check_correct(self, sub_cell_value, key_cell_value, key_coord):
+         # TODO: REFACTOR
         curr_cell_value = self.sub_sheet_raw[key_coord].value
         
         if len(curr_cell_value) == 1 and curr_cell_value[0] == '=':

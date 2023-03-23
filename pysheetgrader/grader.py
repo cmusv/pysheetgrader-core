@@ -115,7 +115,7 @@ class Grader:
             report.report_html_args['passing_tests'] = sheet.passing_tests
         return report
 
-    def grade_sheet_by_rubric(self, document, sheet: Sheet, rubric):
+    def grade_sheet_by_rubric(self, document, sheet: Sheet, rubric): # TODO: REFACTOR
         """
         Grades the `sheet_name` of the passed `document` using the passed `rubric`.
 
