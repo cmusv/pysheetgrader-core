@@ -10,7 +10,7 @@ from pysheetgrader.grading.strategy.soft import SoftFormulaStrategy
 from pysheetgrader.grading.strategy.test import TestRunStrategy
 from pysheetgrader.grading.strategy.relative import RelativeStrategy
 from pysheetgrader.grading.strategy.relative_f import RelativeFormulaStrategy
-from pysheetgrader.grading.strategy.check2 import CheckStrategy
+from pysheetgrader.grading.strategy.check import CheckStrategy
 
 import re
 import os

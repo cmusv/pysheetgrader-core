@@ -68,35 +68,41 @@ class BaseStrategy:
         
         if we must, subtract at the end
         '''
-        ### validate
-        if not self.key_sheet_raw or self.additional_fail_check():
+        try:
+            ### validate
+            if not self.key_sheet_raw or self.additional_fail_check():
+                return self.report
+
+            ### grab the submitted value
+            sub_cell_value = self.get_submitted_value()
+    
+            ### loop thru all keys, including alt cells
+            for key_coord in self.get_key_coord_set():
+                
+                ### get proper answer
+                key_cell_value = self.get_key_value(key_coord)
+                
+                ### compare to submitted
+                is_correct = self.check_correct(sub_cell_value, key_cell_value, key_coord)
+                
+                if is_correct and self.prereq_check():
+                    ### here is where we can add weird logic for different grading natures
+                    self.report.submission_score += self.get_correct_score(self.grading_rubric.grading_nature, self.grading_rubric.score)
+
+                    #### mark as correct
+                    self.grading_rubric.is_correct = True
+                    break
+            
+            ### subtract if necessary
+            if  self.grading_rubric.grading_nature == 'negative' and not self.grading_rubric.is_correct:
+                self.report.submission_score += self.grading_rubric.score
+        
             return self.report
 
-        ### grab the submitted value
-        sub_cell_value = self.get_submitted_value()
- 
-        ### loop thru all keys, including alt cells
-        for key_coord in self.get_key_coord_set():
-            
-            ### get proper answer
-            key_cell_value = self.get_key_value(key_coord)
-            
-            ### compare to submitted
-            is_correct = self.check_correct(sub_cell_value, key_cell_value, key_coord)
-            
-            if is_correct and self.prereq_check():
-                ### here is where we can add weird logic for different grading natures
-                self.report.submission_score += self.get_correct_score(self.grading_rubric.grading_nature, self.grading_rubric.score)
-
-                #### mark as correct
-                self.grading_rubric.is_correct = True
-                break
-        
-        ### subtract if necessary
-        if  self.grading_rubric.grading_nature == 'negative' and not self.grading_rubric.is_correct:
-            self.report.submission_score += self.grading_rubric.score
-    
-        return self.report
+        except Exception as exc:
+            self.report.append_line(f"{self.report_line_prefix}Error: {exc}")
+            self.report.report_html_args['error'] = f"Error: {exc}"
+            return self.report
 
     def create_initial_report(self):
         """
