@@ -1,11 +1,8 @@
 import sys
 from enum import Enum
-from typing import List
 import yaml
-from striprtf.striprtf import rtf_to_text
 from openpyxl.worksheet.worksheet import Worksheet
 
-from email import header
 from pysheetgrader.sheet import Sheet
 from pysheetgrader.grading.test_case import GradingTestCase
 from pysheetgrader.utils import get_headers
