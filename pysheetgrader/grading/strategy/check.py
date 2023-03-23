@@ -18,9 +18,6 @@ class CheckStrategy(BaseStrategy):
         # if we have a result coord, use that
         if self.grading_rubric.result_coord is not None:
             return self.key_sheet_compute[self.grading_rubric.result_coord].value
-        # if a result or alt cell is specified
-        elif key_coord is not None:
-            return self.key_sheet_raw[key_coord].value
         # else check the value of the given cell in the key
         else:
             return self.get_formula_value(self.key_sheet_raw, key_raw_formula)    
@@ -29,6 +26,13 @@ class CheckStrategy(BaseStrategy):
         '''
         template pattern: this is how to check if the value is correct
         '''
+        if(key_coord and key_coord in self.grading_rubric.alt_cells):
+            # we must get the sub cell value again if it is a formula
+            try:
+                sub_cell_value = self.get_formula_value(self.sub_sheet_compute, self.key_sheet_raw[key_coord].value)
+            except:
+                sub_cell_value = sub_cell_value
+        
         return self.value_matches(sub_cell_value, key_cell_value)
 
     def get_key_coord_set(self):

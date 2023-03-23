@@ -173,8 +173,7 @@ class BaseStrategy:
             key_float = float(key_value)
             sub_float = float(sub_value)
             return (key_float - delta) <= sub_float <= (key_float + delta)
-        except Exception: # basically always fails
-            print('error')
+        except Exception as e: # basically always fails
             # TODO: Check if we should log an error here.
             return False
 
