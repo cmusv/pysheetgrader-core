@@ -15,8 +15,11 @@ class CheckStrategy(BaseStrategy):
         template pattern: this is how to get the key value
         '''
         key_raw_formula = self.key_sheet_raw[self.cell_coord].value
+        # if we have a result coord, use that
+        if self.grading_rubric.result_coord is not None:
+            return self.key_sheet_compute[self.grading_rubric.result_coord].value
         # if a result or alt cell is specified
-        if key_coord is not None:
+        elif key_coord is not None:
             return self.key_sheet_raw[key_coord].value
         # else check the value of the given cell in the key
         else:
