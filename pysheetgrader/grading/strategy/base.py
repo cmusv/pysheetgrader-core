@@ -4,6 +4,7 @@ from pysheetgrader.document import Document
 from pysheetgrader.formula_parser import parse_formula_inputs, parse_formula, \
     encode_cell_reference, transform_excel_formula_to_sympy
 from pysheetgrader.custom_excel_formula import get_excel_formula_lambdas
+from traceback import print_exc
 
 class BaseStrategy:
     """
@@ -100,6 +101,7 @@ class BaseStrategy:
             return self.report
 
         except Exception as exc:
+            print_exc()
             self.report.append_line(f"{self.report_line_prefix}Error: {exc}")
             self.report.report_html_args['error'] = f"Error: {exc}"
             return self.report

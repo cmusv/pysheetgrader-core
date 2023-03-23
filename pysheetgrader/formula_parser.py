@@ -16,6 +16,8 @@ def transform_excel_formula_to_sympy(formula: str) -> str:
     :param formula: the string value of an excel formula.
     :return: the string value of a Sympy friendly formula.
     """
+    if not formula or not isinstance(formula, str):
+        raise ValueError(f"Expected formula, got {formula}")
     # Lowercase the inputs and the custom functions, because Sympy supports simple functions out-of-the box
     #   e.g. sqrt, sin
     lowercased_formula = formula.lower()
@@ -106,6 +108,7 @@ def parse_formula(formula: str, local_dict: dict = None):
     string_tokens = parse_formula_tokens(formula)
     # Lowercase the form, to allow Sympy use built-in functions.
     expanded_form = "".join(string_tokens).lower()
+    expanded_form = expanded_form.replace('<==', '<=').replace('>==', '>=')
     
     return parse_expr(expanded_form, local_dict=local_dict)
 
