@@ -16,6 +16,7 @@ class TestRunStrategy(BaseStrategy):
                                                                                                        , test_case.inputs, test_case.failmsg))
         
     def grade(self):
+         # TODO: consider?
         report = self.create_initial_report()
         html_args = {'test_cases': [], 'all_test_pass': False}
 

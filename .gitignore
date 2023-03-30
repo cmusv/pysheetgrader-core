@@ -55,4 +55,13 @@ TestModeReport.html
 excel/~$TestModeSubmission.xlsx
 A2Key.xlsx
 A2Report.html
+
+# Test files, aliases
+A?-???
+*.html
+*.txt
+testyesno.sh
+~$A2Key.xlsx
+~$A2Submission.xlsx
+A2Key.xlsx
 A2Submission.xlsx

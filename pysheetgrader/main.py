@@ -20,8 +20,9 @@ from pysheetgrader.grader import Grader
 @click.option('-v', '--verbose', is_flag=True, help="Print grading details verbosely in stdout")
 @click.option('-i', '--ignore-warnings', is_flag=True, help="Should suppress warnings from depending modules")
 @click.option('-T', '--test-mode', is_flag=True, help="Run the autograder in test mode")
+@click.option('-d', '--debug-mode', is_flag=True, help="Run the autograder in debug mode")
 def cli(key_document_path, submission_document_path, score_output, report_output, html_report_output, verbose,
-        ignore_warnings, test_mode):
+        ignore_warnings, test_mode, debug_mode):
     """ Grades the passed spreadsheet in SUBMISSION_DOCUMENT_PATH using the key spreadsheet from KEY_DOCUMENT_PATH."""
 
     print("PySheetGrader!")
@@ -36,7 +37,7 @@ def cli(key_document_path, submission_document_path, score_output, report_output
     key_doc = Document(key_document_path, read_only=False)
     sub_doc = Document(submission_document_path, read_only=True)
 
-    grader = Grader(key_doc, test_mode)
+    grader = Grader(key_doc, test_mode, debug_mode)
     report = grader.grade(sub_doc)
 
     if verbose:

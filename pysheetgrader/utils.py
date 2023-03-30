@@ -1,3 +1,5 @@
+import re
+
 def get_headers(header_names, row_values):
     """
     Takes a pre-defined dictionary and list of values
@@ -18,3 +20,6 @@ def get_headers(header_names, row_values):
                 header_index[key] = headers.pop(header)
                 break
     return header_index
+
+def is_float(tgt):
+    return re.match(r'^[-+]?[0-9]*\.?[0-9]+$', tgt)
