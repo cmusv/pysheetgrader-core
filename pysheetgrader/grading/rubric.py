@@ -22,6 +22,7 @@ class GradingRubricType(Enum):
     RELATIVE = 5
     RELATIVE_F = 6
     CHECK = 7
+    PYTHON = 8
     
 
     @staticmethod
@@ -46,6 +47,8 @@ class GradingRubricType(Enum):
             return GradingRubricType.RELATIVE_F
         elif value == "check":
             return GradingRubricType.CHECK
+        elif value == "python":
+            return GradingRubricType.PYTHON
         else:
             raise Exception(f"Unsupported rubric type {value}")
 
