@@ -15,6 +15,14 @@ from pysheetgrader.grading.strategy.check import CheckStrategy
 import re
 import os
 
+MAPPING = {
+    GradingRubricType.CONSTANT: ConstantStrategy,
+    GradingRubricType.FORMULA: NaiveFormulaStrategy,
+    GradingRubricType.SOFT_FORMULA: SoftFormulaStrategy,
+    GradingRubricType.RELATIVE: RelativeStrategy,
+    GradingRubricType.RELATIVE_F: RelativeFormulaStrategy,
+}
+
 class Grader:
     """
     Responsible to grade submission Document instances against the key Document.
