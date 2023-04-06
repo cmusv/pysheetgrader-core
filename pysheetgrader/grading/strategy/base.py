@@ -87,9 +87,6 @@ class BaseStrategy:
                 is_correct = self.check_correct(sub_cell_value, key_cell_value, key_coord)
                 
                 if is_correct and self.prereq_check():
-                    if key_coord == 'B25':
-                        print('here1')
-
                     ### here is where we can add weird logic for different grading natures
                     self.report.submission_score += self.get_correct_score(self.grading_rubric.grading_nature, self.grading_rubric.score)
 
@@ -100,8 +97,6 @@ class BaseStrategy:
             
             ### subtract if necessary
             if  self.grading_rubric.grading_nature == 'negative' and not self.grading_rubric.is_correct:
-                if key_coord == 'B25':
-                    print('here2')
 
                 self.report.submission_score += self.grading_rubric.score
         
