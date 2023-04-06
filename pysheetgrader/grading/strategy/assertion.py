@@ -3,7 +3,7 @@ import re
 
 REGEX = r"\$[a-zA-Z]\d{1,2}"
 
-class Assertiontrategy(BaseStrategy):
+class AssertionStrategy(BaseStrategy):
     """
     Used to grade Assertion rubrics.
 
