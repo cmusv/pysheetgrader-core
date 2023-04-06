@@ -20,4 +20,4 @@ class Assertiontrategy(BaseStrategy):
         for m in matches:
             raw_expr = raw_expr.replace(m, str(self.sub_sheet_compute[m].value))
         
-        return str(eval(raw_expr))
+        return eval(raw_expr)
