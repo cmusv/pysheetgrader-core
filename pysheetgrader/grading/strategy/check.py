@@ -1,7 +1,4 @@
 from pysheetgrader.grading.strategy.base import BaseStrategy
-from pysheetgrader.custom_excel_formula import get_excel_formula_lambdas
-from pysheetgrader.formula_parser import parse_formula_inputs, parse_formula, \
-    encode_cell_reference, transform_excel_formula_to_sympy
 
 class CheckStrategy(BaseStrategy):
     """
@@ -9,65 +6,35 @@ class CheckStrategy(BaseStrategy):
     This instance will check the alternative cells in the key if the submission value didn't match the key value
         in the main cell.
     """
-    def grade(self):
-        report = self.create_initial_report()
+    def get_submitted_value(self):
+        key_raw_formula = self.key_sheet_raw[self.cell_coord].value
+        return self.get_formula_value(self.sub_sheet_compute, key_raw_formula)
 
-        # # Retrieving sheets
-        key_sheet,_ = self.try_get_key_and_sub(report, computed=False)
-        _,sub_sheet = self.try_get_key_and_sub(report, computed=True)
-
-        if key_sheet is None:
-            return report
-
-        try:
-            # Grading cells
-            cell_coord = self.grading_rubric.cell_coord
-            key_raw_formula = key_sheet[cell_coord].value
-            sub_evaluated_value = self.get_formula_value(sub_sheet, key_raw_formula)
-            for coord in self.grading_rubric.get_result_cell_coord():
-
-                # if a result or alt cell is specified
-                if coord is not None:
-                    key_evaluated_value = key_sheet[coord].value
-                # else check the value of the given cell in the key
-                else:
-                    key_evaluated_value = self.get_formula_value(key_sheet, key_raw_formula)
-
-                if self.value_matches(sub_evaluated_value, key_evaluated_value):
-                    if self.grading_rubric.prereq_cells is not None:
-                        if self.prereq_check(cell_coord,report):
-                            report.submission_score += self.grading_rubric.score
-                            self.grading_rubric.is_correct = True
-                        else:
-                            break
-                    else:
-                        report.submission_score += self.grading_rubric.score
-                        self.grading_rubric.is_correct = True
-                    break
-
-            return report
-        except Exception as exc:
-            report.append_line(f"{self.report_line_prefix}Error: {exc}")
-            report.report_html_args['error'] = f"Error: {exc}"
-            return report
+    def get_key_value(self, key_coord):
+        '''
+        template pattern: this is how to get the key value
+        '''
+        key_raw_formula = self.key_sheet_raw[self.cell_coord].value
+        # if we have a result coord, use that
+        if self.grading_rubric.result_coord is not None:
+            return self.key_sheet_compute[self.grading_rubric.result_coord].value
+        # else check the value of the given cell in the key
+        else:
+            return self.get_formula_value(self.key_sheet_raw, key_raw_formula)    
+    
+    def check_correct(self, sub_cell_value, key_cell_value, key_coord):
+        '''
+        template pattern: this is how to check if the value is correct
+        '''
+        if(key_coord and key_coord in self.grading_rubric.alt_cells):
+            # we must get the sub cell value again if it is a formula
+             # TODO: consider?
+            try:
+                sub_cell_value = self.get_formula_value(self.sub_sheet_compute, self.key_sheet_raw[key_coord].value)
+            except:
+                sub_cell_value = sub_cell_value
         
+        return self.value_matches(sub_cell_value, key_cell_value)
 
-    def get_formula_value(self, sub_sheet, key_raw_formula: str):
-        """
-        Evaluate the relative value from student's submission cells, using the formula from the Key cell.
-
-        :param sub_sheet: the student's submission sheet
-        :param key_raw_formula: the String value of the relative formula from the Key.
-        :return:
-        """
-        lowercased_formula = transform_excel_formula_to_sympy(key_raw_formula)
-        
-        # extract input coordinates
-        input_coords = parse_formula_inputs(key_raw_formula, encoded=False)
-        encoded_inputs = {encode_cell_reference(coord): sub_sheet[coord].value for coord in input_coords}
-        local_dict = get_excel_formula_lambdas()
-        local_dict.update(encoded_inputs)
-
-        result = parse_formula(lowercased_formula, local_dict)
-        local_dict.clear()
-        return result
+    def get_key_coord_set(self):
+        return self.grading_rubric.get_result_cell_coord()

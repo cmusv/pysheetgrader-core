@@ -20,7 +20,7 @@ class Grader:
     Responsible to grade submission Document instances against the key Document.
     """
 
-    def __init__(self, key_document, is_testmode):
+    def __init__(self, key_document, is_testmode, is_debug):
         """
         Initializer of this instance.
 
@@ -37,6 +37,7 @@ class Grader:
         self.grading_sheets = key_document.get_grading_sheets()
         self.correct_cells = []
         self.is_testmode = is_testmode
+        self.is_debug = is_debug
 
     def grade(self, document):
         """
@@ -75,7 +76,7 @@ class Grader:
                                    'submission_score': 0,
                                    'max_possible_score': 0}
         report.append_line(f"\n {'Running Tests' if self.is_testmode else 'Grading'} for sheet: {sheet.name}")
-        rubrics = GradingRubric.create_rubrics_for_sheet(self.key_document, sheet)
+        rubrics = GradingRubric.create_rubrics_for_sheet(self.key_document, sheet, self.is_debug)
         for r in rubrics:
             sub_score = report.submission_score
             report += self.grade_sheet_by_rubric(document, sheet, r)
@@ -114,7 +115,7 @@ class Grader:
             report.report_html_args['passing_tests'] = sheet.passing_tests
         return report
 
-    def grade_sheet_by_rubric(self, document, sheet: Sheet, rubric):
+    def grade_sheet_by_rubric(self, document, sheet: Sheet, rubric): # TODO: REFACTOR
         """
         Grades the `sheet_name` of the passed `document` using the passed `rubric`.
 

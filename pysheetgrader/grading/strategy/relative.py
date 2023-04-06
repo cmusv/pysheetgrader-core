@@ -1,10 +1,4 @@
-from sympy import SympifyError
-
 from pysheetgrader.grading.strategy.base import BaseStrategy
-from pysheetgrader.formula_parser import parse_formula_inputs, parse_formula, \
-    encode_cell_reference, transform_excel_formula_to_sympy
-from pysheetgrader.custom_excel_formula import get_excel_formula_lambdas
-
 
 class RelativeStrategy(BaseStrategy):
     """
@@ -25,52 +19,14 @@ class RelativeStrategy(BaseStrategy):
 
     Thus, A1 doesn't pass.
     """
+    def get_submitted_value(self):
+        return self.sub_sheet_compute[self.cell_coord].value
 
-    def grade(self):
-        report = self.create_initial_report()
+    def check_correct(self, sub_cell_value, key_cell_value, key_coord):
+        return self.is_key_sub_match(self.key_sheet_compute, key_cell_value, sub_cell_value)
 
-        # Retrieving both key and submission document
-        key_sheet, sub_sheet = self.try_get_key_and_sub(report, computed=True)
-        key_sheet_formula, sub_sheet_formula = self.try_get_key_and_sub(report, computed=False)
-
-        # Grading cells
-        cell_coord = self.grading_rubric.cell_coord
-        key_value = key_sheet[cell_coord].value
-        sub_value = sub_sheet[cell_coord].value
-
-        key_raw_formula = key_sheet_formula[cell_coord].value
-        sub_raw_formula = sub_sheet_formula[cell_coord].value
-
-        # compare submission value and relative evaluation value
-        key_value = self.get_formula_value(sub_sheet, key_raw_formula)
-        
-        # Using a flag to check alternative cells for negative grading nature
-        checkflag_altcells = False
-        
-        if self.grading_rubric.grading_nature == 'positive':
-            if self.is_key_sub_match(key_sheet, key_value, sub_value):
-                if self.grading_rubric.prereq_cells is not None:
-                    if self.prereq_check(cell_coord,report):
-                        report.submission_score += self.grading_rubric.score
-                        self.grading_rubric.is_correct = True
-                    else:
-                        return report
-                else:
-                    report.submission_score += self.grading_rubric.score
-                    self.grading_rubric.is_correct = True
-        elif self.grading_rubric.grading_nature == 'negative':
-            if not self.is_key_sub_match(key_sheet, key_value, sub_value):
-                checkflag_altcells = True
-            else:
-                checkflag_altcells = False
-                self.grading_rubric.is_correct = True
-        else:
-            # TODO: Revisit if we need to print an error here.
-            print("Relative formula Strategy - if new grading nature error needs to be added")
-        
-        if checkflag_altcells and self.grading_rubric.grading_nature == 'negative':
-            report.submission_score += self.grading_rubric.score
-        return report
+    def get_key_value(self, key_coord):
+        return self.get_formula_value(self.sub_sheet_compute, self.key_sheet_raw[key_coord].value)
 
     def is_key_sub_match(self, key_sheet, key_value, sub_value):
         """
@@ -82,6 +38,7 @@ class RelativeStrategy(BaseStrategy):
         :param sub_value: the evaluated submission value for the cell
         :return:
         """
+         # TODO: REFACTOR
         match = False
         if self.value_matches(key_value, sub_value):
             match = True
@@ -91,26 +48,3 @@ class RelativeStrategy(BaseStrategy):
                 match = True
 
         return match
-
-    def get_formula_value(self, sub_sheet, key_raw_formula: str):
-        """
-        Evaluate the relative value from student's submission cells, using the formula from the Key cell.
-
-        :param sub_sheet: the student's submission sheet
-        :param key_raw_formula: the String value of the relative formula from the Key.
-        :return:
-        """
-        lowercased_formula = transform_excel_formula_to_sympy(key_raw_formula)
-
-        # extract input coordinates
-        input_coords = parse_formula_inputs(key_raw_formula, encoded=False)
-
-        encoded_inputs = {encode_cell_reference(coord): sub_sheet[coord].value for coord in input_coords}
-        local_dict = get_excel_formula_lambdas()
-        local_dict.update(encoded_inputs)
-
-        result = parse_formula(lowercased_formula, local_dict)
-        # The clear done below is required because setting the values in a global dict is persistent 
-        # and changes variables that affect other execution
-        local_dict.clear()
-        return result
