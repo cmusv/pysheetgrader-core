@@ -20,8 +20,8 @@ class GradingRubricType(Enum):
     RELATIVE = 5
     RELATIVE_F = 6
     CHECK = 7
+    ASSERTION = 8
     
-
     @staticmethod
     def type_from_string(value):
         """
@@ -44,6 +44,8 @@ class GradingRubricType(Enum):
             return GradingRubricType.RELATIVE_F
         elif value == "check":
             return GradingRubricType.CHECK
+        elif value == "assertion":
+            return GradingRubricType.ASSERTION
         else:
             raise Exception(f"Unsupported rubric type {value}")
 
