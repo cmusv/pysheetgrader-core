@@ -4,6 +4,7 @@ from openpyxl.worksheet.datavalidation import expand_cell_ranges
 from sympy.simplify.simplify import simplify
 from sympy.parsing.sympy_parser import parse_expr
 import re
+import formulas
 
 
 def transform_excel_formula_to_sympy(formula: str) -> str:
@@ -30,6 +31,13 @@ def transform_excel_formula_to_sympy(formula: str) -> str:
 
     return lowercased_formula
 
+def parse_from_excel(formula: str, **kwargs):
+    '''
+    based on what you name the kwargs, replace in given str with whatever value you feed
+    return parsed expression via library
+    '''
+    func = formulas.Parser().ast(formula)[1].compile()
+    return func(**kwargs)
 
 def parse_formula_tokens(formula: str) -> [str]:
     """

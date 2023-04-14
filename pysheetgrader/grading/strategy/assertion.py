@@ -1,7 +1,4 @@
 from pysheetgrader.grading.strategy.base import BaseStrategy
-import re
-
-REGEX = r"\$[a-zA-Z]\d{1,2}"
 
 class AssertionStrategy(BaseStrategy):
     """
@@ -22,7 +19,7 @@ class AssertionStrategy(BaseStrategy):
 
     def get_key_value(self, key_coord) -> bool:
         raw_expr = self.key_sheet_raw[key_coord].value
-        matches = re.findall(REGEX, raw_expr)
+        matches = self.re.findall(self.COL_MATCH, raw_expr)
 
         for m in matches:
             raw_expr = raw_expr.replace(m, str(self.sub_sheet_compute[m].value))

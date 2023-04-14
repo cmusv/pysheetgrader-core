@@ -5,6 +5,7 @@ from pysheetgrader.grading.rubric import GradingRubricType
 from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.grading.report import GradingReportType
 from pysheetgrader.grading.strategy.constant import ConstantStrategy
+from pysheetgrader.grading.strategy.base import BaseStrategy
 from pysheetgrader.grading.strategy.formula import NaiveFormulaStrategy
 from pysheetgrader.grading.strategy.soft import SoftFormulaStrategy
 from pysheetgrader.grading.strategy.test import TestRunStrategy
@@ -21,7 +22,7 @@ class Grader:
     Responsible to grade submission Document instances against the key Document.
     """
 
-    def __init__(self, key_document, is_testmode, is_debug):
+    def __init__(self, key_document, is_testmode, is_debug, is_log):
         """
         Initializer of this instance.
 
@@ -39,6 +40,7 @@ class Grader:
         self.correct_cells = []
         self.is_testmode = is_testmode
         self.is_debug = is_debug
+        self.is_log = is_log
 
     def grade(self, document):
         """
@@ -77,7 +79,8 @@ class Grader:
                                    'submission_score': 0,
                                    'max_possible_score': 0}
         report.append_line(f"\n {'Running Tests' if self.is_testmode else 'Grading'} for sheet: {sheet.name}")
-        rubrics = GradingRubric.create_rubrics_for_sheet(self.key_document, sheet, self.is_debug)
+        rubrics = GradingRubric.create_rubrics_for_sheet(self.key_document, sheet, self.is_debug, self.is_log)
+
         for r in rubrics:
             sub_score = report.submission_score
             report += self.grade_sheet_by_rubric(document, sheet, r)
@@ -134,6 +137,13 @@ class Grader:
             'description': rubric.description,
             'test_params': rubric.test_params
         }
+
+        if rubric.manual:
+            print('manual')
+            # report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, manual value")
+            # report += BaseStrategy(self.key_document, document, sheet.name, rubric, self.correct_cells).sub_sheet_raw[rubric.cell_coord]
+            # html_args['rubric_type'] = "Value check" if rubric.grading_nature == 'positive' else "Value check (penalty)"
+
         if rubric.rubric_type == GradingRubricType.CONSTANT:
             if not rubric.hidden:
                 report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, constant value comparison")

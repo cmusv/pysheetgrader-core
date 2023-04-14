@@ -2,14 +2,18 @@ from pysheetgrader.grading.rubric import GradingRubric
 from pysheetgrader.grading.report import GradingReport, GradingReportType
 from pysheetgrader.document import Document
 from pysheetgrader.formula_parser import parse_formula_inputs, parse_formula, \
-    encode_cell_reference, transform_excel_formula_to_sympy
+    encode_cell_reference, transform_excel_formula_to_sympy, parse_from_excel
 from pysheetgrader.custom_excel_formula import get_excel_formula_lambdas
 from traceback import print_exc
+import re
 
 class BaseStrategy:
     """
     Base class of other grading strategies.
     """
+    COL_MATCH = r"\$[a-zA-Z]+\d+"
+    COL_MATCH_RAW = r"[a-zA-Z]+\d+"
+
     def __init__(self, key_document: Document, sub_document: Document, sheet_name, grading_rubric: GradingRubric,correct_cells,
                  report_line_prefix: str = ""):
         """
@@ -35,6 +39,8 @@ class BaseStrategy:
         self.key_sheet_raw, self.sub_sheet_raw = self.try_get_key_and_sub(computed=False)        
         self.custom_formulas = get_excel_formula_lambdas()
         self.parse_formula = parse_formula
+        self.parse_from_excel = parse_from_excel
+        self.re = re
 
     def get_submitted_value(self):
         '''
@@ -103,9 +109,12 @@ class BaseStrategy:
             return self.report
 
         except Exception as exc:
-            print_exc()
             self.report.append_line(f"{self.report_line_prefix}Error: {exc}")
             self.report.report_html_args['error'] = f"Error: {exc}"
+
+            if self.grading_rubric.log_mode:
+                print_exc()
+
             return self.report
 
     def create_initial_report(self):
@@ -201,9 +210,6 @@ class BaseStrategy:
             self.report.append_line(f"{self.report_line_prefix} "+ prereq_string + " must be correct before this cell can be graded!")
             self.report.report_html_args['feedback'] = f" "+ prereq_string + " must be correct before this cell can be graded!"
 
-        if not prereq_check:
-            print('fail prereq')
-
         return prereq_check
 
     @staticmethod
@@ -218,7 +224,7 @@ class BaseStrategy:
         else:
             raise NotImplementedError(f'Bad grading nature: {grading_nature}')
 
-    def get_formula_value(self, sub_sheet, key_raw_formula: str):
+    def get_formula_value(self, sub_sheet, key_raw_formula: str, parse_xl=False):
         """
         Evaluate the relative value from student's submission cells, using the formula from the Key cell.
 
@@ -226,14 +232,28 @@ class BaseStrategy:
         :param key_raw_formula: the String value of the relative formula from the Key.
         :return:
         """
-        lowercased_formula = transform_excel_formula_to_sympy(key_raw_formula)
-        
-        # extract input coordinates
-        input_coords = parse_formula_inputs(key_raw_formula, encoded=False)
-        encoded_inputs = {encode_cell_reference(coord): sub_sheet[coord].value for coord in input_coords}
-        local_dict = get_excel_formula_lambdas()
-        local_dict.update(encoded_inputs)
+        if parse_xl:
+            return self.get_formula_xl(sub_sheet, key_raw_formula)
 
-        result = parse_formula(lowercased_formula, local_dict)
-        local_dict.clear()
-        return result
+        else:
+            lowercased_formula = transform_excel_formula_to_sympy(key_raw_formula)
+            
+            # extract input coordinates
+            input_coords = parse_formula_inputs(key_raw_formula, encoded=False)
+            encoded_inputs = {encode_cell_reference(coord): sub_sheet[coord].value for coord in input_coords}
+            local_dict = get_excel_formula_lambdas()
+            local_dict.update(encoded_inputs)
+
+            result = parse_formula(lowercased_formula, local_dict)
+            local_dict.clear()
+            return result
+
+    def get_formula_value_xl(self, sub_sheet, key_raw_formula: str) -> str:
+        all_cols = self.re.findall(self.COL_MATCH_RAW, key_raw_formula)
+        
+        tgt_kwargs = {
+            col_match.upper(): sub_sheet[col_match.upper()].value or 0
+            for col_match in all_cols
+        }
+
+        return parse_from_excel(key_raw_formula, **tgt_kwargs)
