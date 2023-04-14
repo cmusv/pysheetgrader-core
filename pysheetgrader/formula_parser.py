@@ -37,7 +37,18 @@ def parse_from_excel(formula: str, **kwargs):
     return parsed expression via library
     '''
     func = formulas.Parser().ast(formula)[1].compile()
-    return func(**kwargs)
+    r = func(**kwargs)
+
+    try:
+        r = bool(r)
+    except:
+        try:
+            r = float(r)
+        
+        except:
+            r = str(r)
+
+    return r
 
 def parse_formula_tokens(formula: str) -> [str]:
     """

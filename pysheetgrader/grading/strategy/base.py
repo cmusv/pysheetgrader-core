@@ -233,7 +233,7 @@ class BaseStrategy:
         :return:
         """
         if parse_xl:
-            return self.get_formula_xl(sub_sheet, key_raw_formula)
+            r = self.get_formula_value_xl(sub_sheet, key_raw_formula)
 
         else:
             lowercased_formula = transform_excel_formula_to_sympy(key_raw_formula)
@@ -246,7 +246,9 @@ class BaseStrategy:
 
             result = parse_formula(lowercased_formula, local_dict)
             local_dict.clear()
-            return result
+            r = result
+        
+        return r
 
     def get_formula_value_xl(self, sub_sheet, key_raw_formula: str) -> str:
         all_cols = self.re.findall(self.COL_MATCH_RAW, key_raw_formula)
