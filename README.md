@@ -6,7 +6,7 @@ See LICENSE file.
 
 # PySheetGrader
 
-Blogs: https://se-edu.org/auto-grading-spreadsheet-assignments/
+For the latest information and feature, please read the related blogs at https://se-edu.org
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
