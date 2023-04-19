@@ -1,21 +1,29 @@
-## CAUTION: pip upgrade sometimes should not be run on Vocareum -- it breaks the installation permanently: setup.sh should ask whether to run or not
-
-## License and Copyright
-
-See LICENSE file.
-
-# PySheetGrader
-
-For the latest information and feature, please read the related blogs at https://se-edu.org
+### CAUTION: pip upgrade sometimes should not be run on Vocareum -- it breaks the installation permanently: setup.sh should ask whether to run or not!
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
 [![pysheetgrader-version](https://img.shields.io/badge/version-2.0-brightgreen.svg)](https://shields.io/)
 
-Related repos:
+## License and Copyright
 
-- https://github.com/cmusv/pysheetgrader-extras: Vocareum scripts and setup and some extras
-- https://github.com/cmusv-svvt/pysheetgrader-obsolete: Old version (a single repo)
+See LICENSE file.
+
+
+# PySheetGrader
+
+
+
+## Latest Information
+
+New features are under development! Stay tuned! 
+
+For the latest information and features, please read the related blogs at https://se-edu.org
+
+
+## Related repos 
+
+- https://github.com/cmusv/pysheetgrader-extras: Vocareum scripts and setup and some extras - ``private``
+- https://github.com/cmusv-svvt/pysheetgrader-obsolete: Old version (a single repo) - ``private``
 
 ## What does PySheetGrader do?
 
