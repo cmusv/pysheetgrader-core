@@ -6,11 +6,11 @@ See LICENSE file.
 
 # PySheetGrader
 
-Blog: https://se-edu.org/auto-grading-spreadsheet-assignments/
+Blogs: https://se-edu.org/auto-grading-spreadsheet-assignments/
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
-[![pysheetgrader-version](https://img.shields.io/badge/version-1.0-brightgreen.svg)](https://shields.io/)
+[![pysheetgrader-version](https://img.shields.io/badge/version-2.0-brightgreen.svg)](https://shields.io/)
 
 Related repos:
 
