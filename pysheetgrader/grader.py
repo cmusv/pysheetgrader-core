@@ -13,6 +13,7 @@ from pysheetgrader.grading.strategy.relative import RelativeStrategy
 from pysheetgrader.grading.strategy.relative_f import RelativeFormulaStrategy
 from pysheetgrader.grading.strategy.check import CheckStrategy
 from pysheetgrader.grading.strategy.assertion import AssertionStrategy
+from pysheetgrader.grading.strategy.manual import ManualStrategy
 
 import re
 import os
@@ -140,9 +141,8 @@ class Grader:
 
         if rubric.manual:
             print('manual')
-            # report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, manual value")
-            # report += BaseStrategy(self.key_document, document, sheet.name, rubric, self.correct_cells).sub_sheet_raw[rubric.cell_coord]
-            # html_args['rubric_type'] = "Value check" if rubric.grading_nature == 'positive' else "Value check (penalty)"
+            report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, constant value comparison")
+            html_args['rubric_type'] = "Manual check"
 
         if rubric.rubric_type == GradingRubricType.CONSTANT:
             if not rubric.hidden:
@@ -194,7 +194,15 @@ class Grader:
             report += AssertionStrategy(self.key_document, document, sheet.name, rubric, self.correct_cells).grade()
             html_args['rubric_type'] = "Result check" if rubric.grading_nature == 'positive' else "Result check (penalty)"
         
-        feedback = self.render_failure_message(document, sheet.name, rubric.fail_msg) if rubric.fail_msg else ""
+        feedback = ManualStrategy(
+            self.key_document, 
+            document, 
+            sheet.name, 
+            rubric, 
+            self.correct_cells
+        ).get_submitted_value() if rubric.manual else self.render_failure_message(
+            document, sheet.name, rubric.fail_msg
+        ) if rubric.fail_msg else "" 
 
         if not self.is_testmode:
             if not rubric.hidden:

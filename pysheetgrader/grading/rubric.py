@@ -227,8 +227,28 @@ class GradingRubric:
             key_cell = key_sheet[cell_coord]
             key_comment = key_cell.comment.text
         except Exception as e:
-            print(e)
-            raise Exception(f"No rubric note found for cell: {cell_coord} in sheet: {key_sheet.title}")
+            if manual:
+                return GradingRubric({
+                    "cell_id": cell_id,
+                    "cell_coord": cell_coord,
+                    "description": description,
+                    "hidden": hidden,
+                    "killer": killer,
+                    "fail_msg": fail_msg,
+                    "rubric_type": None,
+                    "score": None,
+                    "result_coord": None,
+                    "grading_nature": None,
+                    "constant_delta": None,
+                    "alt_cells": None,
+                    "test_cases": None,
+                    "prereq_cells": None,
+                    "test_params": test_params,
+                    "parse_excel": None,
+                    "manual": manual,
+                }, debug_mode, log_mode)
+            else:
+                raise Exception(f"No rubric note found for cell: {cell_coord} in sheet: {key_sheet.title}")
 
         # Comment parsing
         parsed_comment = yaml.load(key_comment, Loader=yaml.Loader)

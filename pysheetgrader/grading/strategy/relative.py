@@ -39,13 +39,6 @@ class RelativeStrategy(BaseStrategy):
         :return:
         """
          # TODO: REFACTOR
-        if self.grading_rubric.parse_excel or self.grading_rubric.cell_coord == 'B32':
-            print(self.cell_coord)
-            print('key ', key_value)
-            print(type(key_value))
-            print('sub ', sub_value)
-            print(type(sub_value))
-
         match = False
         if self.value_matches(key_value, sub_value):
             match = True
