@@ -12,18 +12,50 @@ class BaseStrategy:
     Base class of other grading strategies.
     """
     COL_MATCH = r"\$[a-zA-Z]+\d+"
+    '''
+    very dumbly matches column + digit
+    '''
     COL_MATCH_RAW = r"(?<![\w:])\b[A-Z]+\d+\b(?!\s*[\(:][^()]*[\):]|\s*:\w+\d+\b)" # thanks chatgpt
     '''
     given this pattern: B4+D5+C2+(B5:D4)+MAX(C5:C9) 
-
     write a regular expression that only matches B4, D5, and C2
     (to account for array concats)
 
     This regex pattern will match cell references that are not inside range references or function calls. 
     The negative lookbehind assertion will ensure that the match is not preceded by a word character or a colon. 
     The negative lookahead assertion will ensure that the match is not followed by a range reference or a colon followed by a cell reference.
+
+    1. `(?<![\w:])` - negative lookbehind assertion that ensures that the match is not preceded by a word character or a colon.
+    2. `\b` - word boundary that matches the start or end of a word.
+    3. `[A-Z]+` - character class that matches one or more uppercase letters.
+    4. `\d+` - matches one or more digits.
+    5. `\b` - another word boundary that matches the end of the word.
+    6. `(?!\s*[\(:][^()]*[\):]|\s*:\w+\d+\b)` - negative lookahead assertion that ensures that the match is not followed by a range reference or a colon followed by a cell reference.
+    7. `[\(:][^()]*[\):]` - matches a range reference, such as `C5:B10`, enclosed in parentheses or brackets.
+    8. `:\w+\d+\b` - matches a colon followed by a cell reference, such as `C5`, at the end of a word.
+
+    Putting it all together, the regex pattern matches a cell reference that is not inside a range reference or function call and is not preceded by a word character or a colon.
     '''
+
     CONCAT_MATCH = r"\b[A-Z]+\d+:[A-Z]+\d+\b(?!\s*\([^()]*\))" # this basically just matches concats with a :
+    '''
+    1. `\b` - word boundary that matches the start or end of a word.
+    2. `[A-Z]+` - character class that matches one or more uppercase letters.
+    3. `\d+` - matches one or more digits.
+    4. `:` - matches a colon.
+    5. `[A-Z]+` - character class that matches one or more uppercase letters.
+    6. `\d+` - matches one or more digits.
+    7. `\b` - another word boundary that matches the end of the word.
+    8. `(?!\s*\([^()]*\))` - negative lookahead assertion that ensures that the match is not inside a function call.
+    9. `\s*` - matches zero or more whitespace characters.
+    10. `\(` - matches an opening parenthesis.
+    11. `[^()]*` - matches zero or more characters that are not parentheses.
+    12. `\)` - matches a closing parenthesis.
+
+    Putting it all together, the regex pattern matches a range reference that is not inside a function call. 
+    It matches a cell reference followed by a colon and another cell reference, enclosed in word boundaries, 
+    and ensures that there are no opening and closing parentheses with any number of characters in between them immediately after the match.
+    '''
 
     def __init__(self, key_document: Document, sub_document: Document, sheet_name, grading_rubric: GradingRubric,correct_cells,
                  report_line_prefix: str = ""):
