@@ -270,6 +270,8 @@ class BaseStrategy:
             for col_match in all_cols
         }
 
+        # kind of a hack for getting array concats of cells
+        # might need to special case vlookup?
         for concat in all_concats:
             first, last = concat.split(':')
             tgt_kwargs[concat] = [sub_sheet[first.upper()].value]
