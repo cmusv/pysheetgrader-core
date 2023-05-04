@@ -12,7 +12,15 @@ class BaseStrategy:
     Base class of other grading strategies.
     """
     COL_MATCH = r"\$[a-zA-Z]+\d+"
-    COL_MATCH_RAW = r"[a-zA-Z]+\d+"
+    COL_MATCH_RAW = r"(?<![\w:])\b[A-Z]+\d+\b(?!\s*[\(:][^()]*[\):]|\s*:\w+\d+\b)" # thanks chatgpt
+    CONCAT_MATCH = r"\b[A-Z]+\d+:[A-Z]+\d+\b(?!\s*\([^()]*\))"
+    '''
+    given this pattern: B4+D5+C2+(B5:D4)+MAX(C5:C9) 
+
+    write a regular expression that only matches B4, D5, and C2
+    
+    (to account for array concats)
+    '''
 
     def __init__(self, key_document: Document, sub_document: Document, sheet_name, grading_rubric: GradingRubric,correct_cells,
                  report_line_prefix: str = ""):
@@ -252,10 +260,24 @@ class BaseStrategy:
 
     def get_formula_value_xl(self, sub_sheet, key_raw_formula: str) -> str:
         all_cols = self.re.findall(self.COL_MATCH_RAW, key_raw_formula)
-        
+        all_concats = self.re.findall(self.CONCAT_MATCH, key_raw_formula)
+
         tgt_kwargs = {
             col_match.upper(): sub_sheet[col_match.upper()].value or 0
             for col_match in all_cols
         }
 
+        for concat in all_concats:
+            first, last = concat.split(':')
+            tgt_kwargs[concat] = [sub_sheet[first.upper()].value]
+
+            col = re.sub("[^A-Za-z]", "", first)
+            initial_num = int(re.sub("[^0-9]", "", first))
+            final_num = int(re.sub("[^0-9]", "", last))
+
+            for num in range(initial_num+1, final_num+1):
+                val = sub_sheet[f'{col}{num}'.upper()].value or 0
+                tgt_kwargs[concat].append(val)
+            
+            tgt_kwargs[concat].append(sub_sheet[last.upper()].value)
         return parse_from_excel(key_raw_formula, **tgt_kwargs)

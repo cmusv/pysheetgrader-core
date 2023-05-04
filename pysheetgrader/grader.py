@@ -140,7 +140,6 @@ class Grader:
         }
 
         if rubric.manual:
-            print('manual')
             report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, constant value comparison")
             html_args['rubric_type'] = "Manual check"
 

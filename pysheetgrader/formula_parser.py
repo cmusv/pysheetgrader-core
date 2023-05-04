@@ -40,10 +40,10 @@ def parse_from_excel(formula: str, **kwargs):
     r = func(**kwargs)
 
     try:
-        r = bool(r)
+        r = float(r)
     except:
         try:
-            r = float(r)
+            r = bool(r)
         
         except:
             r = str(r)

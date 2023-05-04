@@ -9,4 +9,4 @@ class ManualStrategy(BaseStrategy):
         raise NotImplementedError
 
     def get_submitted_value(self):
-        return self.sub_sheet_raw[self.cell_coord].value if self.sub_sheet_raw[self.cell_coord].value else self.grading_rubric.fail_msg
+        return f'SUBMISSION: {self.sub_sheet_raw[self.cell_coord].value}' if self.sub_sheet_raw[self.cell_coord].value else self.grading_rubric.fail_msg
