@@ -60,7 +60,7 @@ def parse_from_excel(formula: str, **kwargs):
     for func_entry in func_ast[0]:
         if func_entry.__class__ == formulas.tokens.function.Function and func_entry.name not in SUPPORTED_FUNCTIONS:
             print(f'Excel formula error: {func_entry.name} not supported')
-            raise Exception
+            raise ValueError(f'Excel formula error: {func_entry.name} not supported')
         
     r = func(**kwargs)
 
