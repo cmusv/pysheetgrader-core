@@ -308,13 +308,15 @@ class BaseStrategy:
             first, last = concat.split(':')
             tgt_kwargs[concat] = [sub_sheet[first.upper()].value]
 
-            col = re.sub("[^A-Za-z]", "", first)
+            first_col = re.sub("[^A-Za-z]", "", first)
+            last_col = re.sub("[^A-Za-z]", "", last)
             initial_num = int(re.sub("[^0-9]", "", first))
             final_num = int(re.sub("[^0-9]", "", last))
 
-            for num in range(initial_num+1, final_num+1 if final_num > initial_num + 1 else final_num):
-                val = sub_sheet[f'{col}{num}'.upper()].value or 0
-                tgt_kwargs[concat].append(val)
+            for col in list(map(chr,range(ord(first_col),ord(last_col)+1))):
+                for num in range(initial_num+1, final_num+1 if final_num > initial_num + 1 else final_num):
+                    val = sub_sheet[f'{col}{num}'.upper()].value or 0
+                    tgt_kwargs[concat].append(val)
             
             tgt_kwargs[concat].append(sub_sheet[last.upper()].value)
 
