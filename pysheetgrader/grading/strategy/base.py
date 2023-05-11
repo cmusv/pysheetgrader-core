@@ -308,8 +308,8 @@ class BaseStrategy:
             first, last = concat.split(':')
             tgt_kwargs[concat] = [sub_sheet[first.upper()].value]
 
-            first_col = re.sub("[^A-Za-z]", "", first)
-            last_col = re.sub("[^A-Za-z]", "", last)
+            first_col = re.sub("[^A-Za-z]", "", first).upper()
+            last_col = re.sub("[^A-Za-z]", "", last).upper()
             initial_num = int(re.sub("[^0-9]", "", first))
             final_num = int(re.sub("[^0-9]", "", last))
 
