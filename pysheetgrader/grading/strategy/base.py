@@ -313,8 +313,8 @@ class BaseStrategy:
             initial_num = int(re.sub("[^0-9]", "", first))
             final_num = int(re.sub("[^0-9]", "", last))
             if len(first_col) > 1 or len(first_col) > 1:
-                print(f'Error at {concat}: when using builtin excel, column iteration cannot span multiple letters.')
-                raise ValueError(f'Error at {concat}: when using builtin excel, column iteration cannot span multiple letters.')
+                print(f'Error at {concat}: when using builtin excel, column iteration cannot include multiple letters.')
+                raise ValueError(f'Error at {concat}: when using builtin excel, column iteration cannot include multiple letters.')
 
             for col in list(map(chr,range(ord(first_col),ord(last_col)+1))):
                 for num in range(initial_num+1, final_num+1 if final_num > initial_num + 1 else final_num):
