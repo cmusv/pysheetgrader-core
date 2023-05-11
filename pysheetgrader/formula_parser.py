@@ -6,6 +6,24 @@ from sympy.parsing.sympy_parser import parse_expr
 import re
 import formulas
 
+SUPPORTED_FUNCTIONS = [
+    '_xlfn.STDEV.S',
+    'SQRT',
+    'OR',
+    'IF',
+    'EXP',
+    'LN',
+    'NOT',
+    'OR',
+    'ROUND',
+    'CONCATENATE',
+    'LEN',
+    'SUM',
+    'MAX',
+    'AVERAGE',
+    'COUNTIF',
+    'AND',
+]
 
 def transform_excel_formula_to_sympy(formula: str) -> str:
     """
@@ -36,7 +54,14 @@ def parse_from_excel(formula: str, **kwargs):
     based on what you name the kwargs, replace in given str with whatever value you feed
     return parsed expression via library
     '''
-    func = formulas.Parser().ast(formula)[1].compile()
+    func_ast = formulas.Parser().ast(formula)
+    func = func_ast[1].compile()
+
+    for func_entry in func_ast[0]:
+        if func_entry.__class__ == formulas.tokens.function.Function and func_entry.name not in SUPPORTED_FUNCTIONS:
+            print(f'Excel formula error: {func_entry.name} not supported')
+            raise Exception
+        
     r = func(**kwargs)
 
     try:
