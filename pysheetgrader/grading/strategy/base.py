@@ -303,7 +303,7 @@ class BaseStrategy:
         }
 
         # kind of a hack for getting array concats of cells
-        # might need to special case vlookup?
+        # this will not work with cols that are not one letter
         for concat in all_concats:
             first, last = concat.split(':')
             tgt_kwargs[concat] = [sub_sheet[first.upper()].value]
@@ -312,6 +312,9 @@ class BaseStrategy:
             last_col = re.sub("[^A-Za-z]", "", last).upper()
             initial_num = int(re.sub("[^0-9]", "", first))
             final_num = int(re.sub("[^0-9]", "", last))
+            if len(first_col) > 1 or len(first_col) > 1:
+                print(f'Error at {concat}: when using builtin excel, column iteration cannot span multiple letters.')
+                raise ValueError(f'Error at {concat}: when using builtin excel, column iteration cannot span multiple letters.')
 
             for col in list(map(chr,range(ord(first_col),ord(last_col)+1))):
                 for num in range(initial_num+1, final_num+1 if final_num > initial_num + 1 else final_num):
