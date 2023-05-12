@@ -7,6 +7,7 @@ from pysheetgrader.custom_excel_formula import get_excel_formula_lambdas
 from traceback import print_exc
 import re
 from openpyxl.utils import get_column_letter, column_index_from_string
+from itertools import chain
 
 class BaseStrategy:
     """
@@ -304,19 +305,27 @@ class BaseStrategy:
         }
 
         for concat in all_concats:
-            first, last = concat.split(':')
-            tgt_kwargs[concat] = [sub_sheet[first.upper()].value]
+            bounds = concat.split(':')
 
-            first_col = column_index_from_string(re.sub("[^A-Za-z]", "", first).upper())
-            last_col = column_index_from_string(re.sub("[^A-Za-z]", "", last).upper())
-            initial_num = int(re.sub("[^0-9]", "", first))
-            final_num = int(re.sub("[^0-9]", "", last))
+            first_col, first_num, last_col, last_num = list(chain(*[
+                (
+                    column_index_from_string(re.sub(r"[^A-Za-z]", "", bound).upper()), 
+                    int(re.sub(r"[^0-9]", "", bound))
+                )
+                for bound in bounds
+            ]))
             
-            for col_idx in range(first_col,last_col+1):
-                for num in range(initial_num+1, final_num+1 if final_num > initial_num + 1 else final_num): # this could probably be cleaner
-                    val = sub_sheet[f'{get_column_letter(col_idx)}{num}'.upper()].value or 0
-                    tgt_kwargs[concat].append(val)
-            
-            tgt_kwargs[concat].append(sub_sheet[last.upper()].value)
+            tgt_kwargs[concat] = [    
+                sub_sheet[f'{get_column_letter(col_idx)}{num}'.upper()].value or 0 
+                    for col_idx in range(
+                        first_col, 
+                        last_col + 1
+                    ) 
+                    for num in range(
+                        first_num, 
+                        last_num + 1
+                    )
+            ]
+            print(tgt_kwargs)
 
         return parse_from_excel(key_raw_formula, **tgt_kwargs)
