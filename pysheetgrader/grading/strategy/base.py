@@ -321,7 +321,7 @@ class BaseStrategy:
                             int(self.re.sub(r"[^0-9]", "", bound))
                         )
                         for bound in bounds
-                    ] #
+                    ]
                 )
             )
             
