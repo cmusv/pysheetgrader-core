@@ -326,6 +326,5 @@ class BaseStrategy:
                         last_num + 1
                     )
             ]
-            print(tgt_kwargs)
 
         return parse_from_excel(key_raw_formula, **tgt_kwargs)
