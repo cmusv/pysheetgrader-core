@@ -6,6 +6,7 @@ from pysheetgrader.formula_parser import parse_formula_inputs, parse_formula, \
 from pysheetgrader.custom_excel_formula import get_excel_formula_lambdas
 from traceback import print_exc
 import re
+from openpyxl.utils import get_column_letter, column_index_from_string
 
 class BaseStrategy:
     """
@@ -302,23 +303,18 @@ class BaseStrategy:
             for col_match in all_cols
         }
 
-        # kind of a hack for getting array concats of cells
-        # this will not work with cols that are not one letter
         for concat in all_concats:
             first, last = concat.split(':')
             tgt_kwargs[concat] = [sub_sheet[first.upper()].value]
 
-            first_col = re.sub("[^A-Za-z]", "", first).upper()
-            last_col = re.sub("[^A-Za-z]", "", last).upper()
+            first_col = column_index_from_string(re.sub("[^A-Za-z]", "", first).upper())
+            last_col = column_index_from_string(re.sub("[^A-Za-z]", "", last).upper())
             initial_num = int(re.sub("[^0-9]", "", first))
             final_num = int(re.sub("[^0-9]", "", last))
-            if len(first_col) > 1 or len(first_col) > 1:
-                print(f'Error at {concat}: when using builtin excel, column iteration cannot include multiple letters.')
-                raise ValueError(f'Error at {concat}: when using builtin excel, column iteration cannot include multiple letters.')
-
-            for col in list(map(chr,range(ord(first_col),ord(last_col)+1))):
-                for num in range(initial_num+1, final_num+1 if final_num > initial_num + 1 else final_num):
-                    val = sub_sheet[f'{col}{num}'.upper()].value or 0
+            
+            for col_idx in range(first_col,last_col+1):
+                for num in range(initial_num+1, final_num+1 if final_num > initial_num + 1 else final_num): # this could probably be cleaner
+                    val = sub_sheet[f'{get_column_letter(col_idx)}{num}'.upper()].value or 0
                     tgt_kwargs[concat].append(val)
             
             tgt_kwargs[concat].append(sub_sheet[last.upper()].value)
