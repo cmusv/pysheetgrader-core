@@ -6,6 +6,18 @@ from sympy.parsing.sympy_parser import parse_expr
 import re
 import formulas
 
+# there are likely many more supported
+# they just need  to be tested
+# then can use python shell to introspect each Function object and see its name
+# e.g. do something like this
+
+# import formulas
+# formulas.Parser().ast(tgt_formula)
+# for func_entry in func_ast[0]:
+#    if func_entry.__class__ == formulas.tokens.function.Function:
+#        print(func_entry.name)
+
+# then, add to the list below
 SUPPORTED_FUNCTIONS = [
     '_xlfn.STDEV.S',
     'SQRT',
