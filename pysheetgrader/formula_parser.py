@@ -12,12 +12,10 @@ import formulas
 # e.g. do something like this
 
 # import formulas
-# formulas.Parser().ast(tgt_formula)
-# for func_entry in func_ast[0]:
-#    if func_entry.__class__ == formulas.tokens.function.Function:
-#        print(func_entry.name)
+# tgt_formula = '=SUM(A1:B1)' # e.g. a string containing the function youve just tested
+# print([func_entry.name for func_entry in formulas.Parser().ast(tgt_formula)[0] if func_entry.__class__ == formulas.tokens.function.Function])
 
-# then, add to the list below
+# then, add whever the new one is to the list below
 SUPPORTED_FUNCTIONS = [
     '_xlfn.STDEV.S',
     'SQRT',
