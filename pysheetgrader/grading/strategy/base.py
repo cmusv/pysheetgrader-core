@@ -313,8 +313,8 @@ class BaseStrategy:
             # e.g.
             # concat = 'A1:B1' 
             # split -> [ 'A1', 'B1' ]
-            # sub -> [ ('A', 1), ('B', 1) ] 
-            # column index to string -> [ (1, 1), (2, 1) ]
+            # regex sub parsing -> [ ('A', 1), ('B', 1) ] 
+            # column index from string -> [ (1, 1), (2, 1) ]
             # chain + unpack -> [ 1, 1, 2, 1 ]
 
             bounds = concat.split(':') 
