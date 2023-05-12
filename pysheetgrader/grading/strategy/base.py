@@ -311,8 +311,8 @@ class BaseStrategy:
                 chain(
                     *[
                         (
-                            column_index_from_string(re.sub(r"[^A-Za-z]", "", bound).upper()), 
-                            int(re.sub(r"[^0-9]", "", bound))
+                            column_index_from_string(self.re.sub(r"[^A-Za-z]", "", bound).upper()), 
+                            int(self.re.sub(r"[^0-9]", "", bound))
                         )
                         for bound in bounds
                     ]
