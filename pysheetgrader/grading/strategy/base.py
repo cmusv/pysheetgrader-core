@@ -305,17 +305,23 @@ class BaseStrategy:
         }
 
         for concat in all_concats:
-            bounds = concat.split(':')
+            # e.g.
+            # concat = 'A1:B1' 
+            # split -> [ 'A1', 'B1' ]
+            # sub -> [ ('A', 1), ('B', 1) ] 
+            # column index to string -> [ (1, 1), (2, 1) ]
+            # chain + unpack -> [ 1, 1, 2, 1 ]
 
+            bounds = concat.split(':') 
             first_col, first_num, last_col, last_num = list(
                 chain(
                     *[
-                        (
+                        ( 
                             column_index_from_string(self.re.sub(r"[^A-Za-z]", "", bound).upper()), 
                             int(self.re.sub(r"[^0-9]", "", bound))
                         )
                         for bound in bounds
-                    ]
+                    ] #
                 )
             )
             
