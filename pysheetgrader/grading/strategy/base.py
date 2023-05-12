@@ -307,24 +307,29 @@ class BaseStrategy:
         for concat in all_concats:
             bounds = concat.split(':')
 
-            first_col, first_num, last_col, last_num = list(chain(*[
-                (
-                    column_index_from_string(re.sub(r"[^A-Za-z]", "", bound).upper()), 
-                    int(re.sub(r"[^0-9]", "", bound))
+            first_col, first_num, last_col, last_num = list(
+                chain(
+                    *[
+                        (
+                            column_index_from_string(re.sub(r"[^A-Za-z]", "", bound).upper()), 
+                            int(re.sub(r"[^0-9]", "", bound))
+                        )
+                        for bound in bounds
+                    ]
                 )
-                for bound in bounds
-            ]))
+            )
             
             tgt_kwargs[concat] = [    
-                sub_sheet[f'{get_column_letter(col_idx)}{num}'.upper()].value or 0 
-                    for col_idx in range(
-                        first_col, 
-                        last_col + 1
-                    ) 
-                    for num in range(
-                        first_num, 
-                        last_num + 1
-                    )
+                sub_sheet[f'{get_column_letter(col_idx)}{num}'.upper()].value 
+                
+                for col_idx in range(
+                    first_col, 
+                    last_col + 1
+                ) 
+                for num in range(
+                    first_num, 
+                    last_num + 1
+                )
             ]
 
         return parse_from_excel(key_raw_formula, **tgt_kwargs)
