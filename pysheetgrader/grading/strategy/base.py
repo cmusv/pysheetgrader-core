@@ -1,8 +1,13 @@
 from pysheetgrader.grading.rubric import GradingRubric
 from pysheetgrader.grading.report import GradingReport, GradingReportType
 from pysheetgrader.document import Document
-from pysheetgrader.formula_parser import parse_formula_inputs, parse_formula, \
-    encode_cell_reference, transform_excel_formula_to_sympy, parse_from_excel
+from pysheetgrader.formula_parser import (
+    parse_formula_inputs, 
+    parse_formula, 
+    encode_cell_reference, 
+    transform_excel_formula_to_sympy, 
+    parse_from_excel
+)
 from pysheetgrader.custom_excel_formula import get_excel_formula_lambdas
 from traceback import print_exc
 import re
