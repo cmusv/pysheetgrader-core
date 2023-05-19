@@ -26,7 +26,7 @@ class RelativeStrategy(BaseStrategy):
         return self.is_key_sub_match(self.key_sheet_compute, key_cell_value, sub_cell_value)
 
     def get_key_value(self, key_coord):
-        return self.get_formula_value(self.sub_sheet_compute, self.key_sheet_raw[key_coord].value)
+        return self.get_formula_value(self.sub_sheet_compute, self.key_sheet_raw[key_coord].value, self.grading_rubric.parse_excel)
 
     def is_key_sub_match(self, key_sheet, key_value, sub_value):
         """

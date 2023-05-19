@@ -1,6 +1,4 @@
-from pysheetgrader.custom_excel_formula import get_excel_formula_lambdas
 from pysheetgrader.grading.strategy.constant import ConstantStrategy
-from pysheetgrader.formula_parser import parse_formula
 
 
 class SoftFormulaStrategy(ConstantStrategy):

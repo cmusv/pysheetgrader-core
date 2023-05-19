@@ -1,15 +1,69 @@
 from pysheetgrader.grading.rubric import GradingRubric
 from pysheetgrader.grading.report import GradingReport, GradingReportType
 from pysheetgrader.document import Document
-from pysheetgrader.formula_parser import parse_formula_inputs, parse_formula, \
-    encode_cell_reference, transform_excel_formula_to_sympy
+from pysheetgrader.formula_parser import (
+    parse_formula_inputs, 
+    parse_formula, 
+    encode_cell_reference, 
+    transform_excel_formula_to_sympy, 
+    parse_from_excel
+)
 from pysheetgrader.custom_excel_formula import get_excel_formula_lambdas
 from traceback import print_exc
+import re
+from openpyxl.utils import get_column_letter, column_index_from_string
+from itertools import chain
 
 class BaseStrategy:
     """
     Base class of other grading strategies.
     """
+    COL_MATCH = r"\$[a-zA-Z]+\d+"
+    '''
+    very dumbly matches column + digit
+    '''
+    COL_MATCH_RAW = r"(?<![\w:])\b[A-Z]+\d+\b(?!\s*[\(:][^()]*[\):]|\s*:\w+\d+\b)" # thanks chatgpt
+    '''
+    given this pattern: B4+D5+C2+(B5:D4)+MAX(C5:C9) 
+    write a regular expression that only matches B4, D5, and C2
+    (to account for array concats)
+
+    This regex pattern will match cell references that are not inside range references or function calls. 
+    The negative lookbehind assertion will ensure that the match is not preceded by a word character or a colon. 
+    The negative lookahead assertion will ensure that the match is not followed by a range reference or a colon followed by a cell reference.
+
+    1. `(?<![\w:])` - negative lookbehind assertion that ensures that the match is not preceded by a word character or a colon.
+    2. `\b` - word boundary that matches the start or end of a word.
+    3. `[A-Z]+` - character class that matches one or more uppercase letters.
+    4. `\d+` - matches one or more digits.
+    5. `\b` - another word boundary that matches the end of the word.
+    6. `(?!\s*[\(:][^()]*[\):]|\s*:\w+\d+\b)` - negative lookahead assertion that ensures that the match is not followed by a range reference or a colon followed by a cell reference.
+    7. `[\(:][^()]*[\):]` - matches a range reference, such as `C5:B10`, enclosed in parentheses or brackets.
+    8. `:\w+\d+\b` - matches a colon followed by a cell reference, such as `C5`, at the end of a word.
+
+    Putting it all together, the regex pattern matches a cell reference that is not inside a range reference or function call and is not preceded by a word character or a colon.
+    '''
+
+    CONCAT_MATCH = r"\b[A-Z]+\d+:[A-Z]+\d+\b(?!\s*\([^()]*\))" # this basically just matches concats with a :
+    '''
+    1. `\b` - word boundary that matches the start or end of a word.
+    2. `[A-Z]+` - character class that matches one or more uppercase letters.
+    3. `\d+` - matches one or more digits.
+    4. `:` - matches a colon.
+    5. `[A-Z]+` - character class that matches one or more uppercase letters.
+    6. `\d+` - matches one or more digits.
+    7. `\b` - another word boundary that matches the end of the word.
+    8. `(?!\s*\([^()]*\))` - negative lookahead assertion that ensures that the match is not inside a function call.
+    9. `\s*` - matches zero or more whitespace characters.
+    10. `\(` - matches an opening parenthesis.
+    11. `[^()]*` - matches zero or more characters that are not parentheses.
+    12. `\)` - matches a closing parenthesis.
+
+    Putting it all together, the regex pattern matches a range reference that is not inside a function call. 
+    It matches a cell reference followed by a colon and another cell reference, enclosed in word boundaries, 
+    and ensures that there are no opening and closing parentheses with any number of characters in between them immediately after the match.
+    '''
+
     def __init__(self, key_document: Document, sub_document: Document, sheet_name, grading_rubric: GradingRubric,correct_cells,
                  report_line_prefix: str = ""):
         """
@@ -35,6 +89,8 @@ class BaseStrategy:
         self.key_sheet_raw, self.sub_sheet_raw = self.try_get_key_and_sub(computed=False)        
         self.custom_formulas = get_excel_formula_lambdas()
         self.parse_formula = parse_formula
+        self.parse_from_excel = parse_from_excel
+        self.re = re
 
     def get_submitted_value(self):
         '''
@@ -92,18 +148,23 @@ class BaseStrategy:
 
                     #### mark as correct
                     self.grading_rubric.is_correct = True
+
                     break
             
             ### subtract if necessary
             if  self.grading_rubric.grading_nature == 'negative' and not self.grading_rubric.is_correct:
+
                 self.report.submission_score += self.grading_rubric.score
         
             return self.report
 
         except Exception as exc:
-            print_exc()
             self.report.append_line(f"{self.report_line_prefix}Error: {exc}")
             self.report.report_html_args['error'] = f"Error: {exc}"
+
+            if self.grading_rubric.log_mode:
+                print_exc()
+
             return self.report
 
     def create_initial_report(self):
@@ -199,9 +260,6 @@ class BaseStrategy:
             self.report.append_line(f"{self.report_line_prefix} "+ prereq_string + " must be correct before this cell can be graded!")
             self.report.report_html_args['feedback'] = f" "+ prereq_string + " must be correct before this cell can be graded!"
 
-        if not prereq_check:
-            print('fail prereq')
-
         return prereq_check
 
     @staticmethod
@@ -216,7 +274,7 @@ class BaseStrategy:
         else:
             raise NotImplementedError(f'Bad grading nature: {grading_nature}')
 
-    def get_formula_value(self, sub_sheet, key_raw_formula: str):
+    def get_formula_value(self, sub_sheet, key_raw_formula: str, parse_xl=False):
         """
         Evaluate the relative value from student's submission cells, using the formula from the Key cell.
 
@@ -224,14 +282,65 @@ class BaseStrategy:
         :param key_raw_formula: the String value of the relative formula from the Key.
         :return:
         """
-        lowercased_formula = transform_excel_formula_to_sympy(key_raw_formula)
-        
-        # extract input coordinates
-        input_coords = parse_formula_inputs(key_raw_formula, encoded=False)
-        encoded_inputs = {encode_cell_reference(coord): sub_sheet[coord].value for coord in input_coords}
-        local_dict = get_excel_formula_lambdas()
-        local_dict.update(encoded_inputs)
+        if parse_xl:
+            r = self.get_formula_value_xl(sub_sheet, key_raw_formula)
 
-        result = parse_formula(lowercased_formula, local_dict)
-        local_dict.clear()
-        return result
+        else:
+            lowercased_formula = transform_excel_formula_to_sympy(key_raw_formula)
+            
+            # extract input coordinates
+            input_coords = parse_formula_inputs(key_raw_formula, encoded=False)
+            encoded_inputs = {encode_cell_reference(coord): sub_sheet[coord].value for coord in input_coords}
+            local_dict = get_excel_formula_lambdas()
+            local_dict.update(encoded_inputs)
+
+            result = parse_formula(lowercased_formula, local_dict)
+            local_dict.clear()
+            r = result
+        
+        return r
+
+    def get_formula_value_xl(self, sub_sheet, key_raw_formula: str) -> str:
+        all_cols = self.re.findall(self.COL_MATCH_RAW, key_raw_formula)
+        all_concats = self.re.findall(self.CONCAT_MATCH, key_raw_formula)
+
+        tgt_kwargs = {
+            col_match.upper(): sub_sheet[col_match.upper()].value or 0
+            for col_match in all_cols
+        }
+
+        for concat in all_concats:
+            # e.g.
+            # concat = 'A1:B1' 
+            # split -> [ 'A1', 'B1' ]
+            # regex sub parsing -> [ ('A', 1), ('B', 1) ] 
+            # column index from string -> [ (1, 1), (2, 1) ]
+            # chain + unpack -> [ 1, 1, 2, 1 ]
+
+            bounds = concat.split(':') 
+            first_col, first_num, last_col, last_num = list(
+                chain(
+                    *[
+                        ( 
+                            column_index_from_string(self.re.sub(r"[^A-Za-z]", "", bound).upper()), 
+                            int(self.re.sub(r"[^0-9]", "", bound))
+                        )
+                        for bound in bounds
+                    ]
+                )
+            )
+            
+            tgt_kwargs[concat] = [    
+                sub_sheet[f'{get_column_letter(col_idx)}{num}'.upper()].value 
+                
+                for col_idx in range(
+                    first_col, 
+                    last_col + 1
+                ) 
+                for num in range(
+                    first_num, 
+                    last_num + 1
+                )
+            ]
+
+        return parse_from_excel(key_raw_formula, **tgt_kwargs)

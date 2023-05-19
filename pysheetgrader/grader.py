@@ -5,12 +5,15 @@ from pysheetgrader.grading.rubric import GradingRubricType
 from pysheetgrader.grading.report import GradingReport
 from pysheetgrader.grading.report import GradingReportType
 from pysheetgrader.grading.strategy.constant import ConstantStrategy
+from pysheetgrader.grading.strategy.base import BaseStrategy
 from pysheetgrader.grading.strategy.formula import NaiveFormulaStrategy
 from pysheetgrader.grading.strategy.soft import SoftFormulaStrategy
 from pysheetgrader.grading.strategy.test import TestRunStrategy
 from pysheetgrader.grading.strategy.relative import RelativeStrategy
 from pysheetgrader.grading.strategy.relative_f import RelativeFormulaStrategy
 from pysheetgrader.grading.strategy.check import CheckStrategy
+from pysheetgrader.grading.strategy.assertion import AssertionStrategy
+from pysheetgrader.grading.strategy.manual import ManualStrategy
 
 import re
 import os
@@ -20,7 +23,7 @@ class Grader:
     Responsible to grade submission Document instances against the key Document.
     """
 
-    def __init__(self, key_document, is_testmode, is_debug):
+    def __init__(self, key_document, is_testmode, is_debug, is_log):
         """
         Initializer of this instance.
 
@@ -38,6 +41,7 @@ class Grader:
         self.correct_cells = []
         self.is_testmode = is_testmode
         self.is_debug = is_debug
+        self.is_log = is_log
 
     def grade(self, document):
         """
@@ -76,7 +80,8 @@ class Grader:
                                    'submission_score': 0,
                                    'max_possible_score': 0}
         report.append_line(f"\n {'Running Tests' if self.is_testmode else 'Grading'} for sheet: {sheet.name}")
-        rubrics = GradingRubric.create_rubrics_for_sheet(self.key_document, sheet, self.is_debug)
+        rubrics = GradingRubric.create_rubrics_for_sheet(self.key_document, sheet, self.is_debug, self.is_log)
+
         for r in rubrics:
             sub_score = report.submission_score
             report += self.grade_sheet_by_rubric(document, sheet, r)
@@ -133,6 +138,11 @@ class Grader:
             'description': rubric.description,
             'test_params': rubric.test_params
         }
+
+        if rubric.manual:
+            report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, constant value comparison")
+            html_args['rubric_type'] = "Manual check"
+
         if rubric.rubric_type == GradingRubricType.CONSTANT:
             if not rubric.hidden:
                 report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, constant value comparison")
@@ -177,8 +187,21 @@ class Grader:
                 report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, check result comparison ")
             report += CheckStrategy(self.key_document, document, sheet.name, rubric, self.correct_cells).grade()
             html_args['rubric_type'] = "Result check" if rubric.grading_nature == 'positive' else "Result check (penalty)"
+        elif  rubric.rubric_type == GradingRubricType.ASSERTION:
+            if not rubric.hidden:
+                report.append_line(f"    #{rubric.cell_id} Cell {rubric.cell_coord}, check result comparison ")
+            report += AssertionStrategy(self.key_document, document, sheet.name, rubric, self.correct_cells).grade()
+            html_args['rubric_type'] = "Result check" if rubric.grading_nature == 'positive' else "Result check (penalty)"
         
-        feedback = self.render_failure_message(document, sheet.name, rubric.fail_msg) if rubric.fail_msg else ""
+        feedback = ManualStrategy(
+            self.key_document, 
+            document, 
+            sheet.name, 
+            rubric, 
+            self.correct_cells
+        ).get_submitted_value() if rubric.manual else self.render_failure_message(
+            document, sheet.name, rubric.fail_msg
+        ) if rubric.fail_msg else "" 
 
         if not self.is_testmode:
             if not rubric.hidden:

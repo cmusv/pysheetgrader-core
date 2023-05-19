@@ -4,7 +4,36 @@ from openpyxl.worksheet.datavalidation import expand_cell_ranges
 from sympy.simplify.simplify import simplify
 from sympy.parsing.sympy_parser import parse_expr
 import re
+import formulas
 
+# there are likely many more supported
+# they just need  to be tested
+# then can use python shell to introspect each Function object and see its name
+# e.g. do something like this
+
+# import formulas
+# tgt_formula = '=SUM(A1:B1)' # e.g. a string containing the function youve just tested
+# print([func_entry.name for func_entry in formulas.Parser().ast(tgt_formula)[0] if func_entry.__class__ == formulas.tokens.function.Function])
+
+# then, add whever the new one is to the list below
+SUPPORTED_FUNCTIONS = [
+    '_xlfn.STDEV.S',
+    'SQRT',
+    'OR',
+    'IF',
+    'EXP',
+    'LN',
+    'NOT',
+    'OR',
+    'ROUND',
+    'CONCATENATE',
+    'LEN',
+    'SUM',
+    'MAX',
+    'AVERAGE',
+    'COUNTIF',
+    'AND',
+]
 
 def transform_excel_formula_to_sympy(formula: str) -> str:
     """
@@ -30,6 +59,31 @@ def transform_excel_formula_to_sympy(formula: str) -> str:
 
     return lowercased_formula
 
+def parse_from_excel(formula: str, **kwargs):
+    '''
+    based on what you name the kwargs, replace in given str with whatever value you feed
+    return parsed expression via library
+    '''
+    func_ast = formulas.Parser().ast(formula)
+    func = func_ast[1].compile()
+
+    for func_entry in func_ast[0]:
+        if func_entry.__class__ == formulas.tokens.function.Function and func_entry.name not in SUPPORTED_FUNCTIONS:
+            print(f'Excel formula error: {func_entry.name} not supported')
+            raise ValueError(f'Excel formula error: {func_entry.name} not supported')
+        
+    r = func(**kwargs)
+
+    try:
+        r = float(r)
+    except:
+        try:
+            r = bool(r)
+        
+        except:
+            r = str(r)
+
+    return r
 
 def parse_formula_tokens(formula: str) -> [str]:
     """
