@@ -43,6 +43,7 @@ Fang Han, 2021
 Ksheeraja Raghavan, 2021
 Sandeep Keshavegowda, 2021 
 Aakash Javia, 2022 
+Andrew Colello, 2023
 
 PySheetGrader reliaes on specific versions of the public Python libraries listed in 
 the requirements.txt document, without distributing their source code. 
